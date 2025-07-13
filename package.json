@@ -15,7 +15,8 @@
   "license": "MIT",
   "description": "",
   "dependencies": {
-    "antlr4": "4.13.2"
+    "antlr4": "4.13.2",
+    "codemirror": "^6.0.2"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",

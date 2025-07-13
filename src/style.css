@@ -1,0 +1,8 @@
+.cm-error {
+    text-decoration: red wavy underline;
+}
+
+.hover-msg {
+    background-color: #f88;
+    color: #fff;
+}
