@@ -17,7 +17,7 @@ import TuringStateNameVisitor from "./TuringStateNameVisitor";
 
 let editor: EditorView;
 
-let errors: string[] = [];
+let errors: {type: "syntax" | string, message: string}[] = [];
 let errors_textarea: HTMLTextAreaElement;
 
 let state_select: HTMLSelectElement;
@@ -25,8 +25,8 @@ let states_options: HTMLDivElement;
 
 let tape_input: HTMLInputElement;
 
-const add_error = (message: string) => {
-    errors.push(message);
+const add_error = (message: string, type: "syntax" | string) => {
+    errors.push({type, message});
     errors_textarea.value += message + "\n";
     errors_textarea.style.height = "auto"; // reset height to auto to recalculate
     errors_textarea.style.height = (errors_textarea.scrollHeight + 5) + "px";
@@ -35,6 +35,21 @@ const add_error = (message: string) => {
 const clear_errors = () => {
     errors = [];
     errors_textarea.value = "";
+}
+
+const clear_errors_of_type = (type: "syntax" | string) => {
+    for (let i = 0; i < errors.length; i++) {
+        if (errors[i].type === type) {
+            errors.splice(i, 1);
+
+            // remove that line of textarea
+            const lines = errors_textarea.value.split("\n");
+            lines.splice(i, 1);
+            errors_textarea.value = lines.join("\n");
+
+            i--; // adjust index after removal
+        }
+    }
 }
 
 class CustomErrorListener implements ErrorListener<any> {
@@ -55,7 +70,7 @@ class CustomErrorListener implements ErrorListener<any> {
             add_hover_message(editor, message, offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length);
         }
 
-        add_error(message);
+        add_error(message, "syntax");
     }
 }
 
@@ -80,7 +95,7 @@ const set_state_names = (names: string[]) => {
 }
 
 const parse = (input: string): ProgramContext => {
-    clear_errors();
+    clear_errors_of_type("syntax");
 
     remove_all_decorations(editor);
     remove_all_hover_messages(editor);
@@ -105,6 +120,7 @@ const parse = (input: string): ProgramContext => {
 }
 
 const run = (input: string) => {
+    clear_errors();
     const tree = parse(input);
 
     if (errors.length > 0) {
@@ -120,12 +136,12 @@ const run = (input: string) => {
         tree.accept(exec);
     } catch (e: any) {
         console.error(e);
-        add_error("Parse error: " + e.message);
+        add_error("Parse error: " + e.message, "parse");
     }
 
     const init_state = state_select.value;
     if (init_state === "") {
-        add_error("Please select an initial state.");
+        add_error("Please select an initial state.", "no-init");
         return;
     }
 
@@ -153,7 +169,7 @@ const run = (input: string) => {
         tape_input.value = tape;
     } catch (e: any) {
         console.error(e);
-        add_error("Execution error: " + e.message);
+        add_error("Execution error: " + e.message, "exec");
     }
 }
 
@@ -164,7 +180,6 @@ document.addEventListener("DOMContentLoaded", () => {
     tape_input = document.getElementById("input") as HTMLInputElement;
 
     editor = create_editor();
-
 
     // bind run
     document.getElementById("run")!.addEventListener("click", () => {
@@ -181,6 +196,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 copy_empty.innerText = "Copy empty letter";
             }, 2000);
         });
+    });
+
+    // bind state select change
+    state_select.addEventListener("change", () => {
+       clear_errors_of_type("no-init")
     });
 
     // parse default value
