@@ -223,8 +223,12 @@ const upload_file = () => {
             }
 
             if (read_init_state) {
-                // set the initial state if it was read from the file
-                state_select.value = read_init_state;
+                // validate that the state read from the file is valid
+                if (!state_select.querySelector(`option[value="${read_init_state}"]`)) {
+                    add_error(`Initial state declared in uploaded file "${read_init_state}" is not defined in the program.`, "no-init");
+                } else {
+                    state_select.value = read_init_state;
+                }
             }
         }
 
