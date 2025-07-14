@@ -25,6 +25,9 @@ let states_options: HTMLDivElement;
 
 let tape_input: HTMLInputElement;
 
+let upload_dialog: HTMLDialogElement;
+let file_input: HTMLInputElement;
+
 const add_error = (message: string, type: "syntax" | string) => {
     errors.push({type, message});
     errors_textarea.value += message + "\n";
@@ -173,11 +176,18 @@ const run = (input: string) => {
     }
 }
 
+const open_file_uploader = () => {
+    file_input.value = "";
+    upload_dialog.showModal();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
     state_select = document.getElementById("init-state") as HTMLSelectElement;
     states_options = document.getElementById("states") as HTMLDivElement;
     tape_input = document.getElementById("input") as HTMLInputElement;
+    upload_dialog = document.getElementById("upload-dialog") as HTMLDialogElement;
+    file_input = document.getElementById("file-input") as HTMLInputElement;
 
     editor = create_editor();
 
@@ -206,6 +216,65 @@ document.addEventListener("DOMContentLoaded", () => {
     // bind tape input change
     tape_input.addEventListener("keydown", () => {
         clear_errors_of_type("warn-no-tape");
+    });
+
+    // bind file upload
+    file_input.addEventListener("change", () => {
+        if (!file_input.files) {
+            upload_dialog.close();
+            return;
+        }
+
+        const file = file_input.files[0];
+        if (!file) {
+            upload_dialog.close();
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if (e.target && e.target.result) {
+                let content = e.target.result as string;
+
+                // if there is an INIT statement, remove it but try set it as the init state
+                // e.g. INIT qInit (newline) is qInit
+                // would be better to parse properly but will work as a hack
+                let read_init_state: string | null = null;
+                const init_regex = /^INIT\s+(\w+)\s*\n/;
+                const init_match = content.match(init_regex);
+                if (init_match) {
+                    read_init_state = init_match[1];
+                    console.log(`Read init declaration: ${read_init_state}`);
+                    content = content.replace(init_regex, "");
+                }
+
+                editor.dispatch({
+                    changes: {from: 0, to: editor.state.doc.length, insert: content}
+                });
+
+                parse(content);
+
+                if (errors.length > 0) {
+                    for (const error of errors) {
+                        console.error(error);
+                    }
+                }
+
+                if (read_init_state) {
+                    // set the initial state if it was read from the file
+                    state_select.value = read_init_state;
+                }
+            }
+
+            upload_dialog.close();
+        }
+
+        reader.readAsText(file, "UTF-8");
+    });
+
+    // bind upload button
+    document.getElementById("upload-button")!.addEventListener("click", () => {
+        open_file_uploader();
     });
 
     // parse default value

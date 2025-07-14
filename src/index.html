@@ -14,10 +14,16 @@
     <button id="run">Run</button>
 
     <h3>Transition rules editor</h3>
+    <button id="upload-button">Upload from file</button>
     <button id="copy-empty">Copy empty letter</button>
     <div id="editor"></div>
 
     <h3>All errors:</h3>
     <textarea readonly id="errors"></textarea>
+
+    <dialog id="upload-dialog">
+        <h4>File upload</h4>
+        <input type="file" id="file-input" accept=".txt,.ture">
+    </dialog>
 </body>
 </html>
