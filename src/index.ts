@@ -72,7 +72,9 @@ const set_state_names = (names: string[]) => {
     }
 
     // check if existing state is still valid
-    if (!names.includes(existing_state)) {
+    if (names.includes(existing_state)) {
+        state_select.value = existing_state;
+    } else {
         state_select.value = "";
     }
 }
