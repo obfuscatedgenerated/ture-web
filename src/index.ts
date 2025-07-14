@@ -148,6 +148,7 @@ const run = (input: string) => {
     exec.set_state(init_state);
 
     const in_tape = tape_input.value;
+    add_error("Warning: tape input is empty. This may be a mistake.", "warn-no-tape");
 
     try {
         let tape = exec.execute(in_tape);
@@ -200,6 +201,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // bind state select change
     state_select.addEventListener("change", () => {
        clear_errors_of_type("no-init")
+    });
+
+    // bind tape input change
+    tape_input.addEventListener("keydown", () => {
+        clear_errors_of_type("warn-no-tape");
     });
 
     // parse default value
