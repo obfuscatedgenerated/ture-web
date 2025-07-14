@@ -111,7 +111,23 @@ const run = (input: string) => {
         return;
     }
 
-    tree.accept(new TuringExecutor());
+    const exec = new TuringExecutor();
+    try {
+        tree.accept(exec);
+    } catch (e: any) {
+        console.error(e);
+        add_error("Parse error: " + e.message);
+    }
+
+    exec.set_state("qInit");
+
+    try {
+        let tape = exec.execute("abab");
+        console.log(tape);
+    } catch (e: any) {
+        console.error(e);
+        add_error("Execution error: " + e.message);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
