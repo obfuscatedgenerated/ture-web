@@ -2,17 +2,19 @@ import "./style.css";
 
 import {CharStream, CommonTokenStream, ErrorListener, Token} from "antlr4";
 import TuringLexer from "./grammar/TuringLexer";
-import TuringParser from "./grammar/TuringParser";
+import TuringParser, {ProgramContext} from "./grammar/TuringParser";
 import TuringExecutor from "./TuringExecutor";
 
-import {create_editor, create_decoration_range, apply_decoration_range, add_hover_message} from "./editor";
+import {
+    create_editor,
+    create_decoration_range,
+    apply_decoration_range,
+    add_hover_message,
+    add_update_listener
+} from "./editor";
 import {EditorView} from "@codemirror/view";
 
 let editor: EditorView;
-
-document.addEventListener("DOMContentLoaded", () => {
-    editor = create_editor();
-});
 
 class ThrowingErrorListener implements ErrorListener<any> {
     syntaxError(
@@ -37,7 +39,7 @@ class ThrowingErrorListener implements ErrorListener<any> {
     }
 }
 
-const run = (input: string) => {
+const parse = (input: string): ProgramContext => {
     const chars = new CharStream(input);
     const lexer = new TuringLexer(chars);
     const tokens = new CommonTokenStream(lexer);
@@ -46,11 +48,27 @@ const run = (input: string) => {
     parser.removeErrorListeners();
     parser.addErrorListener(new ThrowingErrorListener());
 
-    const tree = parser.program();
-    console.log(tree.toStringTree(parser.ruleNames, parser));
+    //console.log(tree.toStringTree(parser.ruleNames, parser));
+    return parser.program();
+}
 
+const run = (input: string) => {
+    const tree = parse(input);
     tree.accept(new TuringExecutor());
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    editor = create_editor();
+
+    // parse on change to highlight errors
+    add_update_listener(editor, (view) => {
+        try {
+            parse(editor.state.doc.toString());
+        } catch (error: any) {
+            console.error(error);
+        }
+    });
+});
 
 // bind run
 document.getElementById("run")!.addEventListener("click", () => {

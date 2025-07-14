@@ -69,3 +69,16 @@ export const add_hover_message = (view: EditorView, message: string, start: numb
         effects: StateEffect.appendConfig.of([MessageHover(start, end, message)])
     });
 }
+
+export const add_update_listener = (view: EditorView, callback: (view: EditorView) => void) => {
+    const listener = EditorView.updateListener.of((update) => {
+        if (update.docChanged || update.selectionSet) {
+            callback(view);
+        }
+    });
+
+    view.dispatch({
+        effects: StateEffect.appendConfig.of([listener])
+    });
+}
+
