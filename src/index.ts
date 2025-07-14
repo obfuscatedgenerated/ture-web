@@ -277,6 +277,11 @@ document.addEventListener("DOMContentLoaded", () => {
         open_file_uploader();
     });
 
+    // bind upload close button
+    document.getElementById("upload-cancel")!.addEventListener("click", () => {
+        upload_dialog.close();
+    });
+
     // parse default value
     parse(editor.state.doc.toString());
 
