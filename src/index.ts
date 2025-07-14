@@ -3,7 +3,7 @@ import "./style.css";
 import {CharStream, CommonTokenStream, ErrorListener, Token} from "antlr4";
 import TuringLexer from "./grammar/TuringLexer";
 import TuringParser, {ProgramContext} from "./grammar/TuringParser";
-import TuringExecutor from "./TuringExecutor";
+import TuringExecutor, {EMPTY} from "./TuringExecutor";
 
 import {
     create_editor,
@@ -22,6 +22,8 @@ let errors_textarea: HTMLTextAreaElement;
 
 let state_select: HTMLSelectElement;
 let states_options: HTMLDivElement;
+
+let tape_input: HTMLInputElement;
 
 const add_error = (message: string) => {
     errors.push(message);
@@ -119,11 +121,34 @@ const run = (input: string) => {
         add_error("Parse error: " + e.message);
     }
 
-    exec.set_state("qInit");
+    const init_state = state_select.value;
+    if (init_state === "") {
+        add_error("Please select an initial state.");
+        return;
+    }
+
+    exec.set_state(init_state);
+
+    const in_tape = tape_input.value;
+    // TODO: fix handling of empty input tape
 
     try {
-        let tape = exec.execute("abab");
+        let tape = exec.execute(in_tape);
         console.log(tape);
+
+        // trim trailing empties by finding first non empty character from the end
+        let last_non_empty = tape.length;
+        for (let i = tape.length - 1; i >= 0; i--) {
+            if (tape[i] !== EMPTY) {
+                last_non_empty = i + 1;
+                break;
+            }
+        }
+
+        tape = tape.substring(0, last_non_empty);
+
+        // TODO: is this annoying? is a separate field better for output? maybe a visualisation of the pointer step by step too
+        tape_input.value = tape;
     } catch (e: any) {
         console.error(e);
         add_error("Execution error: " + e.message);
@@ -134,6 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
     errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
     state_select = document.getElementById("init-state") as HTMLSelectElement;
     states_options = document.getElementById("states") as HTMLDivElement;
+    tape_input = document.getElementById("input") as HTMLInputElement;
 
     editor = create_editor();
 
