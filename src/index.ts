@@ -13,10 +13,29 @@ import {
     add_update_listener, remove_all_decorations, remove_all_hover_messages
 } from "./editor";
 import {EditorView} from "@codemirror/view";
+import TuringStateNameVisitor from "./TuringStateNameVisitor";
 
 let editor: EditorView;
 
-class ThrowingErrorListener implements ErrorListener<any> {
+let errors: string[] = [];
+let errors_textarea: HTMLTextAreaElement;
+
+let state_select: HTMLSelectElement;
+let states_options: HTMLDivElement;
+
+const add_error = (message: string) => {
+    errors.push(message);
+    errors_textarea.value += message + "\n";
+    errors_textarea.style.height = "auto"; // reset height to auto to recalculate
+    errors_textarea.style.height = (errors_textarea.scrollHeight + 5) + "px";
+}
+
+const clear_errors = () => {
+    errors = [];
+    errors_textarea.value = "";
+}
+
+class CustomErrorListener implements ErrorListener<any> {
     syntaxError(
         recognizer: unknown,
         offendingSymbol: Token | null,
@@ -34,11 +53,31 @@ class ThrowingErrorListener implements ErrorListener<any> {
             add_hover_message(editor, message, offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length);
         }
 
-        throw new Error(message);
+        add_error(message);
+    }
+}
+
+const set_state_names = (names: string[]) => {
+    let existing_state = state_select.value;
+
+    states_options.innerHTML = "";
+
+    for (const name of names) {
+        const option = document.createElement("option");
+        option.value = name;
+        option.innerText = name;
+        states_options.appendChild(option);
+    }
+
+    // check if existing state is still valid
+    if (!names.includes(existing_state)) {
+        state_select.value = "";
     }
 }
 
 const parse = (input: string): ProgramContext => {
+    clear_errors();
+
     remove_all_decorations(editor);
     remove_all_hover_messages(editor);
 
@@ -48,26 +87,57 @@ const parse = (input: string): ProgramContext => {
 
     const parser = new TuringParser(tokens);
     parser.removeErrorListeners();
-    parser.addErrorListener(new ThrowingErrorListener());
+    parser.addErrorListener(new CustomErrorListener());
 
+    const tree = parser.program();
     //console.log(tree.toStringTree(parser.ruleNames, parser));
-    return parser.program();
+
+    // collect state names and add to select box
+    const collector = new TuringStateNameVisitor();
+    tree.accept(collector);
+    set_state_names(collector.state_names);
+
+    return tree;
 }
 
 const run = (input: string) => {
     const tree = parse(input);
+
+    if (errors.length > 0) {
+        for (const error of errors) {
+            console.error(error);
+        }
+
+        return;
+    }
+
     tree.accept(new TuringExecutor());
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
+    state_select = document.getElementById("init-state") as HTMLSelectElement;
+    states_options = document.getElementById("states") as HTMLDivElement;
+
     editor = create_editor();
+
+    // parse default value
+    parse(editor.state.doc.toString());
+
+    if (errors.length > 0) {
+        for (const error of errors) {
+            console.error(error);
+        }
+    }
 
     // parse on change to highlight errors
     add_update_listener(editor, (view) => {
-        try {
-            parse(editor.state.doc.toString());
-        } catch (error: any) {
-            console.error(error);
+        parse(editor.state.doc.toString());
+
+        if (errors.length > 0) {
+            for (const error of errors) {
+                console.error(error);
+            }
         }
     });
 });
@@ -75,9 +145,5 @@ document.addEventListener("DOMContentLoaded", () => {
 // bind run
 document.getElementById("run")!.addEventListener("click", () => {
     const input = editor.state.doc.toString();
-    try {
-        run(input);
-    } catch (error: any) {
-        console.error(error);
-    }
+    run(input);
 });

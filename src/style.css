@@ -6,3 +6,8 @@
     background-color: #f88;
     color: #fff;
 }
+
+#errors {
+    resize: none;
+    width: 100%;
+}

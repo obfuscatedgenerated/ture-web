@@ -50,7 +50,7 @@ const decorationsField = StateField.define<DecorationSet>({
 export const create_editor = () => {
     return new EditorView({
         doc: DEFAULT,
-        parent: document.body,
+        parent: document.querySelector("#editor") as HTMLElement,
         extensions: [basicSetup, decorationsField]
     });
 }
