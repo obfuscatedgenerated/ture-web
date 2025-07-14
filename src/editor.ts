@@ -39,7 +39,10 @@ const decorationsField = StateField.define<DecorationSet>({
     create: () => Decoration.none,
     update: (value, tr) => {
         for (let e of tr.effects) {
-            if (e.is(setDecorationsEffect)) return e.value;
+            if (e.is(setDecorationsEffect)) {
+                // Ensure decorations are mapped to new document after changes
+                return e.value.map(tr.changes);
+            }
             if (e.is(clearDecorationsEffect)) return Decoration.none;
         }
         return value.map(tr.changes);
@@ -63,49 +66,53 @@ export const create_decoration_range = (
     return Decoration.mark({ class: class_name }).range(start, end);
 }
 
-const active_decorations: Map<number, Range<Decoration>> = new Map();
+type DecorationData = { from: number, to: number, className: string };
+const active_decorations: Map<number, DecorationData> = new Map();
 let decoration_id_counter = 0;
+
+const rebuild_and_apply_decorations = (view: EditorView) => {
+    const docLength = view.state.doc.length;
+    const builder = new RangeSetBuilder<Decoration>();
+
+    for (const { from, to, className } of active_decorations.values()) {
+        // Clamp to document bounds
+        const safeFrom = Math.min(from, docLength);
+        const safeTo = Math.min(to, docLength);
+        if (safeFrom < safeTo) {
+            builder.add(safeFrom, safeTo, Decoration.mark({ class: className }));
+        }
+    }
+
+    view.dispatch({
+        effects: setDecorationsEffect.of(builder.finish())
+    });
+}
 
 export const apply_decoration_range = (
     view: EditorView,
     decoration: Range<Decoration>,
 ) => {
     let id = ++decoration_id_counter;
-    active_decorations.set(id, decoration);
 
-    const builder = new RangeSetBuilder<Decoration>();
-    for (const deco of active_decorations.values()) {
-        builder.add(deco.from, deco.to, deco.value);
-    }
-
-    const decorations = builder.finish();
-    view.dispatch({
-        effects: setDecorationsEffect.of(decorations)
+    // Instead of storing the Range<Decoration> directly, store logical data
+    active_decorations.set(id, {
+        from: decoration.from,
+        to: decoration.to,
+        className: (decoration.value.spec.class || "cm-error")
     });
 
+    rebuild_and_apply_decorations(view);
     return id;
-}
-
-export const remove_all_decorations = (view: EditorView) => {
-    active_decorations.clear();
-
-    view.dispatch({
-        effects: clearDecorationsEffect.of()
-    });
 }
 
 export const remove_decoration_by_id = (view: EditorView, id: number) => {
     active_decorations.delete(id);
+    rebuild_and_apply_decorations(view);
+}
 
-    const builder = new RangeSetBuilder<Decoration>();
-    for (const deco of active_decorations.values()) {
-        builder.add(deco.from, deco.to, deco.value);
-    }
-
-    const decorations = builder.finish();
-    view.dispatch({
-        effects: setDecorationsEffect.of(decorations)
-    });
+export const remove_all_decorations = (view: EditorView) => {
+    active_decorations.clear();
+    view.dispatch({ effects: clearDecorationsEffect.of() });
 }
 
 let hover_extensions: Map<number, Extension> = new Map();
