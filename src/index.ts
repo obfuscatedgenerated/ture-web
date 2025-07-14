@@ -163,6 +163,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     editor = create_editor();
 
+
+    // bind run
+    document.getElementById("run")!.addEventListener("click", () => {
+        const input = editor.state.doc.toString();
+        run(input);
+    });
+
+    // bind copy empty
+    const copy_empty = document.getElementById("copy-empty") as HTMLButtonElement;
+    copy_empty.addEventListener("click", () => {
+        navigator.clipboard.writeText(EMPTY).then(() => {
+            copy_empty.innerText = "Copied!";
+            setTimeout(() => {
+                copy_empty.innerText = "Copy empty letter";
+            }, 2000);
+        });
+    });
+
     // parse default value
     parse(editor.state.doc.toString());
 
@@ -184,8 +202,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// bind run
-document.getElementById("run")!.addEventListener("click", () => {
-    const input = editor.state.doc.toString();
-    run(input);
-});
