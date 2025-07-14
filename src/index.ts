@@ -181,6 +181,81 @@ const open_file_uploader = () => {
     upload_dialog.showModal();
 }
 
+const upload_file = () => {
+    if (!file_input.files) {
+        upload_dialog.close();
+        return;
+    }
+
+    const file = file_input.files[0];
+    if (!file) {
+        upload_dialog.close();
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        if (e.target && e.target.result) {
+            let content = e.target.result as string;
+
+            // if there is an INIT statement, remove it but try set it as the init state
+            // e.g. INIT qInit (newline) is qInit
+            // would be better to parse properly but will work as a hack
+            let read_init_state: string | null = null;
+            const init_regex = /^INIT\s+(\w+)\s*\n/;
+            const init_match = content.match(init_regex);
+            if (init_match) {
+                read_init_state = init_match[1];
+                console.log(`Read init declaration: ${read_init_state}`);
+                content = content.replace(init_regex, "");
+            }
+
+            editor.dispatch({
+                changes: {from: 0, to: editor.state.doc.length, insert: content}
+            });
+
+            parse(content);
+
+            if (errors.length > 0) {
+                for (const error of errors) {
+                    console.error(error);
+                }
+            }
+
+            if (read_init_state) {
+                // set the initial state if it was read from the file
+                state_select.value = read_init_state;
+            }
+        }
+
+        upload_dialog.close();
+    }
+
+    reader.readAsText(file, "UTF-8");
+}
+
+const download_file = () => {
+    // TODO: more advanced dialog allowing file name, option to download just txt, dropdown for init state etc
+
+    const init_state = state_select.value;
+    if (init_state === "") {
+        alert("Please select an initial state before downloading.");
+        return;
+    }
+
+    const content = `INIT ${init_state}\n\n` + editor.state.doc.toString();
+    const blob = new Blob([content], {type: "text/plain"});
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "program.ture";
+    a.target = "_blank";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
     state_select = document.getElementById("init-state") as HTMLSelectElement;
@@ -220,56 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // bind file upload
     file_input.addEventListener("change", () => {
-        if (!file_input.files) {
-            upload_dialog.close();
-            return;
-        }
-
-        const file = file_input.files[0];
-        if (!file) {
-            upload_dialog.close();
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            if (e.target && e.target.result) {
-                let content = e.target.result as string;
-
-                // if there is an INIT statement, remove it but try set it as the init state
-                // e.g. INIT qInit (newline) is qInit
-                // would be better to parse properly but will work as a hack
-                let read_init_state: string | null = null;
-                const init_regex = /^INIT\s+(\w+)\s*\n/;
-                const init_match = content.match(init_regex);
-                if (init_match) {
-                    read_init_state = init_match[1];
-                    console.log(`Read init declaration: ${read_init_state}`);
-                    content = content.replace(init_regex, "");
-                }
-
-                editor.dispatch({
-                    changes: {from: 0, to: editor.state.doc.length, insert: content}
-                });
-
-                parse(content);
-
-                if (errors.length > 0) {
-                    for (const error of errors) {
-                        console.error(error);
-                    }
-                }
-
-                if (read_init_state) {
-                    // set the initial state if it was read from the file
-                    state_select.value = read_init_state;
-                }
-            }
-
-            upload_dialog.close();
-        }
-
-        reader.readAsText(file, "UTF-8");
+        upload_file();
     });
 
     // bind upload button
@@ -280,6 +306,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // bind upload close button
     document.getElementById("upload-cancel")!.addEventListener("click", () => {
         upload_dialog.close();
+    });
+
+    // bind download button
+    document.getElementById("download-button")!.addEventListener("click", () => {
+        download_file();
     });
 
     // parse default value
