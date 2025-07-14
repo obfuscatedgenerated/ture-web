@@ -10,7 +10,7 @@ import {
     create_decoration_range,
     apply_decoration_range,
     add_hover_message,
-    add_update_listener
+    add_update_listener, remove_all_decorations, remove_all_hover_messages
 } from "./editor";
 import {EditorView} from "@codemirror/view";
 
@@ -26,13 +26,12 @@ class ThrowingErrorListener implements ErrorListener<any> {
         e: Error | undefined
     ): void {
         let message = `Syntax error at line ${line}, column ${charPositionInLine}: ${msg}`;
+
         if (offendingSymbol) {
             const decoration = create_decoration_range(offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length, "cm-error");
             apply_decoration_range(editor, decoration);
 
             add_hover_message(editor, message, offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length);
-
-            // TODO: clear decorations on change
         }
 
         throw new Error(message);
@@ -40,6 +39,9 @@ class ThrowingErrorListener implements ErrorListener<any> {
 }
 
 const parse = (input: string): ProgramContext => {
+    remove_all_decorations(editor);
+    remove_all_hover_messages(editor);
+
     const chars = new CharStream(input);
     const lexer = new TuringLexer(chars);
     const tokens = new CommonTokenStream(lexer);
