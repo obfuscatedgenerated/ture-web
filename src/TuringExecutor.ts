@@ -127,7 +127,8 @@ export default class TuringExecutor extends TuringVisitor<string> {
             throw new Error("pos cannot be less than 0");
         }
 
-        if (pos > tape.length - 1) {
+        // manual check if tape length is 0 (therefore pos 0 is allowable as it falls back to EMPTY)
+        if (pos > tape.length - 1 && tape.length !== 0 && pos !== 0) {
             throw new Error("pos is outside tape range");
         }
 

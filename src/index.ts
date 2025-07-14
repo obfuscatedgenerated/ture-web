@@ -148,7 +148,6 @@ const run = (input: string) => {
     exec.set_state(init_state);
 
     const in_tape = tape_input.value;
-    // TODO: fix handling of empty input tape
 
     try {
         let tape = exec.execute(in_tape);
