@@ -151,7 +151,10 @@ const run = (input: string) => {
     exec.set_state(init_state);
 
     const in_tape = tape_input.value;
-    add_error("Warning: tape input is empty. This may be a mistake.", "warn-no-tape");
+
+    if (in_tape === "" || in_tape === EMPTY.repeat(in_tape.length)) {
+        add_error("Warning: tape input is empty. This may be a mistake.", "warn-no-tape");
+    }
 
     try {
         let tape = exec.execute(in_tape);

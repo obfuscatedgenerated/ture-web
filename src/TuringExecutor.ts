@@ -27,8 +27,6 @@ const write_tape_letter = (in_tape: string, pos: number, letter: string) => {
         return in_tape.substring(0, pos) + letter + in_tape.substring(pos + 1);
     }
 
-    debugger;
-
     // need to expand tape by filling space with empties
     const n_empties = pos - in_tape.length;
     return in_tape + EMPTY.repeat(n_empties) + letter;
