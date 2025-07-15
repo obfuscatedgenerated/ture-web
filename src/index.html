@@ -7,17 +7,18 @@
     </h1>
 
     <div class="top-controls">
+        <div class="control-group full">
+            <label for="input">Input tape:</label>
+            <input type="hidden" id="input" value="" />
+            <div id="tape-visual" class="tape-grid" tabindex="0"></div>
+        </div>
+
         <div class="control-group">
             <label for="init-state">Initial state:</label>
             <select id="init-state">
                 <option selected disabled hidden value="">Select initial state</option>
                 <div id="states"></div>
             </select>
-        </div>
-
-        <div class="control-group">
-            <label for="input">Input tape:</label>
-            <input type="text" id="input" placeholder="Input tape">
         </div>
 
         <div class="control-group run-button">

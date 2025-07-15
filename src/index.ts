@@ -15,6 +15,8 @@ import {
 import {EditorView} from "@codemirror/view";
 import TuringStateNameVisitor from "./TuringStateNameVisitor";
 
+import {setup as setup_tape_input} from "./tape_input";
+
 let editor: EditorView;
 
 let errors: {type: "syntax" | string, message: string}[] = [];
@@ -28,6 +30,8 @@ let tape_input: HTMLInputElement;
 let upload_dialog: HTMLDialogElement;
 let file_input: HTMLInputElement;
 let file_name: HTMLInputElement;
+
+let update_tape_value: (value: string) => void;
 
 const add_error = (message: string, type: "syntax" | string) => {
     errors.push({type, message});
@@ -155,6 +159,7 @@ const run = (input: string) => {
     exec.set_state(init_state);
 
     const in_tape = tape_input.value;
+    console.log(`Running Turing machine with initial state "${init_state}" and tape input "${in_tape}"`);
 
     if (in_tape === "" || in_tape === EMPTY.repeat(in_tape.length)) {
         add_error("Warning: tape input is empty. This may be a mistake.", "warn-no-tape");
@@ -176,7 +181,7 @@ const run = (input: string) => {
         tape = tape.substring(0, last_non_empty);
 
         // TODO: is this annoying? is a separate field better for output? maybe a visualisation of the pointer step by step too
-        tape_input.value = tape;
+        update_tape_value(tape);
     } catch (e: any) {
         console.error(e);
         add_error("Execution error: " + e.message, "exec");
@@ -333,5 +338,8 @@ document.addEventListener("DOMContentLoaded", () => {
         parse(editor.state.doc.toString());
         log_errors();
     });
+
+    // TODO: this sucks
+    update_tape_value = setup_tape_input(tape_input, document.getElementById("tape-visual") as HTMLDivElement);
 });
 

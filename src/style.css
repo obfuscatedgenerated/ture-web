@@ -161,3 +161,33 @@ button:hover {
 #run {
     margin-top: 1.85rem;
 }
+
+.tile {
+    height: 2rem;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-size: 1.1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    margin-right: 0.5rem;
+    outline: none;
+}
+.tile:focus {
+    border-color: #2b72d6;
+}
+
+.tape-grid {
+    display: flex;
+    flex-direction: row;
+    overflow-x: scroll;
+}
+
+.control-group.full {
+    flex: 1 1 100%;
+    min-width: 0;
+    width: auto;
+}

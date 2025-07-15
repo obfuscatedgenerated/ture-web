@@ -1,0 +1,151 @@
+import {EMPTY} from "./TuringExecutor";
+
+export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement) => {
+    const add_tile = (char?: string) => {
+        const tile = document.createElement("div");
+        tile.textContent = char || EMPTY;
+        tile.className = "tile";
+        tile.contentEditable = "true";
+
+        tile.addEventListener("input", () => {
+            update_hidden_input();
+        });
+
+        const control_caret = () => {
+            // put caret before if EMPTY, put caret after if not
+            let offset = 0;
+            if (tile.textContent !== EMPTY) {
+                offset = 1;
+            }
+
+            const range = document.createRange();
+            const selection = window.getSelection();
+            range.setStart(tile, offset);
+            range.collapse(true);
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+        }
+
+        tile.addEventListener("focus", control_caret);
+        tile.addEventListener("click", control_caret);
+
+        tile.addEventListener("blur", () => {
+            // ensure tile is not actually empty
+            if (tile.textContent === "") {
+                tile.textContent = EMPTY;
+            }
+            update_hidden_input();
+        });
+
+        tape_visual.appendChild(tile);
+        return tile;
+    }
+
+    const render_tape = (tape_str: string) => {
+        tape_visual.innerHTML = "";
+        [...tape_str].forEach(char => {
+            add_tile(char);
+        });
+    };
+
+    const update_hidden_input = () => {
+        const all_tiles = tape_visual.querySelectorAll(".tile");
+        // @ts-ignore
+        const chars = [...all_tiles].map(el => (el.textContent || EMPTY).slice(0, 1));
+        tape_input.value = chars.join("");
+    };
+
+    const focus_next_tile = (current: HTMLElement) => {
+        const next = current.nextElementSibling;
+        if (next && next.classList.contains("tile")) {
+            (next as HTMLElement).focus();
+        } else {
+            // add a new tile at the end
+            add_tile().focus();
+        }
+    };
+
+    const focus_previous_tile = (current: HTMLElement) => {
+        const prev = current.previousElementSibling;
+        if (prev && prev.classList.contains("tile")) {
+            (prev as HTMLElement).focus();
+        }
+    };
+
+    tape_visual.addEventListener("keydown", e => {
+        const current = document.activeElement;
+        if (!current || !(current instanceof HTMLElement)) return;
+        if (!current.classList.contains("tile")) return;
+
+        if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            current.textContent = e.key;
+            update_hidden_input();
+            focus_next_tile(current);
+            e.preventDefault();
+        } else if (e.key === "Backspace") {
+            current.textContent = "";
+            update_hidden_input();
+            focus_previous_tile(current);
+            e.preventDefault();
+        } else if (e.key === "ArrowRight") {
+            focus_next_tile(current);
+            e.preventDefault();
+        } else if (e.key === "ArrowLeft") {
+            focus_previous_tile(current);
+            e.preventDefault();
+        }
+
+        current.textContent = current.textContent?.slice(0, 1) || "";
+    });
+
+    tape_visual.addEventListener("paste", e => {
+        e.preventDefault();
+        const text = e.clipboardData?.getData("text/plain") || "";
+        const current = document.activeElement;
+
+        if (current && current instanceof HTMLElement && current.classList.contains("tile")) {
+            // split the text into characters and fill tiles from the selected tile onwards
+            const chars = text.split("").slice(0, tape_visual.children.length - 1);
+            let index = Array.from(tape_visual.children).indexOf(current);
+            chars.forEach((char, i) => {
+                if (index + i < tape_visual.children.length - 1) {
+                    const tile = tape_visual.children[index + i] as HTMLElement;
+                    tile.textContent = char.slice(0, 1); // only take the first character
+                }
+            });
+        }
+    });
+
+    // initial render
+    // calculate number of tiles that can fill full width of tape_visual
+
+    render_tape(EMPTY);
+
+    // determine width of tile
+    // TODO fix or improve
+    //const tile_width = tape_visual.children[0].scrollWidth;
+    //const min_tiles = Math.floor(tape_visual.scrollWidth / tile_width);
+
+    // for now just use a sensible default, might look better anyway
+    const min_tiles = 5;
+
+    // set initial value to empty tape with min_tiles tiles
+    render_tape(EMPTY.repeat(min_tiles));
+
+    // TODO: use empties not space, but hide the empties
+
+    const set_value = (value: string) => {
+        tape_input.value = value;
+
+        // prevent shrinking
+        if (value.length < min_tiles) {
+            const diff = min_tiles - value.length;
+            value += EMPTY.repeat(diff);
+        }
+        render_tape(value);
+    }
+
+    return set_value;
+}
+
+// TODO: this is all so jank
