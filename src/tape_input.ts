@@ -59,9 +59,12 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
         const next = current.nextElementSibling;
         if (next && next.classList.contains("tile")) {
             (next as HTMLElement).focus();
+            return (next as HTMLElement);
         } else {
             // add a new tile at the end
-            add_tile().focus();
+            const new_tile = add_tile();
+            new_tile.focus();
+            return new_tile;
         }
     };
 
@@ -69,6 +72,7 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
         const prev = current.previousElementSibling;
         if (prev && prev.classList.contains("tile")) {
             (prev as HTMLElement).focus();
+            return (prev as HTMLElement);
         }
     };
 
@@ -102,18 +106,19 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
     tape_visual.addEventListener("paste", e => {
         e.preventDefault();
         const text = e.clipboardData?.getData("text/plain") || "";
-        const current = document.activeElement;
+        let current = document.activeElement;
 
         if (current && current instanceof HTMLElement && current.classList.contains("tile")) {
+            debugger
             // split the text into characters and fill tiles from the selected tile onwards
-            const chars = text.split("").slice(0, tape_visual.children.length - 1);
-            let index = Array.from(tape_visual.children).indexOf(current);
-            chars.forEach((char, i) => {
-                if (index + i < tape_visual.children.length - 1) {
-                    const tile = tape_visual.children[index + i] as HTMLElement;
-                    tile.textContent = char.slice(0, 1); // only take the first character
+            let chars = text.split("");
+            while (chars.length > 0) {
+                if (current.textContent === EMPTY) {
+                    current.textContent = chars.shift() || EMPTY;
                 }
-            });
+                current = focus_next_tile(current as HTMLElement);
+                current.textContent = current.textContent?.slice(0, 1) || "";
+            }
         }
     });
 
@@ -150,3 +155,4 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
 }
 
 // TODO: this is all so jank
+// TODO: maybe an option to show old school input?
