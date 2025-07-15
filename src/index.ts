@@ -27,6 +27,7 @@ let tape_input: HTMLInputElement;
 
 let upload_dialog: HTMLDialogElement;
 let file_input: HTMLInputElement;
+let file_name: HTMLInputElement;
 
 const add_error = (message: string, type: "syntax" | string) => {
     errors.push({type, message});
@@ -232,6 +233,9 @@ const upload_file = () => {
                     state_select.value = read_init_state;
                 }
             }
+
+            // load file name into field, cutting off file extension
+            file_name.value = file.name.replace(/\.[^/.]+$/, "");
         }
 
         upload_dialog.close();
@@ -255,7 +259,7 @@ const download_file = () => {
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "program.ture";
+    a.download = `${file_name.value || "program"}.ture`;
     a.target = "_blank";
     document.body.appendChild(a);
     a.click();
@@ -269,6 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tape_input = document.getElementById("input") as HTMLInputElement;
     upload_dialog = document.getElementById("upload-dialog") as HTMLDialogElement;
     file_input = document.getElementById("file-input") as HTMLInputElement;
+    file_name = document.getElementById("file-name") as HTMLInputElement;
 
     editor = create_editor();
 
