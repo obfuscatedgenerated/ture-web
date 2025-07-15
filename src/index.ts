@@ -55,6 +55,12 @@ const clear_errors_of_type = (type: "syntax" | string) => {
     }
 }
 
+const log_errors = () => {
+    for (const error of errors) {
+        console.error(`${error.type}: ${error.message}`);
+    }
+}
+
 class CustomErrorListener implements ErrorListener<any> {
     syntaxError(
         recognizer: unknown,
@@ -127,10 +133,7 @@ const run = (input: string) => {
     const tree = parse(input);
 
     if (errors.length > 0) {
-        for (const error of errors) {
-            console.error(error);
-        }
-
+        log_errors();
         return;
     }
 
@@ -218,12 +221,7 @@ const upload_file = () => {
             });
 
             parse(content);
-
-            if (errors.length > 0) {
-                for (const error of errors) {
-                    console.error(error);
-                }
-            }
+            log_errors();
 
             if (read_init_state) {
                 // validate that the state read from the file is valid
@@ -323,22 +321,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // parse default value
     parse(editor.state.doc.toString());
-
-    if (errors.length > 0) {
-        for (const error of errors) {
-            console.error(error);
-        }
-    }
+    log_errors();
 
     // parse on change to highlight errors
     add_update_listener(editor, (view) => {
         parse(editor.state.doc.toString());
-
-        if (errors.length > 0) {
-            for (const error of errors) {
-                console.error(error);
-            }
-        }
+        log_errors();
     });
 });
 
