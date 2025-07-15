@@ -12,15 +12,10 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
         });
 
         const control_caret = () => {
-            // put caret before if EMPTY, put caret after if not
-            let offset = 0;
-            if (tile.textContent !== EMPTY) {
-                offset = 1;
-            }
-
+            // put caret before
             const range = document.createRange();
             const selection = window.getSelection();
-            range.setStart(tile, offset);
+            range.setStart(tile, 0);
             range.collapse(true);
             selection?.removeAllRanges();
             selection?.addRange(range);
