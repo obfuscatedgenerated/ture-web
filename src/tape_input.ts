@@ -87,6 +87,7 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
             update_hidden_input();
             focus_previous_tile(current);
             e.preventDefault();
+            // TODO: cull empty fields above min_tiles
         } else if (e.key === "ArrowRight") {
             focus_next_tile(current);
             e.preventDefault();
