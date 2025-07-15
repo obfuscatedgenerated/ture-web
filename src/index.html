@@ -6,15 +6,28 @@
         <small>(Very much a work in progress)</small>
     </h1>
 
-    <select id="init-state">
-        <option selected disabled hidden value="">Select initial state</option>
-        <div id="states"></div>
-    </select>
-    <input type="text" id="input" placeholder="Input tape">
-    <button id="run">Run</button>
+    <div class="top-controls">
+        <div class="control-group">
+            <label for="init-state">Initial state:</label>
+            <select id="init-state">
+                <option selected disabled hidden value="">Select initial state</option>
+                <div id="states"></div>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="input">Input tape:</label>
+            <input type="text" id="input" placeholder="Input tape">
+        </div>
+
+        <div class="control-group run-button">
+            <button id="run">Run</button>
+        </div>
+    </div>
 
     <h3>Transition rules editor</h3>
 
+    <label for="file-name">Program name:</label>
     <input id="file-name" type="text" placeholder="Program name" value="LastFirst" />
     <button id="download-button">Download .ture file</button>
     <button id="upload-button">Upload from file</button>
