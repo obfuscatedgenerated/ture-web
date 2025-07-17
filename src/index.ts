@@ -213,6 +213,8 @@ let highlight_line_id: number | undefined;
 const run_step = () => {
     // if step_iterator is null, parse the input and create a new iterator
     if (!step_iterator) {
+        clear_errors();
+
         const input = editor.state.doc.toString();
         const tree = parse(input);
 
