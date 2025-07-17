@@ -19,24 +19,25 @@ import TuringStateNameVisitor from "./TuringStateNameVisitor";
 
 import {setup as setup_tape_input, TapeInputFunctions} from "./tape_input";
 
-let editor: EditorView;
+let editor = create_editor();
 
-let errors: {type: "syntax" | string, message: string}[] = [];
-let errors_textarea: HTMLTextAreaElement;
-let errors_container: HTMLDivElement;
+let errors: { type: "syntax" | string, message: string }[] = [];
+let errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
+let errors_container = document.getElementById("errors-container") as HTMLDivElement;
 
-let state_select: HTMLSelectElement;
-let states_options: HTMLDivElement;
+let state_select = document.getElementById("init-state") as HTMLSelectElement;
+let states_options = document.getElementById("states") as HTMLDivElement;
 
-let tape_input: HTMLInputElement;
+let tape_input = document.getElementById("input") as HTMLInputElement;
+let tape_visual = document.getElementById("tape-visual") as HTMLDivElement;
 
-let upload_dialog: HTMLDialogElement;
-let file_input: HTMLInputElement;
-let file_name: HTMLInputElement;
+let tape_fns = setup_tape_input(tape_input, tape_visual);
 
-let step_state: HTMLSpanElement;
+let upload_dialog = document.getElementById("upload-dialog") as HTMLDialogElement;
+let file_input = document.getElementById("file-input") as HTMLInputElement;
+let file_name = document.getElementById("file-name") as HTMLInputElement;
 
-let tape_fns: TapeInputFunctions;
+let step_state = document.getElementById("step-state") as HTMLSpanElement;
 
 const add_error = (message: string, type: "syntax" | string) => {
     errors.push({type, message});
@@ -380,85 +381,70 @@ const download_file = () => {
     a.remove();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    // frequent dom elements
-    errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
-    errors_container = document.getElementById("errors-container") as HTMLDivElement;
-    state_select = document.getElementById("init-state") as HTMLSelectElement;
-    states_options = document.getElementById("states") as HTMLDivElement;
-    tape_input = document.getElementById("input") as HTMLInputElement;
-    upload_dialog = document.getElementById("upload-dialog") as HTMLDialogElement;
-    file_input = document.getElementById("file-input") as HTMLInputElement;
-    file_name = document.getElementById("file-name") as HTMLInputElement;
-    step_state = document.getElementById("step-state") as HTMLSpanElement;
 
-    editor = create_editor();
 
-    // bind run
-    document.getElementById("run")!.addEventListener("click", () => {
-        const input = editor.state.doc.toString();
-        run(input);
-    });
+// parse default value immediately
+parse(editor.state.doc.toString());
+log_errors();
 
-    // bind run step
-    document.getElementById("run-step")!.addEventListener("click", () => {
-        run_step();
-    });
-
-    // bind copy empty
-    const copy_empty = document.getElementById("copy-empty") as HTMLButtonElement;
-    copy_empty.addEventListener("click", () => {
-        navigator.clipboard.writeText(EMPTY).then(() => {
-            copy_empty.innerText = "Copied!";
-            setTimeout(() => {
-                copy_empty.innerText = "Copy empty letter";
-            }, 2000);
-        });
-    });
-
-    // bind state select change
-    state_select.addEventListener("change", () => {
-       clear_errors_of_type("no-init");
-       state_select.setCustomValidity("");
-    });
-
-    // bind tape input change
-    tape_input.addEventListener("keydown", () => {
-        clear_errors_of_type("warn-no-tape");
-    });
-
-    // bind file upload
-    file_input.addEventListener("change", () => {
-        upload_file();
-    });
-
-    // bind upload button
-    document.getElementById("upload-button")!.addEventListener("click", () => {
-        open_file_uploader();
-    });
-
-    // bind upload close button
-    document.getElementById("upload-cancel")!.addEventListener("click", () => {
-        upload_dialog.close();
-    });
-
-    // bind download button
-    document.getElementById("download-button")!.addEventListener("click", () => {
-        download_file();
-    });
-
-    // parse default value
+// parse on change to highlight errors
+add_update_listener(editor, (view) => {
     parse(editor.state.doc.toString());
     log_errors();
-
-    // parse on change to highlight errors
-    add_update_listener(editor, (view) => {
-        parse(editor.state.doc.toString());
-        log_errors();
-    });
-
-    // TODO: this sucks
-    tape_fns = setup_tape_input(tape_input, document.getElementById("tape-visual") as HTMLDivElement);
 });
 
-// TODO: this can be tidied up as webpack is loading the bundle as defer
+
+// bind run
+document.getElementById("run")!.addEventListener("click", () => {
+    const input = editor.state.doc.toString();
+    run(input);
+});
+
+// bind run step
+document.getElementById("run-step")!.addEventListener("click", () => {
+    run_step();
+});
+
+// bind copy empty
+const copy_empty = document.getElementById("copy-empty") as HTMLButtonElement;
+copy_empty.addEventListener("click", () => {
+    navigator.clipboard.writeText(EMPTY).then(() => {
+        copy_empty.innerText = "Copied!";
+        setTimeout(() => {
+            copy_empty.innerText = "Copy empty letter";
+        }, 2000);
+    });
+});
+
+// bind state select change
+state_select.addEventListener("change", () => {
+    clear_errors_of_type("no-init");
+    state_select.setCustomValidity("");
+});
+
+// bind tape input change
+tape_input.addEventListener("keydown", () => {
+    clear_errors_of_type("warn-no-tape");
+});
+
+// bind file upload
+file_input.addEventListener("change", () => {
+    upload_file();
+});
+
+// bind upload button
+document.getElementById("upload-button")!.addEventListener("click", () => {
+    open_file_uploader();
+});
+
+// bind upload close button
+document.getElementById("upload-cancel")!.addEventListener("click", () => {
+    upload_dialog.close();
+});
+
+// bind download button
+document.getElementById("download-button")!.addEventListener("click", () => {
+    download_file();
+});
+
+// TODO: split this file up
