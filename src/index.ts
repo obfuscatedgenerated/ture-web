@@ -460,3 +460,5 @@ document.addEventListener("DOMContentLoaded", () => {
     // TODO: this sucks
     tape_fns = setup_tape_input(tape_input, document.getElementById("tape-visual") as HTMLDivElement);
 });
+
+// TODO: this can be tidied up as webpack is loading the bundle as defer
