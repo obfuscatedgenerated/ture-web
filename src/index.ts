@@ -163,7 +163,7 @@ const run = (input: string) => {
         tree.accept(exec);
     } catch (e: any) {
         console.error(e);
-        add_error("Parse error: " + e.message, "parse");
+        add_error("Validation error: " + e.message, "validation");
         errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
     }
 
@@ -225,7 +225,7 @@ const run_step = () => {
             tree.accept(exec);
         } catch (e: any) {
             console.error(e);
-            add_error("Parse error: " + e.message, "parse");
+            add_error("Validation error: " + e.message, "validation");
             errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
         }
 
