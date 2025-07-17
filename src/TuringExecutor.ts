@@ -47,7 +47,7 @@ export default class TuringExecutor extends TuringVisitor<string> {
     }
 
     private construct_lookup_key = (state: string, letter: string): string => {
-        return `${state}#${letter}`;
+        return `(${state}, ${letter})`;
     }
 
     visitLhs = (ctx: LhsContext) => {
