@@ -183,7 +183,9 @@ button:hover {
 .tape-grid {
     display: flex;
     flex-direction: row;
-    overflow-x: scroll;
+    overflow-x: auto;
+    background-color: #f0f0f0;
+    padding: 0.5rem;
 }
 
 .control-group.full {

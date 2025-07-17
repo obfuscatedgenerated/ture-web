@@ -138,6 +138,11 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
     const set_value = (value: string) => {
         tape_input.value = value;
 
+        // ensure an empty at the end to make it clear it can be extended
+        if (!value.endsWith(EMPTY)) {
+            value += EMPTY;
+        }
+
         // prevent shrinking
         if (value.length < min_tiles) {
             const diff = min_tiles - value.length;
