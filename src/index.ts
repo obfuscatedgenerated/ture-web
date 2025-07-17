@@ -19,25 +19,25 @@ import {
     remove_all_hover_messages, remove_decoration_by_id
 } from "./editor";
 
-let editor = create_editor();
+const editor = create_editor();
 
 let errors: { type: "syntax" | string, message: string }[] = [];
-let errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
-let errors_container = document.getElementById("errors-container") as HTMLDivElement;
+const errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
+const errors_container = document.getElementById("errors-container") as HTMLDivElement;
 
-let state_select = document.getElementById("init-state") as HTMLSelectElement;
-let states_options = document.getElementById("states") as HTMLDivElement;
+const state_select = document.getElementById("init-state") as HTMLSelectElement;
+const states_options = document.getElementById("states") as HTMLDivElement;
 
-let tape_input = document.getElementById("input") as HTMLInputElement;
-let tape_visual = document.getElementById("tape-visual") as HTMLDivElement;
+const tape_input = document.getElementById("input") as HTMLInputElement;
+const tape_visual = document.getElementById("tape-visual") as HTMLDivElement;
 
-let tape_fns = setup_tape_input(tape_input, tape_visual);
+const tape_fns = setup_tape_input(tape_input, tape_visual);
 
-let upload_dialog = document.getElementById("upload-dialog") as HTMLDialogElement;
-let file_input = document.getElementById("file-input") as HTMLInputElement;
-let file_name = document.getElementById("file-name") as HTMLInputElement;
+const upload_dialog = document.getElementById("upload-dialog") as HTMLDialogElement;
+const file_input = document.getElementById("file-input") as HTMLInputElement;
+const file_name = document.getElementById("file-name") as HTMLInputElement;
 
-let step_state = document.getElementById("step-state") as HTMLSpanElement;
+const step_state = document.getElementById("step-state") as HTMLSpanElement;
 
 const add_error = (message: string, type: "syntax" | string) => {
     errors.push({type, message});
