@@ -1,5 +1,12 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+// detect if server is running or this is a build
+const is_server = process.env.WEBPACK_SERVE === "true";
+const css_strategy = !is_server ? MiniCssExtractPlugin.loader : "style-loader";
+
+console.log("css_strategy:", css_strategy);
 
 module.exports = {
     entry: "./src/index.ts",
@@ -12,7 +19,7 @@ module.exports = {
             },
             {
                 test: /\.css$/i,
-                use: ["style-loader", "css-loader"],
+                use: [css_strategy, "css-loader"],
             },
         ],
     },
@@ -34,6 +41,9 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: "./src/index.html",
             //inject: false
-        })
+        }),
+        new MiniCssExtractPlugin({
+            filename: "[name].[contenthash].css",
+        }),
     ]
 }
