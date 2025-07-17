@@ -407,6 +407,10 @@ const copy_share_url = () => {
 
     url.searchParams.set("script", comp);
 
+    if (file_name.value) {
+        url.searchParams.set("name", file_name.value);
+    }
+
     if (state_select.value) {
         url.searchParams.set("init", state_select.value);
     } else {
@@ -451,8 +455,9 @@ const load_from_url = () => {
     const script = url.searchParams.get("script");
     const init_state = url.searchParams.get("init");
     const tape = url.searchParams.get("tape");
+    const name = url.searchParams.get("name");
 
-    const loaded: {script?: string, init?: string, tape?: string} = {};
+    const loaded: {script?: string, init?: string, tape?: string, name?: string} = {};
 
     if (script) {
         const decompressed = decompressFromEncodedURIComponent(script);
@@ -476,6 +481,11 @@ const load_from_url = () => {
         tape_input.value = tape;
         tape_fns.set_value(tape);
         loaded.tape = tape;
+    }
+
+    if (name) {
+        file_name.value = name;
+        loaded.name = name;
     }
 
     return loaded;
