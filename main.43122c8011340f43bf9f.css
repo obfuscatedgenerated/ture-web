@@ -19,7 +19,7 @@ h1 small {
 
 h3 {
     font-size: 1.2rem;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     margin-bottom: 0.5rem;
     color: #444;
 }
@@ -70,12 +70,11 @@ button:hover {
     border: 0.0625rem solid #ccc;
     border-radius: 0.375rem;
     background-color: #fff;
-    padding: 1rem;
     margin-top: 1rem;
     font-family: monospace;
     white-space: pre;
     overflow-x: auto;
-    max-width: 100%;
+    width: 100%;
 }
 
 /* Errors */
@@ -139,9 +138,9 @@ button:hover {
     cursor: pointer;
 }
 
-/* Extra spacing for buttons */
 #copy-empty {
     margin: 1rem 0;
+    float: right;
 }
 
 .top-controls {
@@ -149,7 +148,7 @@ button:hover {
     flex-wrap: wrap;
     gap: 1rem 2rem;
     align-items: flex-end;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .control-group {
@@ -157,13 +156,26 @@ button:hover {
     min-width: 12rem;
 }
 
-.run-button {
-    flex: none;
+.control-group.horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
 }
 
-/* Optional: align the button better */
-#run {
-    margin-top: 1.85rem;
+.control-group.three-quarters {
+    flex: 0 1 75%;
+    min-width: 0;
+}
+
+.control-group.end {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.run-button {
+    flex: none;
 }
 
 .tile {
@@ -208,7 +220,7 @@ button.danger {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 #init-state:invalid {
@@ -218,5 +230,18 @@ button.danger {
 small a {
     color: #619be5;
     text-decoration: none;
+}
+
+#stepper-controls {
+    display: inline-block;
+    width: 100%;
+}
+
+#step-label {
+    font-size: 1.2rem;
+}
+
+#stepper-buttons {
+    float: right;
 }
 
