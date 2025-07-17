@@ -121,7 +121,7 @@ export default class TuringExecutor extends TuringVisitor<string> {
         }
     }
 
-    execute = (tape: string, pos: number = 0) => {
+    execute = (tape: string, pos: number = 0, step_limit: number = 1000000) => {
         if (!this.parsed) {
             throw new Error("Rules have not been parsed yet. Call visit first.");
         }
@@ -135,7 +135,8 @@ export default class TuringExecutor extends TuringVisitor<string> {
             throw new Error("pos is outside tape range");
         }
 
-        while (true) {
+        let halted = false;
+        for (let i = 0; i < step_limit; i++) {
             const res = this.execute_step(tape, pos);
 
             // update tape
@@ -152,8 +153,14 @@ export default class TuringExecutor extends TuringVisitor<string> {
                     pos -= 1;
                 }
             } else {
+                halted = true;
                 break;
             }
+        }
+
+        if (!halted) {
+            // the loop stopped due to step limit, not a halt
+            throw new Error(`Step limit of ${step_limit} reached without halting.`);
         }
 
         return tape;
