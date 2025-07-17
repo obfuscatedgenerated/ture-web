@@ -143,6 +143,7 @@ const run = (input: string) => {
 
     if (errors.length > 0) {
         log_errors();
+        errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
         return;
     }
 
@@ -202,6 +203,7 @@ const run_step = () => {
 
         if (errors.length > 0) {
             log_errors();
+            errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
             return;
         }
 
