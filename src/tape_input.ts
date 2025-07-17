@@ -151,7 +151,32 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
         render_tape(value);
     }
 
-    return set_value;
+    const mark_pointer = (pos: number) => {
+        const tiles = tape_visual.querySelectorAll(".tile");
+        if (pos < 0 || pos >= tiles.length) {
+            console.warn("Pointer position out of bounds");
+            return;
+        }
+        tiles.forEach((tile, index) => {
+            tile.classList.toggle("pointer", index === pos);
+        });
+    }
+
+    return {
+        set_value,
+        update_hidden_input,
+        focus_next_tile,
+        focus_previous_tile,
+        mark_pointer
+    } as TapeInputFunctions;
+}
+
+export interface TapeInputFunctions {
+    set_value: (value: string) => void;
+    update_hidden_input: () => void;
+    focus_next_tile: (current: HTMLElement) => HTMLElement;
+    focus_previous_tile: (current: HTMLElement) => HTMLElement;
+    mark_pointer: (pos: number) => void;
 }
 
 // TODO: this is all so jank

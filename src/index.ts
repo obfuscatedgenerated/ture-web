@@ -3,19 +3,21 @@ import "./style.css";
 import {CharStream, CommonTokenStream, ErrorListener, Token} from "antlr4";
 import TuringLexer from "./grammar/TuringLexer";
 import TuringParser, {ProgramContext} from "./grammar/TuringParser";
-import TuringExecutor, {EMPTY} from "./TuringExecutor";
+import TuringExecutor, {EMPTY, ExecResultStatus, StepIterator} from "./TuringExecutor";
 
 import {
-    create_editor,
-    create_decoration_range,
-    apply_decoration_range,
     add_hover_message,
-    add_update_listener, remove_all_decorations, remove_all_hover_messages
+    add_update_listener,
+    apply_decoration_range,
+    create_decoration_range,
+    create_editor,
+    remove_all_decorations,
+    remove_all_hover_messages
 } from "./editor";
 import {EditorView} from "@codemirror/view";
 import TuringStateNameVisitor from "./TuringStateNameVisitor";
 
-import {setup as setup_tape_input} from "./tape_input";
+import {setup as setup_tape_input, TapeInputFunctions} from "./tape_input";
 
 let editor: EditorView;
 
@@ -31,7 +33,9 @@ let upload_dialog: HTMLDialogElement;
 let file_input: HTMLInputElement;
 let file_name: HTMLInputElement;
 
-let update_tape_value: (value: string) => void;
+let step_state: HTMLSpanElement;
+
+let tape_fns: TapeInputFunctions;
 
 const add_error = (message: string, type: "syntax" | string) => {
     errors.push({type, message});
@@ -153,6 +157,7 @@ const run = (input: string) => {
     const init_state = state_select.value;
     if (init_state === "") {
         add_error("Please select an initial state.", "no-init");
+        state_select.setCustomValidity("Please select an initial state.");
         return;
     }
 
@@ -181,10 +186,76 @@ const run = (input: string) => {
         tape = tape.substring(0, last_non_empty);
 
         // TODO: is this annoying? is a separate field better for output? maybe a visualisation of the pointer step by step too
-        update_tape_value(tape);
+        tape_fns.set_value(tape);
     } catch (e: any) {
         console.error(e);
         add_error("Execution error: " + e.message, "exec");
+    }
+}
+
+let step_iterator: StepIterator | null = null;
+const run_step = () => {
+    // if step_iterator is null, parse the input and create a new iterator
+    if (!step_iterator) {
+        const input = editor.state.doc.toString();
+        const tree = parse(input);
+
+        if (errors.length > 0) {
+            log_errors();
+            return;
+        }
+
+        const exec = new TuringExecutor();
+        tree.accept(exec);
+
+        const init_state = state_select.value;
+        if (init_state === "") {
+            add_error("Please select an initial state.", "no-init");
+            state_select.setCustomValidity("Please select an initial state.");
+            return;
+        }
+
+        exec.set_state(init_state);
+        step_iterator = exec.get_step_iterator(tape_input.value);
+
+        console.log("Prepared new step iterator.")
+
+        // hide run button and show stepper controls
+        document.getElementById("run")!.classList.add("hidden");
+        document.getElementById("stepper-controls")!.classList.remove("hidden");
+
+        // set initial positions
+        tape_fns.mark_pointer(0);
+        step_state.innerText = init_state;
+
+        // TODO: lock form elements
+
+        return;
+    }
+
+    // if step_iterator is not null, execute the next step
+    if (step_iterator) {
+        try {
+            const res = step_iterator.next();
+            if (res.status === ExecResultStatus.Halt) {
+                console.log("Execution finished.");
+                step_iterator = null; // reset iterator
+
+                document.getElementById("run")!.classList.remove("hidden");
+                document.getElementById("stepper-controls")!.classList.add("hidden");
+            } else {
+                console.log(`Tape: ${res.value}, Position: ${res.pos}, State: ${res.state}`);
+
+                tape_fns.set_value(res.value);
+                tape_fns.mark_pointer(res.pos);
+
+                step_state.innerText = res.state;
+            }
+        } catch (e: any) {
+            console.error(e);
+            add_error("Execution error: " + e.message, "exec");
+            step_iterator = null; // reset iterator on error
+        }
     }
 }
 
@@ -272,6 +343,7 @@ const download_file = () => {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    // frequent dom elements
     errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
     state_select = document.getElementById("init-state") as HTMLSelectElement;
     states_options = document.getElementById("states") as HTMLDivElement;
@@ -279,6 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
     upload_dialog = document.getElementById("upload-dialog") as HTMLDialogElement;
     file_input = document.getElementById("file-input") as HTMLInputElement;
     file_name = document.getElementById("file-name") as HTMLInputElement;
+    step_state = document.getElementById("step-state") as HTMLSpanElement;
 
     editor = create_editor();
 
@@ -286,6 +359,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("run")!.addEventListener("click", () => {
         const input = editor.state.doc.toString();
         run(input);
+    });
+
+    // bind run step
+    document.getElementById("run-step")!.addEventListener("click", () => {
+        run_step();
     });
 
     // bind copy empty
@@ -301,7 +379,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // bind state select change
     state_select.addEventListener("change", () => {
-       clear_errors_of_type("no-init")
+       clear_errors_of_type("no-init");
+       state_select.setCustomValidity("");
     });
 
     // bind tape input change
@@ -340,6 +419,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // TODO: this sucks
-    update_tape_value = setup_tape_input(tape_input, document.getElementById("tape-visual") as HTMLDivElement);
+    tape_fns = setup_tape_input(tape_input, document.getElementById("tape-visual") as HTMLDivElement);
 });
 

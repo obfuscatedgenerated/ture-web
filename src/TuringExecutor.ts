@@ -4,7 +4,7 @@ import {ParseTree} from "antlr4";
 
 // basically a direct port of the java code. not ideal but just want an mvp
 
-enum ExecResultStatus {
+export enum ExecResultStatus {
     Left,
     Right,
     Halt
@@ -155,4 +155,47 @@ export default class TuringExecutor extends TuringVisitor<string> {
 
         return tape;
     }
+
+    get_step_iterator = (tape: string, pos: number = 0): StepIterator => {
+        if (!this.parsed) {
+            throw new Error("Rules have not been parsed yet. Call visit first.");
+        }
+
+        if (pos < 0) {
+            throw new Error("pos cannot be less than 0");
+        }
+
+        // manual check if tape length is 0 (therefore pos 0 is allowable as it falls back to EMPTY)
+        if (pos > tape.length - 1 && tape.length !== 0 && pos !== 0) {
+            throw new Error("pos is outside tape range");
+        }
+
+        return {
+            next: () => {
+                const res = this.execute_step(tape, pos);
+                tape = res.new_tape;
+
+                if (res.status == ExecResultStatus.Right) {
+                    pos += 1;
+                } else if (res.status == ExecResultStatus.Left) {
+                    if (pos != 0) {
+                        pos -= 1;
+                    }
+                }
+
+                return {status: res.status, value: tape, pos: pos, state: this.current_state};
+            }
+        };
+    }
+}
+
+export interface StepResult {
+    status: ExecResultStatus;
+    value: string;
+    pos: number;
+    state: string;
+}
+
+export type StepIterator = {
+    next: () => StepResult;
 }

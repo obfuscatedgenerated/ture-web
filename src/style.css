@@ -175,9 +175,13 @@ button:hover {
     background: #fff;
     margin-right: 0.5rem;
     outline: none;
+    box-sizing: border-box;
 }
 .tile:focus {
     border-color: #2b72d6;
+}
+.tile.pointer {
+    border-bottom: solid 0.2rem #111;
 }
 
 .tape-grid {
@@ -192,4 +196,17 @@ button:hover {
     flex: 1 1 100%;
     min-width: 0;
     width: auto;
+}
+
+button.danger {
+    background-color: #e33;
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
+
+#init-state:invalid {
+    border-color: #e33;
 }
