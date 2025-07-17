@@ -164,6 +164,7 @@ const run = (input: string) => {
     } catch (e: any) {
         console.error(e);
         add_error("Parse error: " + e.message, "parse");
+        errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
     }
 
     const init_state = state_select.value;
@@ -220,7 +221,13 @@ const run_step = () => {
         }
 
         const exec = new TuringExecutor();
-        tree.accept(exec);
+        try {
+            tree.accept(exec);
+        } catch (e: any) {
+            console.error(e);
+            add_error("Parse error: " + e.message, "parse");
+            errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
+        }
 
         const init_state = state_select.value;
         if (init_state === "") {
