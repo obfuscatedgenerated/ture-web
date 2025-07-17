@@ -13,10 +13,12 @@ export enum ExecResultStatus {
 class ExecResult {
     status: ExecResultStatus;
     new_tape: string;
+    line_num?: number;
 
-    constructor(status: ExecResultStatus, new_tape: string) {
+    constructor(status: ExecResultStatus, new_tape: string, line_num?: number) {
         this.status = status;
         this.new_tape = new_tape;
+        this.line_num = line_num;
     }
 }
 
@@ -33,7 +35,7 @@ const write_tape_letter = (in_tape: string, pos: number, letter: string) => {
 }
 
 export default class TuringExecutor extends TuringVisitor<string> {
-    private lookup = new Map<string, RhsContext>();
+    private lookup = new Map<string, {rhs: RhsContext, line_num: number}>();
     private parsed = false;
 
     visitLetter = (ctx: LetterContext) => {
@@ -59,7 +61,10 @@ export default class TuringExecutor extends TuringVisitor<string> {
             throw new Error(`Duplicate rule for ${lookup_key}`);
         }
 
-        this.lookup.set(lookup_key, ctx._right);
+        this.lookup.set(lookup_key, {
+            rhs: ctx._right,
+            line_num: ctx.start.line
+        });
 
         return ctx.getText();
     }
@@ -85,32 +90,32 @@ export default class TuringExecutor extends TuringVisitor<string> {
         }
 
         const key = this.construct_lookup_key(this.current_state, current_letter);
-        const rhs = this.lookup.get(key);
+        const rule = this.lookup.get(key);
 
-        if (!rhs) {
+        if (!rule) {
             // no rules apply, halt
             return new ExecResult(ExecResultStatus.Halt, tape);
         }
 
         // write the letter to the tape
-        const letter = this.visit(rhs._to_letter);
+        const letter = this.visit(rule.rhs._to_letter);
         tape = write_tape_letter(tape, pos, letter);
 
         // update the state
         // TODO: move state management to results
-        this.current_state = this.visit(rhs._to_state);
+        this.current_state = this.visit(rule.rhs._to_state);
 
         // return the direction
-        const dir_str = rhs._direction.text;
+        const dir_str = rule.rhs._direction.text;
         if (!dir_str) {
             throw new Error("Direction token could not be read");
         }
 
         switch (dir_str) {
             case "left":
-                return new ExecResult(ExecResultStatus.Left, tape);
+                return new ExecResult(ExecResultStatus.Left, tape, rule.line_num);
             case "right":
-                return new ExecResult(ExecResultStatus.Right, tape);
+                return new ExecResult(ExecResultStatus.Right, tape, rule.line_num);
             default:
                 throw new Error(`Unknown direction: ${dir_str}`);
         }
@@ -151,8 +156,6 @@ export default class TuringExecutor extends TuringVisitor<string> {
             }
         }
 
-        // TODO: trim trailing empties
-
         return tape;
     }
 
@@ -183,7 +186,7 @@ export default class TuringExecutor extends TuringVisitor<string> {
                     }
                 }
 
-                return {status: res.status, value: tape, pos: pos, state: this.current_state};
+                return {status: res.status, value: tape, pos: pos, state: this.current_state, line_num: res.line_num};
             }
         };
     }
@@ -194,6 +197,7 @@ export interface StepResult {
     value: string;
     pos: number;
     state: string;
+    line_num?: number;
 }
 
 export type StepIterator = {

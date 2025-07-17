@@ -96,6 +96,10 @@ button:hover {
     text-decoration: red wavy underline;
 }
 
+.cm-highlight {
+    background-color: #eee784;
+}
+
 .hover-msg {
     background-color: #f88;
     color: #fff;

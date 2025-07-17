@@ -217,3 +217,19 @@ export const add_update_listener = (view: EditorView, callback: (view: EditorVie
         ])
     });
 }
+
+export const highlight_line = (view: EditorView, line_num: number, class_name = "cm-highlight") => {
+    const doc = view.state.doc;
+    const line = doc.line(line_num);
+
+    if (!line) {
+        console.warn(`Line ${line_num} does not exist in the document.`);
+        return;
+    }
+
+    const decoration = create_decoration_range(line.from, line.to, class_name);
+    const id = apply_decoration_range(view, decoration);
+
+    // Optionally return the ID for later removal
+    return id;
+}

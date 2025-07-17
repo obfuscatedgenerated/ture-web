@@ -10,9 +10,9 @@ import {
     add_update_listener,
     apply_decoration_range,
     create_decoration_range,
-    create_editor,
+    create_editor, highlight_line,
     remove_all_decorations,
-    remove_all_hover_messages
+    remove_all_hover_messages, remove_decoration_by_id
 } from "./editor";
 import {EditorView} from "@codemirror/view";
 import TuringStateNameVisitor from "./TuringStateNameVisitor";
@@ -205,6 +205,7 @@ const run = (input: string) => {
 }
 
 let step_iterator: StepIterator | null = null;
+let highlight_line_id: number | undefined;
 const run_step = () => {
     // if step_iterator is null, parse the input and create a new iterator
     if (!step_iterator) {
@@ -259,11 +260,23 @@ const run_step = () => {
                 document.getElementById("stepper-controls")!.classList.add("hidden");
 
                 tape_fns.mark_pointer(null);
+
+                if (highlight_line_id) {
+                    remove_decoration_by_id(editor, highlight_line_id);
+                }
             } else {
-                console.log(`Tape: ${res.value}, Position: ${res.pos}, State: ${res.state}`);
+                console.log(`Tape: ${res.value}, Position: ${res.pos}, State: ${res.state} (Line: ${res.line_num})`);
 
                 tape_fns.set_value(res.value);
                 tape_fns.mark_pointer(res.pos);
+
+                if (highlight_line_id) {
+                    remove_decoration_by_id(editor, highlight_line_id);
+                }
+
+                if (res.line_num) {
+                    highlight_line_id = highlight_line(editor, res.line_num);
+                }
 
                 step_state.innerText = res.state;
             }
@@ -271,6 +284,15 @@ const run_step = () => {
             console.error(e);
             add_error("Execution error: " + e.message, "exec");
             step_iterator = null; // reset iterator on error
+
+            document.getElementById("run")!.classList.remove("hidden");
+            document.getElementById("stepper-controls")!.classList.add("hidden");
+
+            tape_fns.mark_pointer(null);
+
+            if (highlight_line_id) {
+                remove_decoration_by_id(editor, highlight_line_id);
+            }
         }
     }
 }
