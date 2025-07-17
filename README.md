@@ -22,7 +22,7 @@ You can download the program as a .ture file with the `Download .ture file` butt
 
 You can upload either a .txt of just the rules or a .ture file with the rules and init state with the `Upload from file` button (`Ctrl+O` or `Cmd+O`). The file will be parsed and the rules will be loaded into the editor. If an init state is declared, it will be set as the initial state in the dropdown.
 
-You can copy a URL of the encoded program alongside the name, tape, and init state with the `Copy Share URL` button (`Ctrl+Alt+S` or `Cmd+Altt+S`). This URL can be shared with others to run the same program when they open the link.
+You can copy a URL of the encoded program alongside the name, tape, and init state with the `Copy Share URL` button (`Ctrl+Alt+S` or `Cmd+Alt+S`). This URL can be shared with others to run the same program when they open the link.
 
 ## Syntax
 
