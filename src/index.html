@@ -17,30 +17,37 @@
     </h1>
 
     <div class="top-controls">
-        <div class="control-group full">
-            <label for="input">Input tape:</label>
-            <input type="hidden" id="input" value="" />
-            <div id="tape-visual" class="tape-grid" tabindex="0"></div>
+        <div class="control-group full horizontal">
+            <div class="control-group three-quarters">
+                <label for="input">Input tape:</label>
+                <input type="hidden" id="input" value="" />
+                <div id="tape-visual" class="tape-grid" tabindex="0"></div>
+            </div>
+
+            <div class="control-group">
+                <label for="init-state">Initial state:</label>
+                <select id="init-state">
+                    <option selected disabled hidden value="">Select initial state</option>
+                    <optgroup label="Select initial state" id="states"></optgroup>
+                </select>
+            </div>
         </div>
 
-        <div class="control-group">
-            <label for="init-state">Initial state:</label>
-            <select id="init-state">
-                <option selected disabled hidden value="">Select initial state</option>
-                <optgroup label="Select initial state" id="states"></optgroup>
-            </select>
-        </div>
-
-        <div class="control-group run-button">
+        <div class="control-group full end run-button">
             <button id="run">Run program</button>
 
             <button id="run-step">Run step-by-step</button>
 
-            <div id="stepper-controls" class="control-group hidden">
-                <p>State: <span id="step-state">blah</span></p>
+            <div id="stepper-controls" class="hidden">
+                <span id="step-label">
+                    Step: <b id="step-number"></b> |
+                    State: <b id="step-state"></b>
+                </span>
 
-                <button id="cancel-step" class="danger">Cancel</button>
-                <button id="next-step">Next step</button>
+                <div id="stepper-buttons">
+                    <button id="cancel-step" class="danger">Cancel</button>
+                    <button id="next-step">Next step</button>
+                </div>
             </div>
         </div>
     </div>

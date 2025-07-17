@@ -157,13 +157,26 @@ button:hover {
     min-width: 12rem;
 }
 
-.run-button {
-    flex: none;
+.control-group.horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
 }
 
-/* Optional: align the button better */
-#run {
-    margin-top: 1.85rem;
+.control-group.three-quarters {
+    flex: 0 1 75%;
+    min-width: 0;
+}
+
+.control-group.end {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.run-button {
+    flex: none;
 }
 
 .tile {
@@ -208,7 +221,7 @@ button.danger {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 #init-state:invalid {
@@ -218,4 +231,17 @@ button.danger {
 small a {
     color: #619be5;
     text-decoration: none;
+}
+
+#stepper-controls {
+    display: inline-block;
+    width: 100%;
+}
+
+#step-label {
+    font-size: 1.2rem;
+}
+
+#stepper-buttons {
+    float: right;
 }

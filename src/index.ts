@@ -40,6 +40,7 @@ const file_input = document.getElementById("file-input") as HTMLInputElement;
 const file_name = document.getElementById("file-name") as HTMLInputElement;
 
 const step_state = document.getElementById("step-state") as HTMLSpanElement;
+const step_number = document.getElementById("step-number") as HTMLSpanElement;
 
 const add_error = (message: string, type: "syntax" | string) => {
     errors.push({type, message});
@@ -211,6 +212,7 @@ const run = (input: string) => {
 }
 
 let step_iterator: StepIterator | null = null;
+let step_idx = 0;
 let highlight_line_id: number | undefined;
 const run_step = () => {
     // if step_iterator is null, parse the input and create a new iterator
@@ -245,6 +247,7 @@ const run_step = () => {
 
         exec.set_state(init_state);
         step_iterator = exec.get_step_iterator(tape_input.value);
+        step_idx = 0;
 
         console.log("Prepared new step iterator.")
 
@@ -256,6 +259,7 @@ const run_step = () => {
         // set initial positions
         tape_fns.mark_pointer(0);
         step_state.innerText = init_state;
+        step_number.innerText = "1";
 
         // TODO: lock form elements
         // TODO: bind cancel button
@@ -267,6 +271,8 @@ const run_step = () => {
     // if step_iterator is not null, execute the next step
     if (step_iterator) {
         try {
+            step_number.innerText = `${++step_idx}`;
+
             const res = step_iterator.next();
             if (res.status === ExecResultStatus.Halt) {
                 console.log("Execution finished.");
