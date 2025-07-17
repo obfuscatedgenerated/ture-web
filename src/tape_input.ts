@@ -151,8 +151,14 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
         render_tape(value);
     }
 
-    const mark_pointer = (pos: number) => {
+    const mark_pointer = (pos: number | null) => {
         const tiles = tape_visual.querySelectorAll(".tile");
+
+        if (pos === null) {
+            tiles.forEach(tile => tile.classList.remove("pointer"));
+            return;
+        }
+
         if (pos < 0 || pos >= tiles.length) {
             console.warn("Pointer position out of bounds");
             return;
@@ -176,7 +182,7 @@ export interface TapeInputFunctions {
     update_hidden_input: () => void;
     focus_next_tile: (current: HTMLElement) => HTMLElement;
     focus_previous_tile: (current: HTMLElement) => HTMLElement;
-    mark_pointer: (pos: number) => void;
+    mark_pointer: (pos: number | null) => void;
 }
 
 // TODO: this is all so jank

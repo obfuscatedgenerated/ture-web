@@ -229,6 +229,8 @@ const run_step = () => {
         step_state.innerText = init_state;
 
         // TODO: lock form elements
+        // TODO: bind cancel button
+        // TODO: better ux
 
         return;
     }
@@ -243,6 +245,8 @@ const run_step = () => {
 
                 document.getElementById("run")!.classList.remove("hidden");
                 document.getElementById("stepper-controls")!.classList.add("hidden");
+
+                tape_fns.mark_pointer(null);
             } else {
                 console.log(`Tape: ${res.value}, Position: ${res.pos}, State: ${res.state}`);
 
@@ -421,4 +425,3 @@ document.addEventListener("DOMContentLoaded", () => {
     // TODO: this sucks
     tape_fns = setup_tape_input(tape_input, document.getElementById("tape-visual") as HTMLDivElement);
 });
-
