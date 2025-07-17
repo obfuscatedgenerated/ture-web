@@ -401,7 +401,7 @@ log_errors();
 add_update_listener(editor, (view) => {
     parse(editor.state.doc.toString());
     log_errors();
-});
+}, ["edit"]);
 
 
 // bind run
@@ -458,3 +458,4 @@ document.getElementById("download-button")!.addEventListener("click", () => {
 });
 
 // TODO: split this file up
+// TODO: improve validation error ux when editing file (would help if they had a line to blame)

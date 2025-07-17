@@ -189,7 +189,7 @@ export const remove_all_hover_messages = (view: EditorView) => {
     });
 }
 
-export const add_update_listener = (view: EditorView, callback: (view: EditorView) => void) => {
+export const add_update_listener = (view: EditorView, callback: (view: EditorView) => void, events: ("edit" | "select")[] = ["edit", "select"]) => {
     // Remove old listener by reconfiguring without it
     if (update_listener_extension) {
         view.dispatch({
@@ -203,7 +203,7 @@ export const add_update_listener = (view: EditorView, callback: (view: EditorVie
     }
 
     update_listener_extension = EditorView.updateListener.of((update) => {
-        if (update.docChanged || update.selectionSet) {
+        if ((events.includes("edit") && update.docChanged) || (events.includes("select") && update.selectionSet)) {
             callback(view);
         }
     });
