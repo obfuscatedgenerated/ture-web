@@ -108,29 +108,31 @@ button:hover {
 }
 
 /* Upload dialog */
-#upload-dialog {
+dialog {
     border: none;
     border-radius: 0.625rem;
     padding: 1.5rem;
     box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.2);
     background: #fff;
+}
+
+#upload-dialog {
     width: 18.75rem;
 }
 
-#upload-header {
+dialog .header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
-
-#upload-header h4 {
+dialog .header h4 {
     margin: 0;
     font-size: 1rem;
 }
 
-#upload-cancel {
+button.icon {
     background: none;
     color: #444;
     border: none;
@@ -245,6 +247,20 @@ small a {
     float: right;
 }
 
+#readme-dialog {
+    max-height: 90vh;
+    max-width: 90vw;
+}
+
+#readme-content {
+    overflow-y: auto;
+    max-height: calc(90vh - 4rem);
+}
+
+.pointer {
+    cursor: pointer;
+}
+
 kbd {
     background-color: #eee;
     border-radius: 3px;
@@ -291,6 +307,16 @@ button kbd:first-of-type {
     #upload-dialog {
         width: 100%;
         max-width: 20rem;
+    }
+
+    #readme-dialog {
+        max-height: 100vh;
+        max-width: 100vw;
+        height: 100vh;
+    }
+
+    #readme-content {
+        max-height: calc(100vh - 4rem);
     }
 
     label {

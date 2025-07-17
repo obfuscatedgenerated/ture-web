@@ -11,7 +11,7 @@
         Turing machine interpreter<br>
         <small>
             A work in progress |
-            <a href="https://github.com/obfuscatedgenerated/ture-web#syntax" target="_blank" rel="noopener noreferrer">Syntax</a> |
+            <a id="help-link" class="pointer">Help</a> |
             <a href="https://github.com/obfuscatedgenerated/ture-web" target="_blank" rel="noopener noreferrer">Source code</a>
         </small>
     </h1>
@@ -69,11 +69,19 @@
     </div>
 
     <dialog id="upload-dialog">
-        <div id="upload-header">
+        <div id="upload-header" class="header">
             <h4>File upload</h4>
-            <button id="upload-cancel" title="Close uploader">x</button>
+            <button id="upload-cancel" class="icon" title="Close uploader">x</button>
         </div>
         <input type="file" id="file-input" accept=".txt,.ture">
+    </dialog>
+
+    <dialog id="readme-dialog">
+        <div id="readme-header" class="header">
+            <h4>Readme</h4>
+            <button id="readme-close" class="icon" title="Close readme">x</button>
+        </div>
+        <div id="readme-content"></div>
     </dialog>
 </body>
 </html>
