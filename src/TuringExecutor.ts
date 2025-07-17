@@ -199,3 +199,5 @@ export interface StepResult {
 export type StepIterator = {
     next: () => StepResult;
 }
+
+// TODO: store map of line number to rhs so it can be highlighted on step by step mode
