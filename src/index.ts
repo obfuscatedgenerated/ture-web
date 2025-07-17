@@ -165,6 +165,7 @@ const run = (input: string) => {
         console.error(e);
         add_error("Validation error: " + e.message, "validation");
         errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
+        return;
     }
 
     const init_state = state_select.value;
@@ -227,6 +228,7 @@ const run_step = () => {
             console.error(e);
             add_error("Validation error: " + e.message, "validation");
             errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
+            return;
         }
 
         const init_state = state_select.value;
