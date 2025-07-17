@@ -58,7 +58,7 @@ export default class TuringExecutor extends TuringVisitor<string> {
         const lookup_key = this.visit(ctx._left);
 
         if (this.lookup.has(lookup_key)) {
-            throw new Error(`Duplicate rule for ${lookup_key}`);
+            throw new Error(`Duplicate rule for ${lookup_key}. Non-deterministic turing machines are not allowed at this time.`);
         }
 
         this.lookup.set(lookup_key, {
