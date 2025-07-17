@@ -23,6 +23,7 @@ let editor: EditorView;
 
 let errors: {type: "syntax" | string, message: string}[] = [];
 let errors_textarea: HTMLTextAreaElement;
+let errors_container: HTMLDivElement;
 
 let state_select: HTMLSelectElement;
 let states_options: HTMLDivElement;
@@ -40,6 +41,7 @@ let tape_fns: TapeInputFunctions;
 const add_error = (message: string, type: "syntax" | string) => {
     errors.push({type, message});
     errors_textarea.value += message + "\n";
+    errors_container.classList.remove("hidden");
     errors_textarea.style.height = "auto"; // reset height to auto to recalculate
     errors_textarea.style.height = (errors_textarea.scrollHeight + 5) + "px";
 }
@@ -47,6 +49,8 @@ const add_error = (message: string, type: "syntax" | string) => {
 const clear_errors = () => {
     errors = [];
     errors_textarea.value = "";
+    errors_textarea.style.height = "auto"; // reset height to auto to recalculate
+    errors_container.classList.add("hidden");
 }
 
 const clear_errors_of_type = (type: "syntax" | string) => {
@@ -61,6 +65,12 @@ const clear_errors_of_type = (type: "syntax" | string) => {
 
             i--; // adjust index after removal
         }
+    }
+
+    errors_textarea.style.height = (errors_textarea.scrollHeight + 5) + "px";
+
+    if (errors.length === 0) {
+        errors_container.classList.add("hidden");
     }
 }
 
@@ -351,6 +361,7 @@ const download_file = () => {
 document.addEventListener("DOMContentLoaded", () => {
     // frequent dom elements
     errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
+    errors_container = document.getElementById("errors-container") as HTMLDivElement;
     state_select = document.getElementById("init-state") as HTMLSelectElement;
     states_options = document.getElementById("states") as HTMLDivElement;
     tape_input = document.getElementById("input") as HTMLInputElement;
