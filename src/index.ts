@@ -452,7 +452,7 @@ const load_from_url = () => {
     const init_state = url.searchParams.get("init");
     const tape = url.searchParams.get("tape");
 
-    const loaded = [];
+    const loaded: {script?: string, init?: string, tape?: string} = {};
 
     if (script) {
         const decompressed = decompressFromEncodedURIComponent(script);
@@ -461,21 +461,21 @@ const load_from_url = () => {
                 changes: {from: 0, to: editor.state.doc.length, insert: decompressed}
             });
 
-            loaded.push("script");
+            loaded.script = decompressed;
         } else {
             console.error("Failed to decompress script from URL.");
         }
     }
 
     if (init_state) {
-        state_select.value = init_state;
-        loaded.push("init");
+        // cant do anything for this since not parsed yet, so need to deal with it after
+        loaded.init = init_state;
     }
 
     if (tape) {
         tape_input.value = tape;
         tape_fns.set_value(tape);
-        loaded.push("tape");
+        loaded.tape = tape;
     }
 
     return loaded;
@@ -488,11 +488,13 @@ const from_url = load_from_url();
 parse(editor.state.doc.toString());
 log_errors();
 
-if (from_url.includes("init")) {
+if (from_url.init) {
     // check init state from url
-    if (!state_select.querySelector(`option[value="${state_select.value}"]`)) {
-        add_error(`Initial state declared in URL "${state_select.value}" is not defined in the program.`, "no-init");
+    if (!state_select.querySelector(`option[value="${from_url.init}"]`)) {
+        add_error(`Initial state declared in URL "${from_url.init}" is not defined in the program.`, "no-init");
         state_select.value = "";
+    } else {
+        state_select.value = from_url.init;
     }
 }
 
