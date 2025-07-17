@@ -16,6 +16,7 @@ DIRECTION: ('left' | 'right');
 // TODO: get emoji to work with this?? :)
 LEGAL_CHAR: ESCAPED_PERCENT | ~('('|')'|','|'⬚'|' '|'\t'|'\n'|'\r');
 
+// TODO: escaped percent not working as intended with tape input %
 ESCAPED_PERCENT: '\\%';
 COMMENT: '%' ~[\n\r]* -> skip;
 
