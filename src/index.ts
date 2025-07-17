@@ -404,7 +404,7 @@ const download_file = () => {
     a.remove();
 }
 
-const copy_share_url = () => {
+const get_share_url = () => {
     // TODO: dialog to ask which properties to copy
 
     const comp = compressToEncodedURIComponent(editor.state.doc.toString());
@@ -442,16 +442,7 @@ const copy_share_url = () => {
         url.searchParams.delete("tape");
     }
 
-    const share_url = url.toString();
-    navigator.clipboard.writeText(share_url).then(() => {
-        const share_button = document.getElementById("share-button") as HTMLButtonElement;
-        share_button.innerText = "Copied!";
-        setTimeout(() => {
-            share_button.innerText = "Share URL";
-        }, 2000);
-    }).catch((err) => {
-        console.error("Failed to copy share URL: ", err);
-    });
+    return url.toString();
 }
 
 const load_from_url = () => {
@@ -535,11 +526,12 @@ document.getElementById("next-step")!.addEventListener("click", run_step);
 
 // bind copy empty
 const copy_empty = document.getElementById("copy-empty") as HTMLButtonElement;
+const copy_empty_content = copy_empty.innerHTML;
 copy_empty.addEventListener("click", () => {
     navigator.clipboard.writeText(EMPTY).then(() => {
         copy_empty.innerText = "Copied!";
         setTimeout(() => {
-            copy_empty.innerText = "Copy empty letter";
+            copy_empty.innerHTML = copy_empty_content;
         }, 2000);
     });
 });
@@ -570,7 +562,27 @@ document.getElementById("upload-cancel")!.addEventListener("click", () => {
 document.getElementById("download-button")!.addEventListener("click", download_file);
 
 // bind share button
-document.getElementById("share-button")!.addEventListener("click", copy_share_url);
+const share_button = document.getElementById("share-button") as HTMLButtonElement;
+const share_button_content = share_button.innerHTML;
+share_button.addEventListener("click", () => {
+    const share_url = get_share_url();
+
+    navigator.clipboard.writeText(share_url).then(() => {
+        share_button.innerText = "Copied!";
+        setTimeout(() => {
+            share_button.innerHTML = share_button_content;
+        }, 2000);
+    }).catch((err) => {
+        console.error("Failed to copy share URL: ", err);
+    });
+});
+
+// on mac, replace Ctrl with Cmd in the kbd elements
+document.querySelectorAll(".mac-cmd").forEach((el) => {
+    if (navigator.platform.startsWith("Mac")) {
+        el.textContent = "⌘";
+    }
+});
 
 // TODO: split this file up
 // TODO: improve validation error ux when editing file (would help if they had a line to blame)

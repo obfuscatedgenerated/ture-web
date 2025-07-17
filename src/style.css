@@ -244,3 +244,58 @@ small a {
 #stepper-buttons {
     float: right;
 }
+
+kbd {
+    background-color: #eee;
+    border-radius: 3px;
+    border: 1px solid #b4b4b4;
+    box-shadow: 0 1px 1px rgb(0 0 0 / 0.2), 0 2px 0 0 rgb(255 255 255 / 0.7) inset;
+    color: #333;
+    display: inline-block;
+    font-size: 0.85em;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 4px;
+    white-space: nowrap;
+}
+
+button kbd:first-of-type {
+    margin-left: 0.25rem;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    kbd, .kbd-plus {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        margin: 1rem;
+    }
+
+    .top-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .control-group.horizontal {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .control-group.end {
+        justify-content: flex-start;
+    }
+
+    #upload-dialog {
+        width: 100%;
+        max-width: 20rem;
+    }
+
+    label {
+        margin-top: 0.5rem;
+    }
+}
+
+/* TODO: improve editor top buttons on mobile */

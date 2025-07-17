@@ -34,9 +34,9 @@
         </div>
 
         <div class="control-group full end run-button">
-            <button id="run">Run program</button>
+            <button id="run">Run program <kbd>F8</kbd></button>
 
-            <button id="run-step">Run step-by-step</button>
+            <button id="run-step">Run step-by-step <kbd>F9</kbd></button>
 
             <div id="stepper-controls" class="hidden">
                 <span id="step-label">
@@ -45,8 +45,8 @@
                 </span>
 
                 <div id="stepper-buttons">
-                    <button id="cancel-step" class="danger">Cancel</button>
-                    <button id="next-step">Next step</button>
+                    <button id="cancel-step" class="danger">Cancel <kbd>Esc</kbd></button>
+                    <button id="next-step">Next step <kbd>F9</kbd></button>
                 </div>
             </div>
         </div>
@@ -56,10 +56,10 @@
 
     <label for="file-name">Program name:</label>
     <input id="file-name" type="text" placeholder="Program name" value="LastFirst" />
-    <button id="download-button">Download .ture file</button>
-    <button id="upload-button">Upload from file</button>
-    <button id="share-button">Copy share URL</button>
-    <button id="copy-empty">Copy empty letter</button>
+    <button id="download-button">Download .ture file <kbd class="mac-cmd">Ctrl</kbd> <span class="kbd-plus">+</span> <kbd>S</kbd></button>
+    <button id="upload-button">Upload from file <kbd class="mac-cmd">Ctrl</kbd> <span class="kbd-plus">+</span> <kbd>O</kbd></button>
+    <button id="share-button">Copy share URL <kbd class="mac-cmd">Ctrl</kbd> <span class="kbd-plus">+</span> <kbd>Alt</kbd> <span class="kbd-plus">+</span> <kbd>S</kbd></button>
+    <button id="copy-empty">Copy empty letter <kbd>Alt</kbd> <span class="kbd-plus">+</span> <kbd>E</kbd></button>
 
     <div id="editor"></div>
 
