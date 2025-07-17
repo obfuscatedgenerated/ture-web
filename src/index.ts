@@ -1,9 +1,13 @@
 import "./style.css";
 
 import {CharStream, CommonTokenStream, ErrorListener, Token} from "antlr4";
+
 import TuringLexer from "./grammar/TuringLexer";
 import TuringParser, {ProgramContext} from "./grammar/TuringParser";
 import TuringExecutor, {EMPTY, ExecResultStatus, StepIterator} from "./TuringExecutor";
+import TuringStateNameVisitor from "./TuringStateNameVisitor";
+
+import {setup as setup_tape_input} from "./tape_input";
 
 import {
     add_hover_message,
@@ -14,10 +18,6 @@ import {
     remove_all_decorations,
     remove_all_hover_messages, remove_decoration_by_id
 } from "./editor";
-import {EditorView} from "@codemirror/view";
-import TuringStateNameVisitor from "./TuringStateNameVisitor";
-
-import {setup as setup_tape_input, TapeInputFunctions} from "./tape_input";
 
 let editor = create_editor();
 
