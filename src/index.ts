@@ -19,6 +19,8 @@ import {
     remove_all_hover_messages, remove_decoration_by_id
 } from "./editor";
 
+import {compressToEncodedURIComponent, decompressFromEncodedURIComponent} from "lz-string";
+
 const editor = create_editor();
 
 let errors: { type: "syntax" | string, message: string }[] = [];
@@ -396,11 +398,103 @@ const download_file = () => {
     a.remove();
 }
 
+const copy_share_url = () => {
+    // TODO: dialog to ask which properties to copy
 
+    const comp = compressToEncodedURIComponent(editor.state.doc.toString());
+
+    const url = new URL(window.location.href);
+
+    url.searchParams.set("script", comp);
+
+    if (state_select.value) {
+        url.searchParams.set("init", state_select.value);
+    } else {
+        url.searchParams.delete("init");
+    }
+
+    if (tape_input.value) {
+        let tape = tape_input.value;
+
+        // remove trailing empty characters from tape input
+        // trim trailing empties by finding first non empty character from the end
+        let last_non_empty = tape.length;
+        for (let i = tape.length - 1; i >= 0; i--) {
+            if (tape[i] !== EMPTY) {
+                last_non_empty = i + 1;
+                break;
+            }
+        }
+
+        const trimmed = tape.substring(0, last_non_empty);
+        url.searchParams.set("tape", trimmed);
+    } else {
+        url.searchParams.delete("tape");
+    }
+
+    const share_url = url.toString();
+    navigator.clipboard.writeText(share_url).then(() => {
+        const share_button = document.getElementById("share-button") as HTMLButtonElement;
+        share_button.innerText = "Copied!";
+        setTimeout(() => {
+            share_button.innerText = "Share URL";
+        }, 2000);
+    }).catch((err) => {
+        console.error("Failed to copy share URL: ", err);
+    });
+}
+
+const load_from_url = () => {
+    // TODO: support loading a file from a remote url
+
+    const url = new URL(window.location.href);
+    const script = url.searchParams.get("script");
+    const init_state = url.searchParams.get("init");
+    const tape = url.searchParams.get("tape");
+
+    const loaded = [];
+
+    if (script) {
+        const decompressed = decompressFromEncodedURIComponent(script);
+        if (decompressed) {
+            editor.dispatch({
+                changes: {from: 0, to: editor.state.doc.length, insert: decompressed}
+            });
+
+            loaded.push("script");
+        } else {
+            console.error("Failed to decompress script from URL.");
+        }
+    }
+
+    if (init_state) {
+        state_select.value = init_state;
+        loaded.push("init");
+    }
+
+    if (tape) {
+        tape_input.value = tape;
+        tape_fns.set_value(tape);
+        loaded.push("tape");
+    }
+
+    return loaded;
+}
+
+// load from url params
+const from_url = load_from_url();
 
 // parse default value immediately
 parse(editor.state.doc.toString());
 log_errors();
+
+if (from_url.includes("init")) {
+    // check init state from url
+    if (!state_select.querySelector(`option[value="${state_select.value}"]`)) {
+        add_error(`Initial state declared in URL "${state_select.value}" is not defined in the program.`, "no-init");
+        state_select.value = "";
+    }
+}
 
 // parse on change to highlight errors
 add_update_listener(editor, (view) => {
@@ -416,13 +510,9 @@ document.getElementById("run")!.addEventListener("click", () => {
 });
 
 // bind run step
-document.getElementById("run-step")!.addEventListener("click", () => {
-    // TODO: split run_step logic into prepare and execute step rather than call same function
-    run_step();
-});
-document.getElementById("next-step")!.addEventListener("click", () => {
-    run_step();
-});
+// TODO: split run_step logic into prepare and execute step rather than call same function
+document.getElementById("run-step")!.addEventListener("click", run_step);
+document.getElementById("next-step")!.addEventListener("click", run_step);
 
 // bind copy empty
 const copy_empty = document.getElementById("copy-empty") as HTMLButtonElement;
@@ -447,14 +537,10 @@ tape_input.addEventListener("keydown", () => {
 });
 
 // bind file upload
-file_input.addEventListener("change", () => {
-    upload_file();
-});
+file_input.addEventListener("change", upload_file);
 
 // bind upload button
-document.getElementById("upload-button")!.addEventListener("click", () => {
-    open_file_uploader();
-});
+document.getElementById("upload-button")!.addEventListener("click", open_file_uploader);
 
 // bind upload close button
 document.getElementById("upload-cancel")!.addEventListener("click", () => {
@@ -462,9 +548,10 @@ document.getElementById("upload-cancel")!.addEventListener("click", () => {
 });
 
 // bind download button
-document.getElementById("download-button")!.addEventListener("click", () => {
-    download_file();
-});
+document.getElementById("download-button")!.addEventListener("click", download_file);
+
+// bind share button
+document.getElementById("share-button")!.addEventListener("click", copy_share_url);
 
 // TODO: split this file up
 // TODO: improve validation error ux when editing file (would help if they had a line to blame)
