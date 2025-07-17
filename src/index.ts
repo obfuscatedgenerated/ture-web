@@ -247,7 +247,7 @@ const run_step = () => {
         // hide run button and show stepper controls
         document.getElementById("run")!.classList.add("hidden");
         document.getElementById("stepper-controls")!.classList.remove("hidden");
-        document.getElementById("run-step")!.innerText = "Next step";
+        document.getElementById("run-step")!.classList.add("hidden");
 
         // set initial positions
         tape_fns.mark_pointer(0);
@@ -270,7 +270,7 @@ const run_step = () => {
 
                 document.getElementById("run")!.classList.remove("hidden");
                 document.getElementById("stepper-controls")!.classList.add("hidden");
-                document.getElementById("run-step")!.innerText = "Run step-by-step";
+                document.getElementById("run-step")!.classList.remove("hidden");
 
                 tape_fns.mark_pointer(null);
 
@@ -300,7 +300,7 @@ const run_step = () => {
 
             document.getElementById("run")!.classList.remove("hidden");
             document.getElementById("stepper-controls")!.classList.add("hidden");
-            document.getElementById("run-step")!.innerText = "Run step-by-step";
+            document.getElementById("run-step")!.classList.remove("hidden");
 
             tape_fns.mark_pointer(null);
 
@@ -415,6 +415,10 @@ document.getElementById("run")!.addEventListener("click", () => {
 
 // bind run step
 document.getElementById("run-step")!.addEventListener("click", () => {
+    // TODO: split run_step logic into prepare and execute step rather than call same function
+    run_step();
+});
+document.getElementById("next-step")!.addEventListener("click", () => {
     run_step();
 });
 
