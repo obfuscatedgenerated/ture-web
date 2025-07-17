@@ -26,7 +26,7 @@ const errors_textarea = document.getElementById("errors") as HTMLTextAreaElement
 const errors_container = document.getElementById("errors-container") as HTMLDivElement;
 
 const state_select = document.getElementById("init-state") as HTMLSelectElement;
-const states_options = document.getElementById("states") as HTMLDivElement;
+const states_options = document.getElementById("states") as HTMLOptGroupElement;
 
 const tape_input = document.getElementById("input") as HTMLInputElement;
 const tape_visual = document.getElementById("tape-visual") as HTMLDivElement;
