@@ -469,6 +469,7 @@ const load_from_url = () => {
             loaded.script = decompressed;
         } else {
             console.error("Failed to decompress script from URL.");
+            add_error("Failed to decompress script from URL", "decompress");
         }
     }
 
