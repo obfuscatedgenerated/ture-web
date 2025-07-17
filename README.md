@@ -1,6 +1,6 @@
 # Ture on the web
 
-See also: [the original Java implementation](https://github.com/obfuscatedgenerated/Ture)
+See also: <a href="https://github.com/obfuscatedgenerated/Ture" target="_blank">the original Java implementation</a>.
 
 ## Usage
 
