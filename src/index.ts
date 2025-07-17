@@ -417,6 +417,7 @@ const get_share_url = () => {
     const comp = compressToEncodedURIComponent(editor.state.doc.toString());
 
     const url = new URL(window.location.href);
+    url.hash = ""; // clear hash (sometimes set by readme viewers)
 
     url.searchParams.set("script", comp);
 
