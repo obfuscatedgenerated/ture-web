@@ -210,3 +210,8 @@ button.danger {
 #init-state:invalid {
     border-color: #e33;
 }
+
+small a {
+    color: #619be5;
+    text-decoration: none;
+}
