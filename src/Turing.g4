@@ -13,6 +13,7 @@ EMPTY: '⬚';
 DIRECTION: ('left' | 'right');
 
 // equivalent to ~(OPENER | CLOSER | COMMA | EMPTY | SPACE | NEWLINE) except this syntax is unsupported.
+// TODO: get emoji to work with this?? :)
 LEGAL_CHAR: ESCAPED_PERCENT | ~('('|')'|','|'⬚'|' '|'\t'|'\n'|'\r');
 
 ESCAPED_PERCENT: '\\%';
