@@ -68,6 +68,7 @@ const clear_errors_of_type = (type: "syntax" | string) => {
         }
     }
 
+    errors_textarea.style.height = "auto";
     errors_textarea.style.height = (errors_textarea.scrollHeight + 5) + "px";
 
     if (errors.length === 0) {
