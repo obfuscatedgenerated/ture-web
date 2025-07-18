@@ -1,6 +1,6 @@
 import "./style.css";
 
-import {CharStream, CommonTokenStream, ErrorListener, Token} from "antlr4";
+import {CharStream, CommonTokenStream} from "antlr4";
 
 import TuringLexer from "./grammar/TuringLexer";
 import TuringParser, {ProgramContext} from "./grammar/TuringParser";
@@ -10,10 +10,8 @@ import TuringStateNameVisitor from "./TuringStateNameVisitor";
 import {setup as setup_tape_input} from "./tape_input";
 
 import {
-    add_hover_message,
     add_update_listener,
-    apply_decoration_range, create_and_apply_decoration_range,
-    create_decoration_range,
+    create_and_apply_decoration_range,
     create_editor, DEFAULT_DOC,
     remove_all_decorations,
     remove_all_hover_messages, remove_decoration_by_id, set_readonly
@@ -24,6 +22,7 @@ import levenshtein from "js-levenshtein";
 
 import {TuringErrorStrategy} from "./TuringErrorStrategy";
 import {documents, hide_document, show_document} from "./documents";
+import * as error_log from "./error_log";
 
 declare var __COMMIT_DETAILS__: string;
 
@@ -31,10 +30,6 @@ console.log(__COMMIT_DETAILS__);
 document.getElementById("commit-details")!.innerText = __COMMIT_DETAILS__;
 
 const editor = create_editor();
-
-let errors: { type: "syntax" | string, message: string }[] = [];
-const errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
-const errors_container = document.getElementById("errors-container") as HTMLDivElement;
 
 const state_select = document.getElementById("init-state") as HTMLSelectElement;
 const states_options = document.getElementById("states") as HTMLOptGroupElement;
@@ -52,71 +47,6 @@ const share_dialog = document.getElementById("share-dialog") as HTMLDialogElemen
 
 const step_state = document.getElementById("step-state") as HTMLSpanElement;
 const step_number = document.getElementById("step-number") as HTMLSpanElement;
-
-const add_error = (message: string, type: "syntax" | string) => {
-    errors.push({type, message});
-    errors_textarea.value += message + "\n";
-    errors_container.classList.remove("hidden");
-    errors_textarea.style.height = "auto"; // reset height to auto to recalculate
-    errors_textarea.style.height = (errors_textarea.scrollHeight + 5) + "px";
-}
-
-const clear_errors = () => {
-    errors = [];
-    errors_textarea.value = "";
-    errors_textarea.style.height = "auto"; // reset height to auto to recalculate
-    errors_container.classList.add("hidden");
-}
-
-const clear_errors_of_type = (type: "syntax" | string) => {
-    for (let i = 0; i < errors.length; i++) {
-        if (errors[i].type === type) {
-            errors.splice(i, 1);
-
-            // remove that line of textarea
-            const lines = errors_textarea.value.split("\n");
-            lines.splice(i, 1);
-            errors_textarea.value = lines.join("\n");
-
-            i--; // adjust index after removal
-        }
-    }
-
-    errors_textarea.style.height = "auto";
-    errors_textarea.style.height = (errors_textarea.scrollHeight + 5) + "px";
-
-    if (errors.length === 0) {
-        errors_container.classList.add("hidden");
-    }
-}
-
-const log_errors = () => {
-    for (const error of errors) {
-        console.error(`${error.type}: ${error.message}`);
-    }
-}
-
-class CustomErrorListener implements ErrorListener<any> {
-    syntaxError(
-        recognizer: TuringParser,
-        offendingSymbol: Token | null,
-        line: number,
-        charPositionInLine: number,
-        msg: string,
-        e: Error | undefined
-    ): void {
-        let message = `Syntax error at line ${line}, column ${charPositionInLine}: ${msg}`;
-
-        if (offendingSymbol) {
-            const decoration = create_decoration_range(offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length, "cm-error");
-            apply_decoration_range(editor, decoration);
-
-            add_hover_message(editor, message, offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length);
-        }
-
-        add_error(message, "syntax");
-    }
-}
 
 const set_state_names = (names: string[]) => {
     let existing_state = state_select.value;
@@ -150,7 +80,7 @@ const guess_init_state = () => {
 
     // if there is only one state, select it as the initial state
     if (options.length === 1) {
-        add_error(`Warning: guessing initial state from only state "${options[0].value}" as none was set.`, "warn-guessed");
+        error_log.add(`Warning: guessing initial state from only state "${options[0].value}" as none was set.`, "warn-guessed");
         state_select.value = options[0].value;
         state_select.setCustomValidity("");
         return;
@@ -187,18 +117,18 @@ const guess_init_state = () => {
     }
 
     if (best_match) {
-        add_error(`Warning: guessing initial state "${best_match}" as none was set.`, "warn-guessed");
+        error_log.add(`Warning: guessing initial state "${best_match}" as none was set.`, "warn-guessed");
         state_select.value = best_match;
         state_select.setCustomValidity("");
         return;
     }
 
     // can't guess
-    add_error("Could not guess initial state. Please select one.", "no-init");
+    error_log.add("Could not guess initial state. Please select one.", "no-init");
 }
 
 const parse = (input: string): ProgramContext => {
-    clear_errors_of_type("syntax");
+    error_log.clear_type("syntax");
 
     remove_all_decorations(editor);
     remove_all_hover_messages(editor);
@@ -209,7 +139,7 @@ const parse = (input: string): ProgramContext => {
 
     const parser = new TuringParser(tokens);
     parser.removeErrorListeners();
-    parser.addErrorListener(new CustomErrorListener());
+    parser.addErrorListener(new error_log.CustomErrorListener(editor));
     parser._errHandler = new TuringErrorStrategy();
 
     const tree = parser.program();
@@ -224,12 +154,12 @@ const parse = (input: string): ProgramContext => {
 }
 
 const run = (input: string) => {
-    clear_errors();
+    error_log.clear();
     const tree = parse(input);
 
-    if (errors.length > 0) {
-        log_errors();
-        errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
+    if (error_log.get_list().length > 0) {
+        error_log.log();
+        error_log.get_textarea().scrollIntoView({behavior: "smooth", block: "end"});
         return;
     }
 
@@ -238,8 +168,8 @@ const run = (input: string) => {
         tree.accept(exec);
     } catch (e: any) {
         console.error(e);
-        add_error("Validation error: " + e.message, "validation");
-        errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
+        error_log.add("Validation error: " + e.message, "validation");
+        error_log.get_textarea().scrollIntoView({behavior: "smooth", block: "end"});
         return;
     }
 
@@ -262,7 +192,7 @@ const run = (input: string) => {
     console.log(`Running Turing machine with initial state "${init_state}" and tape input "${in_tape}"`);
 
     if (in_tape === "" || in_tape === EMPTY.repeat(in_tape.length)) {
-        add_error("Warning: tape input is empty. This may be a mistake.", "warn-no-tape");
+        error_log.add("Warning: tape input is empty. This may be a mistake.", "warn-no-tape");
     }
 
     try {
@@ -284,7 +214,7 @@ const run = (input: string) => {
         tape_fns.set_value(tape);
     } catch (e: any) {
         console.error(e);
-        add_error("Execution error: " + e.message, "exec");
+        error_log.add("Execution error: " + e.message, "exec");
     }
 }
 
@@ -313,14 +243,14 @@ const cancel_steps = () => {
 const run_step = () => {
     // if step_iterator is null, parse the input and create a new iterator
     if (!step_iterator) {
-        clear_errors();
+        error_log.clear();
 
         const input = editor.state.doc.toString();
         const tree = parse(input);
 
-        if (errors.length > 0) {
-            log_errors();
-            errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
+        if (error_log.get_list().length > 0) {
+            error_log.log();
+            error_log.get_textarea().scrollIntoView({behavior: "smooth", block: "end"});
             return;
         }
 
@@ -329,8 +259,8 @@ const run_step = () => {
             tree.accept(exec);
         } catch (e: any) {
             console.error(e);
-            add_error("Validation error: " + e.message, "validation");
-            errors_textarea.scrollIntoView({behavior: "smooth", block: "end"});
+            error_log.add("Validation error: " + e.message, "validation");
+            error_log.get_textarea().scrollIntoView({behavior: "smooth", block: "end"});
             return;
         }
 
@@ -397,7 +327,7 @@ const run_step = () => {
             }
         } catch (e: any) {
             console.error(e);
-            add_error("Execution error: " + e.message, "exec");
+            error_log.add("Execution error: " + e.message, "exec");
             cancel_steps();
         }
     }
@@ -429,7 +359,7 @@ const run_remaining_steps = () => {
 
     if (!halted) {
         console.warn(`Reached step limit of ${DEFAULT_STEP_LIMIT} without halting.`);
-        add_error(`Reached step limit of ${DEFAULT_STEP_LIMIT} without halting.`, "step-limit");
+        error_log.add(`Reached step limit of ${DEFAULT_STEP_LIMIT} without halting.`, "step-limit");
     }
 }
 
@@ -472,12 +402,12 @@ const upload_file = () => {
             });
 
             parse(content);
-            log_errors();
+            error_log.log();
 
             if (read_init_state) {
                 // validate that the state read from the file is valid
                 if (!state_select.querySelector(`option[value="${read_init_state}"]`)) {
-                    add_error(`Initial state declared in uploaded file "${read_init_state}" is not defined in the program.`, "no-init");
+                    error_log.add(`Initial state declared in uploaded file "${read_init_state}" is not defined in the program.`, "no-init");
                     state_select.value = "";
                 } else {
                     state_select.value = read_init_state;
@@ -645,7 +575,7 @@ const load_from_url = (): ShareURLPropertiesWithValues => {
             };
         } else {
             console.error("Failed to decompress script from URL.");
-            add_error("Failed to decompress script from URL", "decompress");
+            error_log.add("Failed to decompress script from URL", "decompress");
         }
     }
 
@@ -704,12 +634,12 @@ const from_url = load_from_url();
 
 // parse default value immediately
 parse(editor.state.doc.toString());
-log_errors();
+error_log.log();
 
 if (from_url.init) {
     // check init state from url
     if (!state_select.querySelector(`option[value="${from_url.init.value}"]`)) {
-        add_error(`Initial state declared in URL "${from_url.init.value}" is not defined in the program.`, "no-init");
+        error_log.add(`Initial state declared in URL "${from_url.init.value}" is not defined in the program.`, "no-init");
         state_select.value = "";
     } else {
         state_select.value = from_url.init.value;
@@ -719,7 +649,7 @@ if (from_url.init) {
 // parse on change to highlight errors
 add_update_listener(editor, (view) => {
     parse(editor.state.doc.toString());
-    log_errors();
+    error_log.log();
 }, ["edit"]);
 
 
@@ -754,13 +684,13 @@ copy_empty.addEventListener("click", () => {
 
 // bind state select change
 state_select.addEventListener("change", () => {
-    clear_errors_of_type("no-init");
+    error_log.clear_type("no-init");
     state_select.setCustomValidity("");
 });
 
 // bind tape input change
 tape_input.addEventListener("keydown", () => {
-    clear_errors_of_type("warn-no-tape");
+    error_log.clear_type("warn-no-tape");
 });
 
 // bind file upload
