@@ -1,10 +1,10 @@
 @import "vars_base.css";
 @import "vars_dark.css" screen and (prefers-color-scheme: dark);
 
-@import "mobile.css" screen and (max-width: 600px);
-
 @import "base.css";
 @import "ui.css";
+
+@import "mobile.css" screen and (max-width: 600px);
 
 #file-name {
     width: 12.5rem;
