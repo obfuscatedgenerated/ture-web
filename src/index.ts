@@ -223,6 +223,21 @@ const run = (input: string) => {
 let step_iterator: StepIterator | null = null;
 let step_idx = 0;
 let step_highlight_id: number | undefined;
+
+const cancel_steps = () => {
+    step_iterator = null; // reset iterator
+
+    document.getElementById("run")!.classList.remove("hidden");
+    document.getElementById("stepper-controls")!.classList.add("hidden");
+    document.getElementById("run-step")!.classList.remove("hidden");
+
+    tape_fns.mark_pointer(null);
+
+    if (step_highlight_id) {
+        remove_decoration_by_id(editor, step_highlight_id);
+    }
+}
+
 const run_step = () => {
     // if step_iterator is null, parse the input and create a new iterator
     if (!step_iterator) {
@@ -285,17 +300,7 @@ const run_step = () => {
             const res = step_iterator.next();
             if (res.status === ExecResultStatus.Halt) {
                 console.log("Execution finished.");
-                step_iterator = null; // reset iterator
-
-                document.getElementById("run")!.classList.remove("hidden");
-                document.getElementById("stepper-controls")!.classList.add("hidden");
-                document.getElementById("run-step")!.classList.remove("hidden");
-
-                tape_fns.mark_pointer(null);
-
-                if (step_highlight_id) {
-                    remove_decoration_by_id(editor, step_highlight_id);
-                }
+                cancel_steps();
             } else {
                 console.log(`Tape: ${res.value}, Position: ${res.pos}, State: ${res.state} (Text range: ${res.text_range?.start} - ${res.text_range?.end})`);
 
@@ -315,17 +320,7 @@ const run_step = () => {
         } catch (e: any) {
             console.error(e);
             add_error("Execution error: " + e.message, "exec");
-            step_iterator = null; // reset iterator on error
-
-            document.getElementById("run")!.classList.remove("hidden");
-            document.getElementById("stepper-controls")!.classList.add("hidden");
-            document.getElementById("run-step")!.classList.remove("hidden");
-
-            tape_fns.mark_pointer(null);
-
-            if (step_highlight_id) {
-                remove_decoration_by_id(editor, step_highlight_id);
-            }
+            cancel_steps();
         }
     }
 }
@@ -336,15 +331,7 @@ const run_remaining_steps = () => {
         return;
     }
 
-    document.getElementById("run")!.classList.remove("hidden");
-    document.getElementById("stepper-controls")!.classList.add("hidden");
-    document.getElementById("run-step")!.classList.remove("hidden");
-
-    tape_fns.mark_pointer(null);
-
-    if (step_highlight_id) {
-        remove_decoration_by_id(editor, step_highlight_id);
-    }
+    cancel_steps();
 
     let halted = false;
     let value = tape_input.value;
@@ -577,9 +564,7 @@ document.getElementById("next-step")!.addEventListener("click", run_step);
 document.getElementById("run-remaining")!.addEventListener("click", run_remaining_steps);
 
 // bind cancel step
-document.getElementById("cancel-step")!.addEventListener("click", () => {
-    // TODO
-});
+document.getElementById("cancel-step")!.addEventListener("click", cancel_steps);
 
 // bind copy empty
 const copy_empty = document.getElementById("copy-empty") as HTMLButtonElement;
@@ -728,7 +713,7 @@ document.addEventListener("keydown", (e) => {
         }
     }
 
-    // run / run remaining steps: F8
+    // run / run remaining steps: F8 (contextual)
     if (e.key === "F8") {
         e.preventDefault();
         override_kbd_hiding();
@@ -753,12 +738,12 @@ document.addEventListener("keydown", (e) => {
         return;
     }
 
-    // cancel: Esc
-    if (e.key === "Escape") {
+    // cancel: Esc (contextual)
+    if (e.key === "Escape" && step_iterator) {
         e.preventDefault();
         override_kbd_hiding();
 
-        // TODO
+        cancel_steps();
     }
 });
 
