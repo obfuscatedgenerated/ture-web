@@ -331,12 +331,13 @@ const run_remaining_steps = () => {
         return;
     }
 
+    const save_iterator = step_iterator;
     cancel_steps();
 
     let halted = false;
     let value = tape_input.value;
     for (step_idx; step_idx < DEFAULT_STEP_LIMIT; step_idx++) {
-        const res = step_iterator.next();
+        const res = save_iterator.next();
         if (res.status === ExecResultStatus.Halt) {
             console.log("Execution finished.");
             halted = true;
@@ -347,8 +348,6 @@ const run_remaining_steps = () => {
     }
 
     tape_fns.set_value(value);
-
-    step_iterator = null; // reset iterator
 
     if (!halted) {
         console.warn(`Reached step limit of ${DEFAULT_STEP_LIMIT} without halting.`);
