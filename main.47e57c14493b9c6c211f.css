@@ -39,9 +39,12 @@ textarea {
     font-size: 1rem;
     border: 0.0625rem solid #ccc;
     border-radius: 0.375rem;
-    width: 100%;
     box-sizing: border-box;
     margin-right: 1rem;
+}
+
+input:not([type="checkbox"]), select, textarea {
+    width: 100%;
 }
 
 #file-name {
@@ -313,6 +316,10 @@ button kbd:first-of-type {
     #document-content kbd, #document-content .kbd-plus {
         display: inline-block;
     }
+}
+
+.sub-option {
+    margin-left: 20px;
 }
 
 @media screen and (max-width: 600px) {
