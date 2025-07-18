@@ -165,12 +165,12 @@ const guess_init_state = () => {
 
             // award a small bonus if the value includes the keyword
             const includes = value.includes(keyword);
-            const adjusted = normalized - (includes ? 0.2 : 0);
+            const adjusted = normalized - (includes ? 0.4 : 0);
 
             console.log(`${value} vs ${keyword}: distance=${distance}, normalized=${normalized}, adjusted=${adjusted}`);
 
             // only accept if the adjusted score is below the threshold
-            if (adjusted < threshold && adjusted < best_score) {
+            if (adjusted <= threshold && adjusted < best_score) {
                 best_score = adjusted;
                 best_match = option.value;
             }
