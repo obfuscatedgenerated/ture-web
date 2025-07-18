@@ -24,7 +24,7 @@ Example attribution formats are provided below. Feel free to adapt them to fit y
 
 ```
 Ture - Turing machine interpreter by Ollie G  
-https://ture.ollieg.codes/
+https://ture.ollieg.codes
 
 Source code: https://github.com/obfuscatedgenerated/ture-web  
 Author homepage: https://ollieg.codes
@@ -33,14 +33,14 @@ Author homepage: https://ollieg.codes
 ### Markdown
 
 ```markdown
-[Ture – Turing machine interpreter](https://ture.ollieg.codes/) by [Ollie G](https://ollieg.codes)  
+[Ture – Turing machine interpreter](https://ture.ollieg.codes) by [Ollie G](https://ollieg.codes)  
 [Source code](https://github.com/obfuscatedgenerated/ture-web)
 ```
 
 ### HTML
 
 ```html
-<a href="https://ture.ollieg.codes." target="_blank">Ture – Turing machine interpreter</a> by <a href="https://ollieg.codes" target="_blank">Ollie G</a><br>
+<a href="https://ture.ollieg.codes" target="_blank">Ture – Turing machine interpreter</a> by <a href="https://ollieg.codes" target="_blank">Ollie G</a><br>
 <a href="https://github.com/obfuscatedgenerated/ture-web" target="_blank">Source code</a>
 ```
 
@@ -50,7 +50,7 @@ Author homepage: https://ollieg.codes
 @misc{ollieg_ture,
   author = {Ollie G},
   title = {{Ture} - Turing machine interpreter},
-  howpublished = {\url{https://ture.ollieg.codes/}},
+  howpublished = {\url{https://ture.ollieg.codes}},
   year = {2025},
   note = {GitHub: \url{https://github.com/obfuscatedgenerated/ture-web}; Author homepage: \url{https://ollieg.codes}}
 }
