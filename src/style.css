@@ -12,6 +12,7 @@
     --text-secondary: #444;
     --text-tertiary: #777;
     --text-ghost: #aaa;
+    --text-link: var(--accent);
 
     --accent: #2b72d6;
     --accent-hover: #1e5cb0;
@@ -24,13 +25,58 @@
     --on-light-danger: #900;
 
     --step-pointer: #111;
-    --highlighter: #ede242;
+
+    --highlighter-bg: #ede242;
+    --highlighter-text: #000;
+
+    --active-line-bg: #92c0d742;
+    --active-line-gutter-bg: #bfd6ec;
 
     --shadow: rgba(0, 0, 0, 0.2);
     --unshadow: rgba(255, 255, 255, 0.7);
 
     --key-bg: #eee;
     --key-border: #b4b4b4;
+    --key-text: var(--text-body);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --body-bg: #181818;
+        --on-body-bg: #444;
+
+        --white-bg: #111;
+        --disabled-white-bg: #000;
+
+        --tape-bg: #222;
+        --on-tape-bg: #333;
+
+        --text-body: #ddd;
+        --text-secondary: #bbb;
+        --text-tertiary: #888;
+        --text-ghost: #666;
+        --text-link: #6ab7ff;
+
+        --accent: #1255a1;
+        --accent-hover: #0e3f7d;
+        --on-accent: #fff;
+        --accent-secondary: #7fb3e5;
+
+        --danger: #e33;
+        --on-danger: #fff;
+        --light-danger: #411;
+        --on-light-danger: #fdd;
+
+        --step-pointer: #fff;
+
+        --active-line-bg: #5f889d29;
+        --active-line-gutter-bg: #2a3f4f;
+
+        --shadow: rgba(0, 0, 0, 0.5);
+        --unshadow: rgba(255, 255, 255, 0.1);
+
+        --key-text: #333;
+    }
 }
 
 /* Global styles */
@@ -41,6 +87,11 @@ body {
     background-color: var(--body-bg);
     color: var(--text-body);
     accent-color: var(--accent);
+}
+
+a {
+    color: var(--text-link);
+    text-decoration: none;
 }
 
 /* Header */
@@ -78,6 +129,8 @@ textarea {
     border-radius: 0.375rem;
     box-sizing: border-box;
     margin-right: 1rem;
+    background-color: var(--white-bg);
+    color: var(--text-body);
 }
 
 input:not([type="checkbox"]), select, textarea {
@@ -149,12 +202,30 @@ button[disabled] {
     margin-top: 0.5rem;
 }
 
+.cm-gutter {
+    background-color: var(--white-bg);
+    color: var(--text-secondary);
+}
+
+.cm-gutters {
+    border-color: var(--on-body-bg);
+}
+
+.cm-activeLine {
+    background-color: var(--active-line-bg) !important;
+}
+
+.cm-activeLineGutter {
+    background-color: var(--active-line-gutter-bg) !important;
+}
+
 .cm-error {
     text-decoration: var(--danger) wavy underline;
 }
 
 .cm-highlight {
-    background-color: var(--highlighter);
+    background-color: var(--highlighter-bg);
+    color: var(--highlighter-text);
 }
 
 .cm-hover-msg {
@@ -182,6 +253,7 @@ dialog {
     padding: 1.5rem;
     box-shadow: 0 0 0.625rem var(--shadow);
     background: var(--white-bg);
+    color: inherit;
 }
 
 #upload-dialog {
@@ -336,7 +408,7 @@ kbd {
     border-radius: 3px;
     border: 1px solid var(--key-border);
     box-shadow: 0 1px 1px var(--shadow), 0 2px 0 0 var(--unshadow) inset;
-    color: var(--text-body);
+    color: var(--key-text);
     display: inline-block;
     font-size: 0.85em;
     font-weight: 700;
