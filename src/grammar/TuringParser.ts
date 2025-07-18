@@ -27,8 +27,9 @@ export default class TuringParser extends Parser {
 	public static readonly EMPTY = 7;
 	public static readonly DIRECTION = 8;
 	public static readonly LEGAL_CHAR = 9;
-	public static readonly ESCAPED_PERCENT = 10;
-	public static readonly COMMENT = 11;
+	public static readonly WORD = 10;
+	public static readonly ESCAPED_PERCENT = 11;
+	public static readonly COMMENT = 12;
 	public static override readonly EOF = Token.EOF;
 	public static readonly RULE_letter = 0;
 	public static readonly RULE_state = 1;
@@ -41,14 +42,14 @@ export default class TuringParser extends Parser {
                                                             "')'", "','", 
                                                             "'->'", "'\\u2B1A'", 
                                                             null, null, 
-                                                            "'\\%'" ];
+                                                            null, "'\\%'" ];
 	public static readonly symbolicNames: (string | null)[] = [ null, "SPACE", 
                                                              "NEWLINE", 
                                                              "OPENER", "CLOSER", 
                                                              "COMMA", "ARROW", 
                                                              "EMPTY", "DIRECTION", 
                                                              "LEGAL_CHAR", 
-                                                             "ESCAPED_PERCENT", 
+                                                             "WORD", "ESCAPED_PERCENT", 
                                                              "COMMENT" ];
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
@@ -105,24 +106,11 @@ export default class TuringParser extends Parser {
 	public state_(): StateContext {
 		let localctx: StateContext = new StateContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 2, TuringParser.RULE_state);
-		let _la: number;
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 15;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			do {
-				{
-				{
-				this.state = 14;
-				this.match(TuringParser.LEGAL_CHAR);
-				}
-				}
-				this.state = 17;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			} while (_la===9);
+			this.state = 14;
+			this.match(TuringParser.WORD);
 			}
 		}
 		catch (re) {
@@ -147,71 +135,71 @@ export default class TuringParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 19;
+			this.state = 16;
 			this.match(TuringParser.OPENER);
+			this.state = 20;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			while (_la===1) {
+				{
+				{
+				this.state = 17;
+				this.match(TuringParser.SPACE);
+				}
+				}
+				this.state = 22;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			}
 			this.state = 23;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			while (_la===1) {
-				{
-				{
-				this.state = 20;
-				this.match(TuringParser.SPACE);
-				}
-				}
-				this.state = 25;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			}
-			this.state = 26;
 			localctx._from_state = this.state_();
+			this.state = 27;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			while (_la===1) {
+				{
+				{
+				this.state = 24;
+				this.match(TuringParser.SPACE);
+				}
+				}
+				this.state = 29;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			}
 			this.state = 30;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			while (_la===1) {
-				{
-				{
-				this.state = 27;
-				this.match(TuringParser.SPACE);
-				}
-				}
-				this.state = 32;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			}
-			this.state = 33;
 			this.match(TuringParser.COMMA);
+			this.state = 34;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			while (_la===1) {
+				{
+				{
+				this.state = 31;
+				this.match(TuringParser.SPACE);
+				}
+				}
+				this.state = 36;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			}
 			this.state = 37;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			while (_la===1) {
-				{
-				{
-				this.state = 34;
-				this.match(TuringParser.SPACE);
-				}
-				}
-				this.state = 39;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			}
-			this.state = 40;
 			localctx._from_letter = this.letter();
-			this.state = 44;
+			this.state = 41;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===1) {
 				{
 				{
-				this.state = 41;
+				this.state = 38;
 				this.match(TuringParser.SPACE);
 				}
 				}
-				this.state = 46;
+				this.state = 43;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 47;
+			this.state = 44;
 			this.match(TuringParser.CLOSER);
 			}
 		}
@@ -237,103 +225,103 @@ export default class TuringParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 49;
+			this.state = 46;
 			this.match(TuringParser.OPENER);
+			this.state = 50;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			while (_la===1) {
+				{
+				{
+				this.state = 47;
+				this.match(TuringParser.SPACE);
+				}
+				}
+				this.state = 52;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			}
 			this.state = 53;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			while (_la===1) {
-				{
-				{
-				this.state = 50;
-				this.match(TuringParser.SPACE);
-				}
-				}
-				this.state = 55;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			}
-			this.state = 56;
 			localctx._to_state = this.state_();
+			this.state = 57;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			while (_la===1) {
+				{
+				{
+				this.state = 54;
+				this.match(TuringParser.SPACE);
+				}
+				}
+				this.state = 59;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			}
 			this.state = 60;
+			this.match(TuringParser.COMMA);
+			this.state = 64;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===1) {
 				{
 				{
-				this.state = 57;
+				this.state = 61;
 				this.match(TuringParser.SPACE);
 				}
 				}
-				this.state = 62;
+				this.state = 66;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 63;
-			this.match(TuringParser.COMMA);
 			this.state = 67;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			while (_la===1) {
-				{
-				{
-				this.state = 64;
-				this.match(TuringParser.SPACE);
-				}
-				}
-				this.state = 69;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			}
-			this.state = 70;
 			localctx._to_letter = this.letter();
+			this.state = 71;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			while (_la===1) {
+				{
+				{
+				this.state = 68;
+				this.match(TuringParser.SPACE);
+				}
+				}
+				this.state = 73;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			}
 			this.state = 74;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			while (_la===1) {
-				{
-				{
-				this.state = 71;
-				this.match(TuringParser.SPACE);
-				}
-				}
-				this.state = 76;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			}
-			this.state = 77;
 			this.match(TuringParser.COMMA);
+			this.state = 78;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			while (_la===1) {
+				{
+				{
+				this.state = 75;
+				this.match(TuringParser.SPACE);
+				}
+				}
+				this.state = 80;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			}
 			this.state = 81;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			while (_la===1) {
-				{
-				{
-				this.state = 78;
-				this.match(TuringParser.SPACE);
-				}
-				}
-				this.state = 83;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			}
-			this.state = 84;
 			localctx._direction = this.match(TuringParser.DIRECTION);
-			this.state = 88;
+			this.state = 85;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===1) {
 				{
 				{
-				this.state = 85;
+				this.state = 82;
 				this.match(TuringParser.SPACE);
 				}
 				}
-				this.state = 90;
+				this.state = 87;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 91;
+			this.state = 88;
 			this.match(TuringParser.CLOSER);
 			}
 		}
@@ -360,69 +348,69 @@ export default class TuringParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(localctx, 1);
 			{
+			this.state = 93;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			while (_la===1) {
+				{
+				{
+				this.state = 90;
+				this.match(TuringParser.SPACE);
+				}
+				}
+				this.state = 95;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			}
 			this.state = 96;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			while (_la===1) {
-				{
-				{
-				this.state = 93;
-				this.match(TuringParser.SPACE);
-				}
-				}
-				this.state = 98;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			}
-			this.state = 99;
 			localctx._left = this.lhs();
+			this.state = 100;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			while (_la===1) {
+				{
+				{
+				this.state = 97;
+				this.match(TuringParser.SPACE);
+				}
+				}
+				this.state = 102;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			}
 			this.state = 103;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			while (_la===1) {
-				{
-				{
-				this.state = 100;
-				this.match(TuringParser.SPACE);
-				}
-				}
-				this.state = 105;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			}
-			this.state = 106;
 			this.match(TuringParser.ARROW);
-			this.state = 110;
+			this.state = 107;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===1) {
 				{
 				{
-				this.state = 107;
+				this.state = 104;
 				this.match(TuringParser.SPACE);
 				}
 				}
-				this.state = 112;
+				this.state = 109;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 113;
+			this.state = 110;
 			localctx._right = this.rhs();
-			this.state = 117;
+			this.state = 114;
 			this._errHandler.sync(this);
-			_alt = this._interp.adaptivePredict(this._input, 14, this._ctx);
+			_alt = this._interp.adaptivePredict(this._input, 13, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
 				if (_alt === 1) {
 					{
 					{
-					this.state = 114;
+					this.state = 111;
 					this.match(TuringParser.SPACE);
 					}
 					}
 				}
-				this.state = 119;
+				this.state = 116;
 				this._errHandler.sync(this);
-				_alt = this._interp.adaptivePredict(this._input, 14, this._ctx);
+				_alt = this._interp.adaptivePredict(this._input, 13, this._ctx);
 			}
 			}
 		}
@@ -448,24 +436,24 @@ export default class TuringParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 124;
+			this.state = 121;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 14) !== 0)) {
 				{
-				this.state = 122;
+				this.state = 119;
 				this._errHandler.sync(this);
 				switch (this._input.LA(1)) {
 				case 1:
 				case 3:
 					{
-					this.state = 120;
+					this.state = 117;
 					this.turing_rule();
 					}
 					break;
 				case 2:
 					{
-					this.state = 121;
+					this.state = 118;
 					this.match(TuringParser.NEWLINE);
 					}
 					break;
@@ -473,11 +461,11 @@ export default class TuringParser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				this.state = 126;
+				this.state = 123;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 127;
+			this.state = 124;
 			this.match(TuringParser.EOF);
 			}
 		}
@@ -496,46 +484,45 @@ export default class TuringParser extends Parser {
 		return localctx;
 	}
 
-	public static readonly _serializedATN: number[] = [4,1,11,130,2,0,7,0,2,
-	1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,1,0,1,0,1,1,4,1,16,8,1,11,1,12,1,
-	17,1,2,1,2,5,2,22,8,2,10,2,12,2,25,9,2,1,2,1,2,5,2,29,8,2,10,2,12,2,32,
-	9,2,1,2,1,2,5,2,36,8,2,10,2,12,2,39,9,2,1,2,1,2,5,2,43,8,2,10,2,12,2,46,
-	9,2,1,2,1,2,1,3,1,3,5,3,52,8,3,10,3,12,3,55,9,3,1,3,1,3,5,3,59,8,3,10,3,
-	12,3,62,9,3,1,3,1,3,5,3,66,8,3,10,3,12,3,69,9,3,1,3,1,3,5,3,73,8,3,10,3,
-	12,3,76,9,3,1,3,1,3,5,3,80,8,3,10,3,12,3,83,9,3,1,3,1,3,5,3,87,8,3,10,3,
-	12,3,90,9,3,1,3,1,3,1,4,5,4,95,8,4,10,4,12,4,98,9,4,1,4,1,4,5,4,102,8,4,
-	10,4,12,4,105,9,4,1,4,1,4,5,4,109,8,4,10,4,12,4,112,9,4,1,4,1,4,5,4,116,
-	8,4,10,4,12,4,119,9,4,1,5,1,5,5,5,123,8,5,10,5,12,5,126,9,5,1,5,1,5,1,5,
-	0,0,6,0,2,4,6,8,10,0,1,2,0,7,7,9,9,140,0,12,1,0,0,0,2,15,1,0,0,0,4,19,1,
-	0,0,0,6,49,1,0,0,0,8,96,1,0,0,0,10,124,1,0,0,0,12,13,7,0,0,0,13,1,1,0,0,
-	0,14,16,5,9,0,0,15,14,1,0,0,0,16,17,1,0,0,0,17,15,1,0,0,0,17,18,1,0,0,0,
-	18,3,1,0,0,0,19,23,5,3,0,0,20,22,5,1,0,0,21,20,1,0,0,0,22,25,1,0,0,0,23,
-	21,1,0,0,0,23,24,1,0,0,0,24,26,1,0,0,0,25,23,1,0,0,0,26,30,3,2,1,0,27,29,
-	5,1,0,0,28,27,1,0,0,0,29,32,1,0,0,0,30,28,1,0,0,0,30,31,1,0,0,0,31,33,1,
-	0,0,0,32,30,1,0,0,0,33,37,5,5,0,0,34,36,5,1,0,0,35,34,1,0,0,0,36,39,1,0,
-	0,0,37,35,1,0,0,0,37,38,1,0,0,0,38,40,1,0,0,0,39,37,1,0,0,0,40,44,3,0,0,
-	0,41,43,5,1,0,0,42,41,1,0,0,0,43,46,1,0,0,0,44,42,1,0,0,0,44,45,1,0,0,0,
-	45,47,1,0,0,0,46,44,1,0,0,0,47,48,5,4,0,0,48,5,1,0,0,0,49,53,5,3,0,0,50,
-	52,5,1,0,0,51,50,1,0,0,0,52,55,1,0,0,0,53,51,1,0,0,0,53,54,1,0,0,0,54,56,
-	1,0,0,0,55,53,1,0,0,0,56,60,3,2,1,0,57,59,5,1,0,0,58,57,1,0,0,0,59,62,1,
-	0,0,0,60,58,1,0,0,0,60,61,1,0,0,0,61,63,1,0,0,0,62,60,1,0,0,0,63,67,5,5,
-	0,0,64,66,5,1,0,0,65,64,1,0,0,0,66,69,1,0,0,0,67,65,1,0,0,0,67,68,1,0,0,
-	0,68,70,1,0,0,0,69,67,1,0,0,0,70,74,3,0,0,0,71,73,5,1,0,0,72,71,1,0,0,0,
-	73,76,1,0,0,0,74,72,1,0,0,0,74,75,1,0,0,0,75,77,1,0,0,0,76,74,1,0,0,0,77,
-	81,5,5,0,0,78,80,5,1,0,0,79,78,1,0,0,0,80,83,1,0,0,0,81,79,1,0,0,0,81,82,
-	1,0,0,0,82,84,1,0,0,0,83,81,1,0,0,0,84,88,5,8,0,0,85,87,5,1,0,0,86,85,1,
-	0,0,0,87,90,1,0,0,0,88,86,1,0,0,0,88,89,1,0,0,0,89,91,1,0,0,0,90,88,1,0,
-	0,0,91,92,5,4,0,0,92,7,1,0,0,0,93,95,5,1,0,0,94,93,1,0,0,0,95,98,1,0,0,
-	0,96,94,1,0,0,0,96,97,1,0,0,0,97,99,1,0,0,0,98,96,1,0,0,0,99,103,3,4,2,
-	0,100,102,5,1,0,0,101,100,1,0,0,0,102,105,1,0,0,0,103,101,1,0,0,0,103,104,
-	1,0,0,0,104,106,1,0,0,0,105,103,1,0,0,0,106,110,5,6,0,0,107,109,5,1,0,0,
-	108,107,1,0,0,0,109,112,1,0,0,0,110,108,1,0,0,0,110,111,1,0,0,0,111,113,
-	1,0,0,0,112,110,1,0,0,0,113,117,3,6,3,0,114,116,5,1,0,0,115,114,1,0,0,0,
-	116,119,1,0,0,0,117,115,1,0,0,0,117,118,1,0,0,0,118,9,1,0,0,0,119,117,1,
-	0,0,0,120,123,3,8,4,0,121,123,5,2,0,0,122,120,1,0,0,0,122,121,1,0,0,0,123,
-	126,1,0,0,0,124,122,1,0,0,0,124,125,1,0,0,0,125,127,1,0,0,0,126,124,1,0,
-	0,0,127,128,5,0,0,1,128,11,1,0,0,0,17,17,23,30,37,44,53,60,67,74,81,88,
-	96,103,110,117,122,124];
+	public static readonly _serializedATN: number[] = [4,1,12,127,2,0,7,0,2,
+	1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,1,0,1,0,1,1,1,1,1,2,1,2,5,2,19,8,
+	2,10,2,12,2,22,9,2,1,2,1,2,5,2,26,8,2,10,2,12,2,29,9,2,1,2,1,2,5,2,33,8,
+	2,10,2,12,2,36,9,2,1,2,1,2,5,2,40,8,2,10,2,12,2,43,9,2,1,2,1,2,1,3,1,3,
+	5,3,49,8,3,10,3,12,3,52,9,3,1,3,1,3,5,3,56,8,3,10,3,12,3,59,9,3,1,3,1,3,
+	5,3,63,8,3,10,3,12,3,66,9,3,1,3,1,3,5,3,70,8,3,10,3,12,3,73,9,3,1,3,1,3,
+	5,3,77,8,3,10,3,12,3,80,9,3,1,3,1,3,5,3,84,8,3,10,3,12,3,87,9,3,1,3,1,3,
+	1,4,5,4,92,8,4,10,4,12,4,95,9,4,1,4,1,4,5,4,99,8,4,10,4,12,4,102,9,4,1,
+	4,1,4,5,4,106,8,4,10,4,12,4,109,9,4,1,4,1,4,5,4,113,8,4,10,4,12,4,116,9,
+	4,1,5,1,5,5,5,120,8,5,10,5,12,5,123,9,5,1,5,1,5,1,5,0,0,6,0,2,4,6,8,10,
+	0,1,2,0,7,7,9,9,136,0,12,1,0,0,0,2,14,1,0,0,0,4,16,1,0,0,0,6,46,1,0,0,0,
+	8,93,1,0,0,0,10,121,1,0,0,0,12,13,7,0,0,0,13,1,1,0,0,0,14,15,5,10,0,0,15,
+	3,1,0,0,0,16,20,5,3,0,0,17,19,5,1,0,0,18,17,1,0,0,0,19,22,1,0,0,0,20,18,
+	1,0,0,0,20,21,1,0,0,0,21,23,1,0,0,0,22,20,1,0,0,0,23,27,3,2,1,0,24,26,5,
+	1,0,0,25,24,1,0,0,0,26,29,1,0,0,0,27,25,1,0,0,0,27,28,1,0,0,0,28,30,1,0,
+	0,0,29,27,1,0,0,0,30,34,5,5,0,0,31,33,5,1,0,0,32,31,1,0,0,0,33,36,1,0,0,
+	0,34,32,1,0,0,0,34,35,1,0,0,0,35,37,1,0,0,0,36,34,1,0,0,0,37,41,3,0,0,0,
+	38,40,5,1,0,0,39,38,1,0,0,0,40,43,1,0,0,0,41,39,1,0,0,0,41,42,1,0,0,0,42,
+	44,1,0,0,0,43,41,1,0,0,0,44,45,5,4,0,0,45,5,1,0,0,0,46,50,5,3,0,0,47,49,
+	5,1,0,0,48,47,1,0,0,0,49,52,1,0,0,0,50,48,1,0,0,0,50,51,1,0,0,0,51,53,1,
+	0,0,0,52,50,1,0,0,0,53,57,3,2,1,0,54,56,5,1,0,0,55,54,1,0,0,0,56,59,1,0,
+	0,0,57,55,1,0,0,0,57,58,1,0,0,0,58,60,1,0,0,0,59,57,1,0,0,0,60,64,5,5,0,
+	0,61,63,5,1,0,0,62,61,1,0,0,0,63,66,1,0,0,0,64,62,1,0,0,0,64,65,1,0,0,0,
+	65,67,1,0,0,0,66,64,1,0,0,0,67,71,3,0,0,0,68,70,5,1,0,0,69,68,1,0,0,0,70,
+	73,1,0,0,0,71,69,1,0,0,0,71,72,1,0,0,0,72,74,1,0,0,0,73,71,1,0,0,0,74,78,
+	5,5,0,0,75,77,5,1,0,0,76,75,1,0,0,0,77,80,1,0,0,0,78,76,1,0,0,0,78,79,1,
+	0,0,0,79,81,1,0,0,0,80,78,1,0,0,0,81,85,5,8,0,0,82,84,5,1,0,0,83,82,1,0,
+	0,0,84,87,1,0,0,0,85,83,1,0,0,0,85,86,1,0,0,0,86,88,1,0,0,0,87,85,1,0,0,
+	0,88,89,5,4,0,0,89,7,1,0,0,0,90,92,5,1,0,0,91,90,1,0,0,0,92,95,1,0,0,0,
+	93,91,1,0,0,0,93,94,1,0,0,0,94,96,1,0,0,0,95,93,1,0,0,0,96,100,3,4,2,0,
+	97,99,5,1,0,0,98,97,1,0,0,0,99,102,1,0,0,0,100,98,1,0,0,0,100,101,1,0,0,
+	0,101,103,1,0,0,0,102,100,1,0,0,0,103,107,5,6,0,0,104,106,5,1,0,0,105,104,
+	1,0,0,0,106,109,1,0,0,0,107,105,1,0,0,0,107,108,1,0,0,0,108,110,1,0,0,0,
+	109,107,1,0,0,0,110,114,3,6,3,0,111,113,5,1,0,0,112,111,1,0,0,0,113,116,
+	1,0,0,0,114,112,1,0,0,0,114,115,1,0,0,0,115,9,1,0,0,0,116,114,1,0,0,0,117,
+	120,3,8,4,0,118,120,5,2,0,0,119,117,1,0,0,0,119,118,1,0,0,0,120,123,1,0,
+	0,0,121,119,1,0,0,0,121,122,1,0,0,0,122,124,1,0,0,0,123,121,1,0,0,0,124,
+	125,5,0,0,1,125,11,1,0,0,0,16,20,27,34,41,50,57,64,71,78,85,93,100,107,
+	114,119,121];
 
 	private static __ATN: ATN;
 	public static get _ATN(): ATN {
@@ -581,11 +568,8 @@ export class StateContext extends ParserRuleContext {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
-	public LEGAL_CHAR_list(): TerminalNode[] {
-	    	return this.getTokens(TuringParser.LEGAL_CHAR);
-	}
-	public LEGAL_CHAR(i: number): TerminalNode {
-		return this.getToken(TuringParser.LEGAL_CHAR, i);
+	public WORD(): TerminalNode {
+		return this.getToken(TuringParser.WORD, 0);
 	}
     public get ruleIndex(): number {
     	return TuringParser.RULE_state;

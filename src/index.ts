@@ -94,7 +94,7 @@ const log_errors = () => {
 
 class CustomErrorListener implements ErrorListener<any> {
     syntaxError(
-        recognizer: unknown,
+        recognizer: TuringParser,
         offendingSymbol: Token | null,
         line: number,
         charPositionInLine: number,
