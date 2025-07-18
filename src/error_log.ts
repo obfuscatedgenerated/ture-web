@@ -74,7 +74,7 @@ export class CustomErrorListener implements ErrorListener<any> {
             const decoration = editor.create_decoration_range(offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length, "cm-error");
             editor.apply_decoration_range(decoration);
 
-            editor.add_hover_message(message, offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length);
+            editor.add_hover_message(message, offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length, "cm-hover-msg error");
         }
 
         add(message, "syntax");

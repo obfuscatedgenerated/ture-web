@@ -108,7 +108,7 @@ export const remove_all_decorations = () => {
 let hover_extensions: Map<number, Extension> = new Map();
 let hover_id_counter = 0;
 
-const MessageHover = (start: number, end: number, message: string) => {
+const MessageHover = (start: number, end: number, message: string, class_name = "cm-hover-msg") => {
     return hoverTooltip((view, hoverPos) => {
         if (hoverPos < start || hoverPos >= end) return null;
 
@@ -118,7 +118,7 @@ const MessageHover = (start: number, end: number, message: string) => {
             above: true,
             create(view) {
                 const dom = document.createElement("div");
-                dom.classList.add("hover-msg");
+                dom.className = class_name;
                 dom.innerText = message;
                 return { dom };
             }
@@ -132,9 +132,10 @@ let update_listener_id_counter = 0;
 export const add_hover_message = (
     message: string,
     start: number,
-    end: number
+    end: number,
+    class_name = "cm-hover-msg"
 ) => {
-    const hover = MessageHover(start, end, message);
+    const hover = MessageHover(start, end, message, class_name);
 
     let id = ++hover_id_counter;
     hover_extensions.set(id, hover);
