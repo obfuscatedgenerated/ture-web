@@ -126,8 +126,8 @@ const MessageHover = (start: number, end: number, message: string) => {
     });
 }
 
-// ** GLOBAL listener extension reference **
-let update_listener_extension: Extension | null = null;
+let update_listener_extensions: Map<number, Extension> = new Map();
+let update_listener_id_counter = 0;
 
 export const add_hover_message = (
     message: string,
@@ -144,7 +144,7 @@ export const add_hover_message = (
             basicSetup,
             decorationsField,
             ...hover_extensions.values(),
-            ...(update_listener_extension ? [update_listener_extension] : [])
+            ...update_listener_extensions.values()
         ])
     });
 
@@ -161,7 +161,7 @@ export const remove_hover_message_by_id = (id: number) => {
             basicSetup,
             decorationsField,
             ...remaining,
-            ...(update_listener_extension ? [update_listener_extension] : [])
+            ...update_listener_extensions.values()
         ])
     });
 }
@@ -173,54 +173,44 @@ export const remove_all_hover_messages = () => {
         effects: StateEffect.reconfigure.of([
             basicSetup,
             decorationsField,
-            ...(update_listener_extension ? [update_listener_extension] : [])
+            ...update_listener_extensions.values()
         ])
     });
 }
 
 export const add_update_listener = (callback: (view: EditorView) => void, events: ("edit" | "select")[] = ["edit", "select"]) => {
-    // Remove old listener by reconfiguring without it
-    if (update_listener_extension) {
-        view.dispatch({
-            effects: StateEffect.reconfigure.of([
-                basicSetup,
-                decorationsField,
-                ...hover_extensions.values()
-            ])
-        });
-        update_listener_extension = null;
-    }
-
-    update_listener_extension = EditorView.updateListener.of((update) => {
-        if ((events.includes("edit") && update.docChanged) || (events.includes("select") && update.selectionSet)) {
-            callback(view);
-        }
-    });
+    update_listener_extensions.set(
+        ++update_listener_id_counter,
+        EditorView.updateListener.of((update) => {
+            if ((events.includes("edit") && update.docChanged) || (events.includes("select") && update.selectionSet)) {
+                callback(view);
+            }
+        })
+    );
 
     view.dispatch({
         effects: StateEffect.reconfigure.of([
             basicSetup,
             decorationsField,
             ...hover_extensions.values(),
-            update_listener_extension
+            ...update_listener_extensions.values()
         ])
     });
 }
 
-export const highlight_line = (line_num: number, class_name = "cm-highlight") => {
-    const doc = view.state.doc;
-    const line = doc.line(line_num);
+export const remove_update_listener_by_id = (id: number) => {
+    update_listener_extensions.delete(id);
 
-    if (!line) {
-        console.warn(`Line ${line_num} does not exist in the document.`);
-        return;
-    }
+    const remaining = Array.from(update_listener_extensions.values());
 
-    const decoration = create_decoration_range(line.from, line.to, class_name);
-    const id = apply_decoration_range(decoration);
-
-    // Optionally return the ID for later removal
-    return id;
+    view.dispatch({
+        effects: StateEffect.reconfigure.of([
+            basicSetup,
+            decorationsField,
+            ...hover_extensions.values(),
+            ...remaining
+        ])
+    });
 }
 
 export const set_readonly = (readonly: boolean) => {
@@ -229,7 +219,7 @@ export const set_readonly = (readonly: boolean) => {
             basicSetup,
             decorationsField,
             ...hover_extensions.values(),
-            ...(update_listener_extension ? [update_listener_extension] : []),
+            ...update_listener_extensions.values(),
             EditorView.editable.of(!readonly)
         ])
     });
@@ -239,4 +229,16 @@ export const set_readonly = (readonly: boolean) => {
     } else {
         view.dom.classList.remove("readonly");
     }
+}
+
+let dirty = false;
+add_update_listener((view => {
+    console.log("Editor content changed, marking as dirty");
+    dirty = true;
+}), ["edit"]);
+
+export const is_dirty = () => dirty;
+export const clear_dirty = () => {
+    console.log("Editor content saved, clearing dirty flag");
+    dirty = false;
 }

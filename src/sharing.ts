@@ -236,6 +236,7 @@ share_button.addEventListener("click", () => {
     const share_url = get_share_url(get_share_checkbox_values());
 
     navigator.clipboard.writeText(share_url).then(() => {
+        editor.clear_dirty();
         share_button.innerText = "Copied!";
         setTimeout(() => {
             share_button.innerHTML = share_button_content;
@@ -268,6 +269,7 @@ share_iframe_button.addEventListener("click", () => {
     iframe.height = height.toString();
 
     navigator.clipboard.writeText(iframe.outerHTML).then(() => {
+        editor.clear_dirty();
         share_iframe_button.innerText = "Copied!";
         setTimeout(() => {
             share_iframe_button.innerHTML = share_iframe_button_content;

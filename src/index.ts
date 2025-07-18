@@ -34,9 +34,7 @@ if (from_url.init) {
 
 // listen for navigating away from the page
 window.addEventListener("beforeunload", (e) => {
-    // TODO: proper dirty flag
-    if (editor.get_text() !== editor.DEFAULT_DOC) {
-        // if the document is not the default, warn the user
+    if (editor.is_dirty()) {
         e.preventDefault();
         e.returnValue = "You have unsaved changes. Are you sure you want to leave?";
     }

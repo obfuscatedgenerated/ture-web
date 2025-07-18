@@ -88,6 +88,8 @@ export const download_file = () => {
     document.body.appendChild(a);
     a.click();
     a.remove();
+
+    editor.clear_dirty();
 }
 
 
