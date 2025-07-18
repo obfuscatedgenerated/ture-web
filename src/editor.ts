@@ -32,13 +32,11 @@ const decorationsField = StateField.define<DecorationSet>({
     provide: f => EditorView.decorations.from(f)
 });
 
-export const create_editor = () => {
-    return new EditorView({
-        doc: DEFAULT_DOC,
-        parent: document.querySelector("#editor") as HTMLElement,
-        extensions: [basicSetup, decorationsField]
-    });
-}
+export const view = new EditorView({
+    doc: DEFAULT_DOC,
+    parent: document.querySelector("#editor") as HTMLElement,
+    extensions: [basicSetup, decorationsField]
+});
 
 export const create_decoration_range = (
     start: number,
@@ -52,7 +50,7 @@ type DecorationData = { from: number, to: number, className: string };
 const active_decorations: Map<number, DecorationData> = new Map();
 let decoration_id_counter = 0;
 
-const rebuild_and_apply_decorations = (view: EditorView) => {
+const rebuild_and_apply_decorations = () => {
     const docLength = view.state.doc.length;
     const builder = new RangeSetBuilder<Decoration>();
 
@@ -70,10 +68,7 @@ const rebuild_and_apply_decorations = (view: EditorView) => {
     });
 }
 
-export const apply_decoration_range = (
-    view: EditorView,
-    decoration: Range<Decoration>,
-) => {
+export const apply_decoration_range = (decoration: Range<Decoration>,) => {
     let id = ++decoration_id_counter;
 
     // Instead of storing the Range<Decoration> directly, store logical data
@@ -83,26 +78,25 @@ export const apply_decoration_range = (
         className: (decoration.value.spec.class || "cm-error")
     });
 
-    rebuild_and_apply_decorations(view);
+    rebuild_and_apply_decorations();
     return id;
 }
 
 export const create_and_apply_decoration_range = (
-    view: EditorView,
     start: number,
     end: number,
     class_name = "cm-error"
 ) => {
     const decoration = create_decoration_range(start, end, class_name);
-    return apply_decoration_range(view, decoration);
+    return apply_decoration_range(decoration);
 }
 
-export const remove_decoration_by_id = (view: EditorView, id: number) => {
+export const remove_decoration_by_id = (id: number) => {
     active_decorations.delete(id);
-    rebuild_and_apply_decorations(view);
+    rebuild_and_apply_decorations();
 }
 
-export const remove_all_decorations = (view: EditorView) => {
+export const remove_all_decorations = () => {
     active_decorations.clear();
     view.dispatch({ effects: clearDecorationsEffect.of() });
 }
@@ -132,7 +126,6 @@ const MessageHover = (start: number, end: number, message: string) => {
 let update_listener_extension: Extension | null = null;
 
 export const add_hover_message = (
-    view: EditorView,
     message: string,
     start: number,
     end: number
@@ -154,7 +147,7 @@ export const add_hover_message = (
     return id;
 }
 
-export const remove_hover_message_by_id = (view: EditorView, id: number) => {
+export const remove_hover_message_by_id = (id: number) => {
     hover_extensions.delete(id);
 
     const remaining = Array.from(hover_extensions.values());
@@ -169,7 +162,7 @@ export const remove_hover_message_by_id = (view: EditorView, id: number) => {
     });
 }
 
-export const remove_all_hover_messages = (view: EditorView) => {
+export const remove_all_hover_messages = () => {
     hover_extensions.clear();
 
     view.dispatch({
@@ -181,7 +174,7 @@ export const remove_all_hover_messages = (view: EditorView) => {
     });
 }
 
-export const add_update_listener = (view: EditorView, callback: (view: EditorView) => void, events: ("edit" | "select")[] = ["edit", "select"]) => {
+export const add_update_listener = (callback: (view: EditorView) => void, events: ("edit" | "select")[] = ["edit", "select"]) => {
     // Remove old listener by reconfiguring without it
     if (update_listener_extension) {
         view.dispatch({
@@ -210,7 +203,7 @@ export const add_update_listener = (view: EditorView, callback: (view: EditorVie
     });
 }
 
-export const highlight_line = (view: EditorView, line_num: number, class_name = "cm-highlight") => {
+export const highlight_line = (line_num: number, class_name = "cm-highlight") => {
     const doc = view.state.doc;
     const line = doc.line(line_num);
 
@@ -220,13 +213,13 @@ export const highlight_line = (view: EditorView, line_num: number, class_name = 
     }
 
     const decoration = create_decoration_range(line.from, line.to, class_name);
-    const id = apply_decoration_range(view, decoration);
+    const id = apply_decoration_range(decoration);
 
     // Optionally return the ID for later removal
     return id;
 }
 
-export const set_readonly = (view: EditorView, readonly: boolean) => {
+export const set_readonly = (readonly: boolean) => {
     view.dispatch({
         effects: StateEffect.reconfigure.of([
             basicSetup,
