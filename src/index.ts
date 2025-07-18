@@ -850,6 +850,36 @@ share_button.addEventListener("click", () => {
     });
 });
 
+// bind share iframe button
+const share_iframe_button = document.getElementById("share-iframe-button") as HTMLButtonElement;
+const share_iframe_button_content = share_iframe_button.innerHTML;
+share_iframe_button.addEventListener("click", () => {
+    const props = get_share_checkbox_values();
+    const share_url = get_share_url(props);
+
+    // create an iframe with the share url
+    const iframe = document.createElement("iframe");
+    iframe.src = share_url;
+    iframe.width = "1200";
+
+    // calculate height based on content
+    let height = 520;
+
+    if (props.script) {
+        const line_count = (editor.state.doc.toString().match(/\n/g) || []).length + 1;
+        height += line_count * 18; // 18px per line
+    }
+
+    iframe.height = height.toString();
+
+    navigator.clipboard.writeText(iframe.outerHTML).then(() => {
+        share_iframe_button.innerText = "Copied!";
+        setTimeout(() => {
+            share_iframe_button.innerHTML = share_iframe_button_content;
+        }, 2000);
+    });
+});
+
 // on mac, replace Ctrl with Cmd in the kbd elements
 document.querySelectorAll(".mac-cmd").forEach((el) => {
     if (navigator.platform.startsWith("Mac")) {
