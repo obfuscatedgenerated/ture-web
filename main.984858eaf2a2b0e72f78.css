@@ -1,9 +1,97 @@
+:root {
+    --body-bg: #fafafa;
+    --on-body-bg: #ccc;
+
+    --white-bg: #fff;
+    --disabled-white-bg: #f0f0f0;
+
+    --tape-bg: #f0f0f0;
+    --on-tape-bg: #c9c9c9;
+
+    --text-body: #333;
+    --text-secondary: #444;
+    --text-tertiary: #777;
+    --text-ghost: #aaa;
+    --text-link: var(--accent);
+
+    --accent: #2b72d6;
+    --accent-hover: #1e5cb0;
+    --on-accent: #fff;
+    --accent-secondary: #619be5;
+
+    --danger: #e33;
+    --on-danger: #fff;
+    --light-danger: #fdd;
+    --on-light-danger: #900;
+
+    --step-pointer: #111;
+
+    --highlighter-bg: #ede242;
+    --highlighter-text: #000;
+
+    --active-line-bg: #92c0d742;
+    --active-line-gutter-bg: #bfd6ec;
+
+    --shadow: rgba(0, 0, 0, 0.2);
+    --unshadow: rgba(255, 255, 255, 0.7);
+
+    --key-bg: #eee;
+    --key-border: #b4b4b4;
+    --key-text: var(--text-body);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --body-bg: #181818;
+        --on-body-bg: #444;
+
+        --white-bg: #111;
+        --disabled-white-bg: #000;
+
+        --tape-bg: #222;
+        --on-tape-bg: #333;
+
+        --text-body: #ddd;
+        --text-secondary: #bbb;
+        --text-tertiary: #888;
+        --text-ghost: #666;
+        --text-link: #6ab7ff;
+
+        --accent: #1255a1;
+        --accent-hover: #0e3f7d;
+        --on-accent: #fff;
+        --accent-secondary: #7fb3e5;
+
+        --danger: #e33;
+        --on-danger: #fff;
+        --light-danger: #411;
+        --on-light-danger: #fdd;
+
+        --step-pointer: #fff;
+
+        --active-line-bg: #5f889d29;
+        --active-line-gutter-bg: #2a3f4f;
+
+        --shadow: rgba(0, 0, 0, 0.5);
+        --unshadow: rgba(255, 255, 255, 0.1);
+
+        --key-text: #333;
+    }
+}
+
 /* Global styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 2rem;
-    background-color: #fafafa;
-    color: #333;
+
+    background-color: var(--body-bg);
+    color: var(--text-body);
+    accent-color: var(--accent);
+}
+
+a {
+    color: var(--text-link);
+    text-decoration: none;
 }
 
 /* Header */
@@ -14,14 +102,14 @@ h1 {
 
 h1 small {
     font-size: 0.95rem;
-    color: #777;
+    color: var(--text-tertiary);
 }
 
 h3 {
     font-size: 1.2rem;
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
-    color: #444;
+    color: var(--text-secondary);
 }
 
 /* Form controls */
@@ -37,10 +125,12 @@ input,
 textarea {
     padding: 0.5rem;
     font-size: 1rem;
-    border: 0.0625rem solid #ccc;
+    border: 0.0625rem solid var(--on-body-bg);
     border-radius: 0.375rem;
     box-sizing: border-box;
     margin-right: 1rem;
+    background-color: var(--white-bg);
+    color: var(--text-body);
 }
 
 input:not([type="checkbox"]), select, textarea {
@@ -54,8 +144,8 @@ input:not([type="checkbox"]), select, textarea {
 button {
     padding: 0.5rem 0.9rem;
     font-size: 0.95rem;
-    background-color: #2b72d6;
-    color: white;
+    background-color: var(--accent);
+    color: var(--on-accent);
     border: none;
     border-radius: 0.375rem;
     cursor: pointer;
@@ -65,32 +155,32 @@ button {
 }
 
 button:hover {
-    background-color: #1e5cb0;
+    background-color: var(--accent-hover);
 }
 
 button.danger {
-    background-color: #e33;
-    color: white;
+    background-color: var(--danger);
+    color: var(--on-danger);
 }
 
 button.icon {
     background: none;
-    color: #444;
+    color: var(--text-secondary);
     border: none;
     font-size: 1.2rem;
     cursor: pointer;
 }
 
 button[disabled] {
-    background-color: #ccc;
+    background-color: var(--on-body-bg);
     cursor: not-allowed;
 }
 
 /* Editor & spacing */
 #editor {
-    border: 0.0625rem solid #ccc;
+    border: 0.0625rem solid var(--on-body-bg);
     border-radius: 0.375rem;
-    background-color: #fff;
+    background-color: var(--white-bg);
     margin-top: 1rem;
     font-family: monospace;
     white-space: pre;
@@ -104,33 +194,56 @@ button[disabled] {
     width: 100%;
     height: 4.5rem;
     padding: 1rem;
-    border: 0.0625rem solid #e33;
+    border: 0.0625rem solid var(--danger);
     border-radius: 0.375rem;
-    background-color: #fff2f2;
+    background-color: var(--light-danger);
     font-family: monospace;
-    color: #b00;
+    color: var(--on-light-danger);
     margin-top: 0.5rem;
 }
 
+.cm-gutter {
+    background-color: var(--white-bg);
+    color: var(--text-secondary);
+}
+
+.cm-gutters {
+    border-color: var(--on-body-bg);
+}
+
+.cm-activeLine {
+    background-color: var(--active-line-bg) !important;
+}
+
+.cm-activeLineGutter {
+    background-color: var(--active-line-gutter-bg) !important;
+}
+
 .cm-error {
-    text-decoration: red wavy underline;
+    text-decoration: var(--danger) wavy underline;
 }
 
 .cm-highlight {
-    background-color: #eee784;
+    background-color: var(--highlighter-bg);
+    color: var(--highlighter-text);
 }
 
-.hover-msg {
-    background-color: #9f2d2d;
-    color: #fff;
+.cm-hover-msg {
+    background-color: var(--accent);
+    color: var(--on-accent);
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
     font-size: 0.9rem;
 }
 
+.cm-hover-msg.error {
+    background-color: var(--light-danger);
+    color: var(--on-light-danger);
+}
+
 .cm-editor.readonly {
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: var(--disabled-white-bg);
+    color: var(--text-body);
 }
 
 /* Upload dialog */
@@ -138,8 +251,9 @@ dialog {
     border: none;
     border-radius: 0.625rem;
     padding: 1.5rem;
-    box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.2);
-    background: #fff;
+    box-shadow: 0 0 0.625rem var(--shadow);
+    background: var(--white-bg);
+    color: inherit;
 }
 
 #upload-dialog {
@@ -206,9 +320,9 @@ dialog .header h4 {
     justify-content: center;
     font-family: monospace;
     font-size: 1.1rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--on-body-bg);
     border-radius: 4px;
-    background: #fff;
+    background: var(--white-bg);
     margin-right: 0.5rem;
     outline: none;
     box-sizing: border-box;
@@ -216,11 +330,11 @@ dialog .header h4 {
 }
 
 .tile:focus {
-    border-color: #2b72d6;
+    border-color: var(--accent);
 }
 
 .tile.pointer {
-    border-bottom: solid 0.2rem #111;
+    border-bottom: solid 0.2rem var(--step-pointer);
 }
 
 .tile.locked {
@@ -231,12 +345,12 @@ dialog .header h4 {
     display: flex;
     flex-direction: row;
     overflow-x: auto;
-    background-color: #f0f0f0;
+    background-color: var(--tape-bg);
     padding: 0.5rem;
 }
 
 .tape-grid.locked {
-    background: repeating-linear-gradient(-45deg, #f0f0f0 0px, #f0f0f0 2px,rgb(211,211,211) 2px, rgb(211,211,211) 4px);
+    background: repeating-linear-gradient(-45deg, var(--tape-bg) 0px, var(--tape-bg) 2px, var(--on-tape-bg) 2px, var(--on-tape-bg) 4px);
 }
 
 .control-group.full {
@@ -250,11 +364,11 @@ dialog .header h4 {
 }
 
 #init-state:invalid {
-    border-color: #e33;
+    border-color: var(--danger);
 }
 
 small a {
-    color: #619be5;
+    color: var(--accent-secondary);
     text-decoration: none;
 }
 
@@ -290,11 +404,11 @@ small a {
 }
 
 kbd {
-    background-color: #eee;
+    background-color: var(--key-bg);
     border-radius: 3px;
-    border: 1px solid #b4b4b4;
-    box-shadow: 0 1px 1px rgb(0 0 0 / 0.2), 0 2px 0 0 rgb(255 255 255 / 0.7) inset;
-    color: #333;
+    border: 1px solid var(--key-border);
+    box-shadow: 0 1px 1px var(--shadow), 0 2px 0 0 var(--unshadow) inset;
+    color: var(--key-text);
     display: inline-block;
     font-size: 0.85em;
     font-weight: 700;
@@ -331,7 +445,7 @@ button kbd:first-of-type {
     bottom: 0.1rem;
     left: 0.2rem;
     pointer-events: none;
-    color: #aaa;
+    color: var(--text-ghost);
     font-size: 0.8rem;
 }
 
