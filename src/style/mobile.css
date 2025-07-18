@@ -12,8 +12,20 @@ body {
     align-items: stretch;
 }
 
-.control-group.end {
-    justify-content: flex-start;
+.run-button {
+    justify-content: center !important;
+}
+
+#stepper-controls:not(.hidden) {
+    display: flex !important;
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#stepper-buttons {
+    float: unset !important;
 }
 
 #upload-dialog {
@@ -31,8 +43,25 @@ body {
     max-height: calc(100dvh - 4rem);
 }
 
+h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+#links {
+    font-size: 1.1rem;
+}
+
 label {
     margin-top: 0.5rem;
+}
+
+.mobile-only {
+    display: inline;
+}
+
+.not-mobile {
+    display: none;
 }
 
 /* TODO: improve editor top buttons on mobile */

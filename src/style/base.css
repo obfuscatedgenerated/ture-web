@@ -27,6 +27,11 @@ h1 small {
     color: var(--text-tertiary);
 }
 
+h1 .medium {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+}
+
 h3 {
     font-size: 1.2rem;
     margin-top: 1.5rem;
@@ -132,6 +137,10 @@ dialog .header h4 {
 
 .sub-option {
     margin-left: 1.5rem;
+}
+
+.mobile-only {
+    display: none;
 }
 
 kbd {
