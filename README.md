@@ -24,7 +24,7 @@ You can download the program as a .ture file with the `Download .ture file` butt
 
 You can upload either a .txt of just the rules or a .ture file with the rules and init state with the `Upload from file` button (<kbd>Ctrl</kbd><span class="kbd-plus">+</span><kbd>O</kbd> or <kbd>Cmd</kbd><span class="kbd-plus">+</span><kbd>O</kbd>). The file will be parsed and the rules will be loaded into the editor. If an init state is declared, it will be set as the initial state in the dropdown.
 
-You can copy a URL of the encoded program alongside the name, tape, and init state with the `Copy Share URL` button (<kbd>Ctrl</kbd><span class="kbd-plus">+</span><kbd>Alt</kbd><span class="kbd-plus">+</span><kbd>S</kbd> or <kbd>Cmd</kbd><span class="kbd-plus">+</span><kbd>Alt</kbd><span class="kbd-plus">+</span><kbd>S</kbd>). This URL can be shared with others to run the same program when they open the link.
+You can copy a URL of the encoded program alongside the name, tape, and init state with the `Create share URL` button (<kbd>Ctrl</kbd><span class="kbd-plus">+</span><kbd>Alt</kbd><span class="kbd-plus">+</span><kbd>S</kbd> or <kbd>Cmd</kbd><span class="kbd-plus">+</span><kbd>Alt</kbd><span class="kbd-plus">+</span><kbd>S</kbd>). This URL can be shared with others to run the same program when they open the link. You have the option of which properties you want to share and whether to make them read only. You can choose to copy the link or generate an iframe embed code to include in your own website or application.
 
 ## Syntax
 
