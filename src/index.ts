@@ -7,7 +7,6 @@ import * as sharing from "./sharing";
 
 import "./ui_binding";
 import "./keybinds";
-import {add_dirty_change_listener} from "./editor";
 
 declare var __COMMIT_DETAILS__: string;
 
@@ -55,5 +54,5 @@ const update_title = () => {
 }
 
 file_name.addEventListener("input", update_title);
-add_dirty_change_listener(update_title);
+editor.add_dirty_change_listener(update_title);
 update_title();
