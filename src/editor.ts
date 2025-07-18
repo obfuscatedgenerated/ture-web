@@ -38,6 +38,10 @@ export const view = new EditorView({
     extensions: [basicSetup, decorationsField]
 });
 
+export const get_text = () => {
+    return view.state.doc.toString();
+}
+
 export const create_decoration_range = (
     start: number,
     end: number,

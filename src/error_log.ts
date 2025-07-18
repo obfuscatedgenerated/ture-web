@@ -1,13 +1,12 @@
 import {ErrorListener, Token} from "antlr4";
 
 import type TuringParser from "./grammar/TuringParser";
-import type {EditorView} from "@codemirror/view";
 
-import {add_hover_message, apply_decoration_range, create_decoration_range} from "./editor";
+import * as editor from "./editor";
 
 let errors: { type: "syntax" | string, message: string }[] = [];
 const errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
-const errors_container = document.getElementById("error_log-container") as HTMLDivElement;
+const errors_container = document.getElementById("errors-container") as HTMLDivElement;
 
 export const get_list = () => {
     return errors;
@@ -54,19 +53,13 @@ export const clear_type = (type: "syntax" | string) => {
     }
 }
 
-export const log = () => {
+export const log_to_console = () => {
     for (const error of errors) {
         console.error(`${error.type}: ${error.message}`);
     }
 }
 
 export class CustomErrorListener implements ErrorListener<any> {
-    editor: EditorView;
-
-    constructor(editor: EditorView) {
-        this.editor = editor
-    }
-
     syntaxError(
         recognizer: TuringParser,
         offendingSymbol: Token | null,
@@ -78,10 +71,10 @@ export class CustomErrorListener implements ErrorListener<any> {
         let message = `Syntax error at line ${line}, column ${charPositionInLine}: ${msg}`;
 
         if (offendingSymbol) {
-            const decoration = create_decoration_range(offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length, "cm-error");
-            apply_decoration_range(this.editor, decoration);
+            const decoration = editor.create_decoration_range(offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length, "cm-error");
+            editor.apply_decoration_range(decoration);
 
-            add_hover_message(this.editor, message, offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length);
+            editor.add_hover_message(message, offendingSymbol.start, offendingSymbol.start + offendingSymbol.text.length);
         }
 
         add(message, "syntax");
