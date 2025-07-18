@@ -132,6 +132,8 @@ const set_state_names = (names: string[]) => {
 }
 
 const guess_init_state = () => {
+    // TODO: explore behavioural guessing i.e. compare lhs frequency to rhs frequency. a state with no transitions into it is likely an initial state
+
     if (state_select.value !== "") {
         // already selected
         return;
