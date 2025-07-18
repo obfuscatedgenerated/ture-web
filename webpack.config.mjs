@@ -1,7 +1,7 @@
 import path from "path";
-import { fileURLToPath } from "url";
+import {fileURLToPath} from "url";
 
-import { execSync } from "child_process";
+import {execSync} from "child_process";
 
 import webpack from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
@@ -19,14 +19,12 @@ console.log("css_strategy:", css_strategy);
 const get_commit_details = () => {
     try {
         // get hash, name, and date
-        return execSync(`git log -1 --pretty=format:"%h: %s (%ad)" --date=short`, { encoding: 'utf8' })
+        return execSync(`git log -1 --pretty=format:"%h: %s (%ad)" --date=short`, {encoding: 'utf8'})
     } catch (error) {
         console.error("Error getting commit details:", error);
         return "";
     }
 }
-
-let commit_details = get_commit_details();
 
 export default {
     entry: "./src/index.ts",
@@ -69,16 +67,9 @@ export default {
         },
     },
     plugins: [
-        {
-            apply: (compiler) => {
-                compiler.hooks.beforeRun.tap("BeforeRunPlugin", () => {
-                    commit_details = get_commit_details();
-                });
-            }
-        },
-
+        // note: doesnt update on watch mode but doesnt matter
         new webpack.DefinePlugin({
-            "__COMMIT_DETAILS__": JSON.stringify(commit_details),
+            __COMMIT_DETAILS__: JSON.stringify(get_commit_details()),
         }),
 
         new HtmlWebpackPlugin({
