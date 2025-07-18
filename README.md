@@ -1,4 +1,6 @@
-# Ture on the web
+# Ture
+
+A turing machine interpreter.
 
 See also: <a href="https://github.com/obfuscatedgenerated/Ture" target="_blank">the original Java implementation</a>.
 

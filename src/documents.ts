@@ -22,6 +22,7 @@ export const show_document = (title: string, content_html: string) => {
     document_content.innerHTML = content_html;
 
     document_dialog.showModal();
+    document_content.scrollTop = 0;
 }
 
 export const hide_document = () => {

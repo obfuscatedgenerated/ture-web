@@ -57,7 +57,7 @@ tape_input_dom.addEventListener("keydown", () => {
 // bind help link
 document.getElementById("help-link")!.addEventListener("click", (e) => {
     e.preventDefault();
-    show_document("Help", documents.readme);
+    show_document("README", documents.readme);
 });
 
 // bind examples link
