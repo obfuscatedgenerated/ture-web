@@ -20,6 +20,8 @@ import {
 } from "./editor";
 
 import {compressToEncodedURIComponent, decompressFromEncodedURIComponent} from "lz-string";
+import levenshtein from "js-levenshtein";
+
 import {TuringErrorStrategy} from "./TuringErrorStrategy";
 import {documents, hide_document, show_document} from "./documents";
 
@@ -129,6 +131,63 @@ const set_state_names = (names: string[]) => {
     }
 }
 
+const guess_init_state = () => {
+    if (state_select.value !== "") {
+        // already selected
+        return;
+    }
+
+    const options = states_options.querySelectorAll("option");
+
+    // if there is only one state, select it as the initial state
+    if (options.length === 1) {
+        add_error(`Warning: guessing initial state from only state "${options[0].value}" as none was set.`, "warn");
+        state_select.value = options[0].value;
+        state_select.setCustomValidity("");
+        return;
+    }
+
+    // first, look for any states similar to "init" or "start"
+    // priority goes to lowest edit distance
+    const keywords = ["init", "start"];
+    const threshold = 0.5;
+
+    let best_match: string | null = null;
+    let best_score = Infinity;
+
+    for (let i = 0; i < options.length; i++) {
+        const option = options[i];
+        const value = option.value.toLowerCase();
+
+        for (const keyword of keywords) {
+            const distance = levenshtein(value, keyword);
+            const normalized = distance / value.length;
+
+            // award a small bonus if the value includes the keyword
+            const includes = value.includes(keyword);
+            const adjusted = normalized - (includes ? 0.2 : 0);
+
+            console.log(`${value} vs ${keyword}: distance=${distance}, normalized=${normalized}, adjusted=${adjusted}`);
+
+            // only accept if the adjusted score is below the threshold
+            if (adjusted < threshold && adjusted < best_score) {
+                best_score = adjusted;
+                best_match = option.value;
+            }
+        }
+    }
+
+    if (best_match) {
+        add_error(`Warning: guessing initial state "${best_match}" as none was set.`, "warn");
+        state_select.value = best_match;
+        state_select.setCustomValidity("");
+        return;
+    }
+
+    // can't guess
+    add_error("Could not guess initial state.", "no-init");
+}
+
 const parse = (input: string): ProgramContext => {
     clear_errors_of_type("syntax");
 
@@ -175,11 +234,17 @@ const run = (input: string) => {
         return;
     }
 
-    const init_state = state_select.value;
+    let init_state = state_select.value;
     if (init_state === "") {
-        add_error("Please select an initial state.", "no-init");
-        state_select.setCustomValidity("Please select an initial state.");
-        return;
+        // guess init state if none set
+        guess_init_state();
+        init_state = state_select.value;
+
+        // if couldn't guess, set invalid and stop
+        if (init_state === "") {
+            state_select.setCustomValidity("Please select an initial state.");
+            return;
+        }
     }
 
     exec.set_state(init_state);
@@ -260,11 +325,17 @@ const run_step = () => {
             return;
         }
 
-        const init_state = state_select.value;
+        let init_state = state_select.value;
         if (init_state === "") {
-            add_error("Please select an initial state.", "no-init");
-            state_select.setCustomValidity("Please select an initial state.");
-            return;
+            // guess init state if none set
+            guess_init_state();
+            init_state = state_select.value;
+
+            // if couldn't guess, set invalid and stop
+            if (init_state === "") {
+                state_select.setCustomValidity("Please select an initial state.");
+                return;
+            }
         }
 
         exec.set_state(init_state);
