@@ -24,6 +24,7 @@ import {
 } from "./editor";
 
 import {compressToEncodedURIComponent, decompressFromEncodedURIComponent} from "lz-string";
+import {TuringErrorStrategy} from "./TuringErrorStrategy";
 
 const editor = create_editor();
 
@@ -147,6 +148,7 @@ const parse = (input: string): ProgramContext => {
     const parser = new TuringParser(tokens);
     parser.removeErrorListeners();
     parser.addErrorListener(new CustomErrorListener());
+    parser._errHandler = new TuringErrorStrategy();
 
     const tree = parser.program();
     //console.log(tree.toStringTree(parser.ruleNames, parser));
