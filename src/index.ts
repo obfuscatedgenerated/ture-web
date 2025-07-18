@@ -775,6 +775,12 @@ document.getElementById("help-link")!.addEventListener("click", (e) => {
     show_document("Help", documents.readme);
 });
 
+// bind examples link
+document.getElementById("examples-link")!.addEventListener("click", (e) => {
+    e.preventDefault();
+    show_document("Examples", documents.examples);
+});
+
 // bind teachers link
 document.getElementById("teachers-link")!.addEventListener("click", (e) => {
     e.preventDefault();
@@ -953,5 +959,14 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
+// listen for navigating away from the page
+window.addEventListener("beforeunload", (e) => {
+    // TODO: proper dirty flag
+    if (editor.state.doc.toString() !== DEFAULT_DOC) {
+        // if the document is not the default, warn the user
+        e.preventDefault();
+        e.returnValue = "You have unsaved changes. Are you sure you want to leave?";
+    }
+});
+
 // TODO: split this file up
-// TODO: improve validation error ux when editing file (would help if they had a line to blame)

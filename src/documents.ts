@@ -1,11 +1,14 @@
 // @ts-expect-error
 import readme_html from "../README.md";
 // @ts-expect-error
-import teachers_html from "../teachers.md";
+import teachers_html from "../TEACHERS.md";
+// @ts-expect-error
+import examples_html from "../examples.md";
 
 export const documents = {
     readme: readme_html,
     teachers: teachers_html,
+    examples: examples_html,
     easter_egg: `<p style="text-align: center">Congratulations! You have solved the halting problem!</p>
         <p style="text-align: center"><img src="./public/confetti.gif" style="text-align: center; width: 50%" /></p>`
 }
