@@ -17,11 +17,3 @@
 .mobile-only {
     display: none;
 }
-
-.space-left {
-    margin-left: 0.1em;
-}
-
-.space-right {
-    margin-right: 0.1em;
-}
