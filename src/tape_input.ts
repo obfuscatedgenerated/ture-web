@@ -1,5 +1,5 @@
 import {EMPTY} from "./TuringExecutor";
-import {documents, hide_document, show_document} from "./documents";
+import {documents, show_document} from "./documents";
 
 export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement) => {
     const add_tile = (char?: string) => {

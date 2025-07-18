@@ -1,4 +1,4 @@
-import {DefaultErrorStrategy, InputMismatchException, RecognitionException} from "antlr4";
+import {DefaultErrorStrategy, InputMismatchException} from "antlr4";
 import TuringParser from "./grammar/TuringParser";
 
 export class TuringErrorStrategy extends DefaultErrorStrategy {
