@@ -347,7 +347,8 @@ h1 {
 }
 
 #links {
-    font-size: 4.5vw;
+    font-size: clamp(0.75rem, 4.5vw, 0.9rem);
+    white-space: nowrap;
 }
 
 label {
