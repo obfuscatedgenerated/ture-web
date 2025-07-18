@@ -105,6 +105,16 @@ export const apply_decoration_range = (
     return id;
 }
 
+export const create_and_apply_decoration_range = (
+    view: EditorView,
+    start: number,
+    end: number,
+    class_name = "cm-error"
+) => {
+    const decoration = create_decoration_range(start, end, class_name);
+    return apply_decoration_range(view, decoration);
+}
+
 export const remove_decoration_by_id = (view: EditorView, id: number) => {
     active_decorations.delete(id);
     rebuild_and_apply_decorations(view);

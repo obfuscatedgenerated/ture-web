@@ -16,7 +16,7 @@ import {setup as setup_tape_input} from "./tape_input";
 import {
     add_hover_message,
     add_update_listener,
-    apply_decoration_range,
+    apply_decoration_range, create_and_apply_decoration_range,
     create_decoration_range,
     create_editor, highlight_line,
     remove_all_decorations,
@@ -220,7 +220,7 @@ const run = (input: string) => {
 
 let step_iterator: StepIterator | null = null;
 let step_idx = 0;
-let highlight_line_id: number | undefined;
+let step_highlight_id: number | undefined;
 const run_step = () => {
     // if step_iterator is null, parse the input and create a new iterator
     if (!step_iterator) {
@@ -291,21 +291,21 @@ const run_step = () => {
 
                 tape_fns.mark_pointer(null);
 
-                if (highlight_line_id) {
-                    remove_decoration_by_id(editor, highlight_line_id);
+                if (step_highlight_id) {
+                    remove_decoration_by_id(editor, step_highlight_id);
                 }
             } else {
-                console.log(`Tape: ${res.value}, Position: ${res.pos}, State: ${res.state} (Line: ${res.line_num})`);
+                console.log(`Tape: ${res.value}, Position: ${res.pos}, State: ${res.state} (Text range: ${res.text_range?.start} - ${res.text_range?.end})`);
 
                 tape_fns.set_value(res.value);
                 tape_fns.mark_pointer(res.pos);
 
-                if (highlight_line_id) {
-                    remove_decoration_by_id(editor, highlight_line_id);
+                if (step_highlight_id) {
+                    remove_decoration_by_id(editor, step_highlight_id);
                 }
 
-                if (res.line_num) {
-                    highlight_line_id = highlight_line(editor, res.line_num);
+                if (res.text_range) {
+                    step_highlight_id = create_and_apply_decoration_range(editor, res.text_range.start, res.text_range.end, "cm-highlight");
                 }
 
                 step_state.innerText = res.state;
@@ -321,8 +321,8 @@ const run_step = () => {
 
             tape_fns.mark_pointer(null);
 
-            if (highlight_line_id) {
-                remove_decoration_by_id(editor, highlight_line_id);
+            if (step_highlight_id) {
+                remove_decoration_by_id(editor, step_highlight_id);
             }
         }
     }

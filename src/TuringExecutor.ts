@@ -10,15 +10,20 @@ export enum ExecResultStatus {
     Halt
 }
 
+interface TextRange {
+    start: number;
+    end: number;
+}
+
 class ExecResult {
     status: ExecResultStatus;
     new_tape: string;
-    line_num?: number;
+    text_range?: TextRange;
 
-    constructor(status: ExecResultStatus, new_tape: string, line_num?: number) {
+    constructor(status: ExecResultStatus, new_tape: string, text_range?: TextRange) {
         this.status = status;
         this.new_tape = new_tape;
-        this.line_num = line_num;
+        this.text_range = text_range;
     }
 }
 
@@ -35,7 +40,7 @@ const write_tape_letter = (in_tape: string, pos: number, letter: string) => {
 }
 
 export default class TuringExecutor extends TuringVisitor<string> {
-    private lookup = new Map<string, {rhs: RhsContext, line_num: number}>();
+    private lookup = new Map<string, {rhs: RhsContext, text_range: TextRange}>();
     private parsed = false;
 
     visitLetter = (ctx: LetterContext) => {
@@ -63,7 +68,10 @@ export default class TuringExecutor extends TuringVisitor<string> {
 
         this.lookup.set(lookup_key, {
             rhs: ctx._right,
-            line_num: ctx.start.line
+            text_range: {
+                start: ctx.start.start,
+                end: ctx.stop!.stop + 1
+            }
         });
 
         return ctx.getText();
@@ -113,9 +121,9 @@ export default class TuringExecutor extends TuringVisitor<string> {
 
         switch (dir_str) {
             case "left":
-                return new ExecResult(ExecResultStatus.Left, tape, rule.line_num);
+                return new ExecResult(ExecResultStatus.Left, tape, rule.text_range);
             case "right":
-                return new ExecResult(ExecResultStatus.Right, tape, rule.line_num);
+                return new ExecResult(ExecResultStatus.Right, tape, rule.text_range);
             default:
                 throw new Error(`Unknown direction: ${dir_str}`);
         }
@@ -193,7 +201,7 @@ export default class TuringExecutor extends TuringVisitor<string> {
                     }
                 }
 
-                return {status: res.status, value: tape, pos: pos, state: this.current_state, line_num: res.line_num};
+                return {status: res.status, value: tape, pos: pos, state: this.current_state, text_range: res.text_range};
             }
         };
     }
@@ -204,7 +212,7 @@ export interface StepResult {
     value: string;
     pos: number;
     state: string;
-    line_num?: number;
+    text_range?: TextRange;
 }
 
 export type StepIterator = {
