@@ -22,7 +22,7 @@ ESCAPED_PERCENT: '\\%';
 COMMENT: '%' ~[\n\r]* -> skip;
 
 letter: LEGAL_CHAR | EMPTY;
-state: WORD;
+state: LEGAL_CHAR | WORD;
 
 // whitespace is allowed between the elements of each rule but not in state names etc (so we aren't skipping whitespace in the lexer)
 lhs: OPENER SPACE* from_state=state SPACE* COMMA SPACE* from_letter=letter SPACE* CLOSER;
