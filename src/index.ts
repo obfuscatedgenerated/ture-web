@@ -280,7 +280,7 @@ const run = (input: string) => {
 }
 
 let step_iterator: StepIterator | null = null;
-let step_idx = 0;
+let step_idx = 1;
 let step_highlight_id: number | undefined;
 
 const cancel_steps = () => {
@@ -340,7 +340,7 @@ const run_step = () => {
 
         exec.set_state(init_state);
         step_iterator = exec.get_step_iterator(tape_input.value);
-        step_idx = 0;
+        step_idx = 1;
 
         console.log("Prepared new step iterator.");
 
