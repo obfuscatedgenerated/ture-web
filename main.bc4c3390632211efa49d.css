@@ -258,6 +258,14 @@ button kbd:first-of-type {
     display: none;
 }
 
+.space-left {
+    margin-left: 0.1em;
+}
+
+.space-right {
+    margin-right: 0.1em;
+}
+
 .top-controls {
     display: flex;
     flex-wrap: wrap;
