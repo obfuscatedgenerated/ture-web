@@ -270,6 +270,9 @@ share_iframe_button.addEventListener("click", () => {
     // create an iframe with the share url
     const iframe = document.createElement("iframe");
     iframe.src = share_url;
+    iframe.style.border = "none";
+    iframe.loading = "lazy";
+    iframe.allowFullscreen = true;
     iframe.width = "1200";
 
     // calculate height based on content
