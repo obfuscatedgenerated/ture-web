@@ -141,7 +141,7 @@ const guess_init_state = () => {
 
     // if there is only one state, select it as the initial state
     if (options.length === 1) {
-        add_error(`Warning: guessing initial state from only state "${options[0].value}" as none was set.`, "warn");
+        add_error(`Warning: guessing initial state from only state "${options[0].value}" as none was set.`, "warn-guessed");
         state_select.value = options[0].value;
         state_select.setCustomValidity("");
         return;
@@ -178,14 +178,14 @@ const guess_init_state = () => {
     }
 
     if (best_match) {
-        add_error(`Warning: guessing initial state "${best_match}" as none was set.`, "warn");
+        add_error(`Warning: guessing initial state "${best_match}" as none was set.`, "warn-guessed");
         state_select.value = best_match;
         state_select.setCustomValidity("");
         return;
     }
 
     // can't guess
-    add_error("Could not guess initial state.", "no-init");
+    add_error("Could not guess initial state. Please select one.", "no-init");
 }
 
 const parse = (input: string): ProgramContext => {
