@@ -6,7 +6,7 @@ import {EMPTY} from "./TuringExecutor";
 import {documents, hide_document, show_document} from "./documents";
 
 const state_select = document.getElementById("init-state") as HTMLSelectElement;
-const tape_input = document.getElementById("input") as HTMLInputElement;
+const tape_input_dom = document.getElementById("input") as HTMLInputElement;
 
 // parse on change to highlight errors
 editor.add_update_listener((view) => {
@@ -50,7 +50,7 @@ state_select.addEventListener("change", () => {
 });
 
 // bind tape input change
-tape_input.addEventListener("keydown", () => {
+tape_input_dom.addEventListener("keydown", () => {
     error_log.clear_type("warn-no-tape");
 });
 

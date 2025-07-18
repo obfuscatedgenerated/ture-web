@@ -192,6 +192,18 @@ export const load_from_url = (): ShareURLPropertiesWithValues => {
     return loaded;
 }
 
+export const finish_load_from_url = (from_url: ShareURLPropertiesWithValues) => {
+    if (from_url.init) {
+        // check init state from url
+        if (!state_select.querySelector(`option[value="${from_url.init.value}"]`)) {
+            error_log.add(`Initial state declared in URL "${from_url.init.value}" is not defined in the program.`, "no-init");
+            state_select.value = "";
+        } else {
+            state_select.value = from_url.init.value;
+        }
+    }
+}
+
 const get_share_checkbox_values = (): ShareURLProperties => {
     const properties: ShareURLProperties = {};
 
@@ -276,3 +288,4 @@ share_iframe_button.addEventListener("click", () => {
         }, 2000);
     });
 });
+

@@ -235,10 +235,19 @@ let dirty = false;
 add_update_listener((view => {
     console.log("Editor content changed, marking as dirty");
     dirty = true;
+
+    dirty_change_callbacks.forEach(callback => callback(dirty));
 }), ["edit"]);
 
 export const is_dirty = () => dirty;
 export const clear_dirty = () => {
     console.log("Editor content saved, clearing dirty flag");
     dirty = false;
+
+    dirty_change_callbacks.forEach(callback => callback(dirty));
+}
+
+const dirty_change_callbacks: ((dirty: boolean) => void)[] = [];
+export const add_dirty_change_listener = (callback: (dirty: boolean) => void) => {
+    dirty_change_callbacks.push(callback);
 }

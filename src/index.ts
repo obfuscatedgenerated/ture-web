@@ -2,35 +2,25 @@ import "./style.css";
 
 import * as editor from "./editor";
 import * as error_log from "./error_log";
-import * as sharing from "./sharing";
 import * as runner from "./runner";
+import * as sharing from "./sharing";
 
 import "./ui_binding";
 import "./keybinds";
+import {add_dirty_change_listener} from "./editor";
 
 declare var __COMMIT_DETAILS__: string;
 
 console.log(__COMMIT_DETAILS__);
 document.getElementById("commit-details")!.innerText = __COMMIT_DETAILS__;
 
-const state_select = document.getElementById("init-state") as HTMLSelectElement;
-
-// load from url params
 const from_url = sharing.load_from_url();
 
 // parse default value immediately
 runner.parse(editor.get_text());
 error_log.log_to_console();
 
-if (from_url.init) {
-    // check init state from url
-    if (!state_select.querySelector(`option[value="${from_url.init.value}"]`)) {
-        error_log.add(`Initial state declared in URL "${from_url.init.value}" is not defined in the program.`, "no-init");
-        state_select.value = "";
-    } else {
-        state_select.value = from_url.init.value;
-    }
-}
+sharing.finish_load_from_url(from_url);
 
 // listen for navigating away from the page
 window.addEventListener("beforeunload", (e) => {
@@ -46,3 +36,24 @@ document.querySelectorAll(".mac-cmd").forEach((el) => {
         el.textContent = "⌘";
     }
 });
+
+// update document title to reflect the file name
+const file_name = document.getElementById("file-name") as HTMLInputElement;
+
+const update_title = () => {
+    let title = "Ture";
+
+    if (file_name.value) {
+        title = `${file_name.value} - ${title}`;
+    }
+
+    if (editor.is_dirty()) {
+        title = `(*) ${title}`;
+    }
+
+    document.title = title;
+}
+
+file_name.addEventListener("input", update_title);
+add_dirty_change_listener(update_title);
+update_title();
