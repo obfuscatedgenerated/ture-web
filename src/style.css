@@ -247,12 +247,12 @@ small a {
     float: right;
 }
 
-#readme-dialog {
+#document-dialog {
     max-height: 90vh;
     max-width: 90vw;
 }
 
-#readme-content {
+#document-content {
     overflow-y: auto;
     max-height: calc(90vh - 4rem);
 }
@@ -289,7 +289,7 @@ button kbd:first-of-type {
     }
 
     /* always show in readme */
-    #readme-content kbd, #readme-content .kbd-plus {
+    #document-content kbd, #document-content .kbd-plus {
         display: inline-block;
     }
 }
@@ -318,13 +318,13 @@ button kbd:first-of-type {
         max-width: 20rem;
     }
 
-    #readme-dialog {
+    #document-dialog {
         max-height: 100dvh;
         max-width: 100vw;
         height: 100dvh;
     }
 
-    #readme-content {
+    #document-content {
         max-height: calc(100dvh - 4rem);
     }
 

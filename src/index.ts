@@ -1,9 +1,5 @@
 import "./style.css";
 
-
-// @ts-expect-error
-import readme_html from "../README.md";
-
 import {CharStream, CommonTokenStream, ErrorListener, Token} from "antlr4";
 
 import TuringLexer from "./grammar/TuringLexer";
@@ -25,6 +21,7 @@ import {
 
 import {compressToEncodedURIComponent, decompressFromEncodedURIComponent} from "lz-string";
 import {TuringErrorStrategy} from "./TuringErrorStrategy";
+import {documents, hide_document, show_document} from "./documents";
 
 const editor = create_editor();
 
@@ -46,9 +43,6 @@ const file_name = document.getElementById("file-name") as HTMLInputElement;
 
 const step_state = document.getElementById("step-state") as HTMLSpanElement;
 const step_number = document.getElementById("step-number") as HTMLSpanElement;
-
-const readme_dialog = document.getElementById("readme-dialog") as HTMLDialogElement;
-readme_dialog.querySelector("#readme-content")!.innerHTML = readme_html;
 
 const add_error = (message: string, type: "syntax" | string) => {
     errors.push({type, message});
@@ -602,12 +596,18 @@ document.getElementById("upload-cancel")!.addEventListener("click", () => {
 // bind help link
 document.getElementById("help-link")!.addEventListener("click", (e) => {
     e.preventDefault();
-    readme_dialog.showModal();
+    show_document("Help", documents.readme);
+});
+
+// bind teachers link
+document.getElementById("teachers-link")!.addEventListener("click", (e) => {
+    e.preventDefault();
+    show_document("Teachers", documents.teachers);
 });
 
 // bind help close button
-document.getElementById("readme-close")!.addEventListener("click", () => {
-    readme_dialog.close();
+document.getElementById("document-close")!.addEventListener("click", () => {
+    hide_document();
 });
 
 // bind download button

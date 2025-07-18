@@ -1,4 +1,5 @@
 import {EMPTY} from "./TuringExecutor";
+import {documents, hide_document, show_document} from "./documents";
 
 export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement) => {
     const add_tile = (char?: string) => {
@@ -40,16 +41,7 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
     const easter_egg = () => {
         done_easter_egg = true;
 
-        const dialog = document.createElement("dialog");
-        dialog.innerHTML = `<p style="text-align: center">Congratulations! You have solved the halting problem!</p>
-        <p style="text-align: center"><img src="./public/confetti.gif" style="text-align: center; width: 50%" /></p>`;
-        document.body.appendChild(dialog);
-        dialog.showModal();
-
-       setTimeout(() => {
-          dialog.close();
-          document.body.removeChild(dialog);
-       }, 5000);
+        show_document("", documents.easter_egg);
     }
 
     const check_easter_egg = (tape_str: string) => {
