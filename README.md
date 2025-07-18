@@ -28,7 +28,7 @@ You can copy a URL of the encoded program alongside the name, tape, and init sta
 
 ## Syntax
 
-You can check the example programs, such as <a target="_blank" href="https://ollieg.codes/ture-web/?script=KQAgygLg9gTgpiCALBAzAljAzhEAbOCCOGEdAO0RRAHdYATEAQy2ZByeICgAKARwCS5dBAA0zAJQgAtAD4Q-AILim4mOgDmSCBN6DhYkACMpchXwBC4o2s3bdXUAFkoANwTQqCOOUZRUXohMAA5wesqSMvJKKrZaOuHWptF8ETYg6vG6-FaRZjmxGXYJBcbJ5rnpmfZcjiAWTADGANYQME3NIFDkjQg0KJQ0CPBNSIE%2BfgHIHiFhMSCAWNTl-ACivhEL4gSoJZbiS1Hma-S5m-hwOw6gAEpwwXhNHtQPOOdEJLQiY9MgGNi4BHepCYvhAPmIpB%2BbRC7AgnDmfGOESYyz4AAkmHhDKoilk9Eikod%2BBisYVqrtjrkUUT0ZjDFVitlEb5KqiSfS4vYgA&name=LastFirst&name_ro=true&init=qInit">LastFirst</a> for examples of valid syntax.
+You can check the example programs, such as <a target="_blank" href="https://ture.ollieg.codes/?script=KQAgygLg9gTgpiCALBAzAljAzhEAbOCCOGEdAO0RRAHdYATEAQy2ZByeICgAKARwCS5dBAA0zAJQgAtAD4Q-AILim4mOgDmSCBN6DhYkACMpchXwBC4o2s3bdXUAFkoANwTQqCOOUZRUXohMAA5wesqSMvJKKrZaOuHWptF8ETYg6vG6-FaRZjmxGXYJBcbJ5rnpmfZcjiAWTADGANYQME3NIFDkjQg0KJQ0CPBNSIE%2BfgHIHiFhMSCAWNTl-ACivhEL4gSoJZbiS1Hma-S5m-hwOw6gAEpwwXhNHtQPOOdEJLQiY9MgGNi4BHepCYvhAPmIpB%2BbRC7AgnDmfGOESYyz4AAkmHhDKoilk9Eikod%2BBisYVqrtjrkUUT0ZjDFVitlEb5KqiSfS4vYgA&name=LastFirst&name_ro=true&init=qInit">LastFirst</a> for examples of valid syntax.
 
 ### Rules
 
