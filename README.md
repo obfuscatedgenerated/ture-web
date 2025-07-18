@@ -6,23 +6,23 @@ See also: <a href="https://github.com/obfuscatedgenerated/Ture" target="_blank">
 
 You can enter the formal descriptions of transition rules as described in the [syntax section](#syntax) in the text area at the bottom. This will be validated against syntax errors in real time.
 
-You can use the `Copy empty letter` button (`Alt+E`) to copy the empty letter symbol `⬚` to your clipboard. This is useful for pasting into the rules.
+You can use the `Copy empty letter` button (<kbd>Alt</kbd><span class="kbd-plus">+</span><kbd>E</kbd>) to copy the empty letter symbol `⬚` to your clipboard. This is useful for pasting into the rules.
 
 You can enter the tape contents to feed to a program in the input at the top. It will automatically expand to the correct size as you type or paste.
 
 You can select the initial state to start the program from with the dropdown. This will automatically be populated from the rules you enter.
 
-You can use the `Run program` button (`F8`) to run the program in one go. This will replace the contents of the tape with the final result.
+You can use the `Run program` button (<kbd>F8</kbd>) to run the program in one go. This will replace the contents of the tape with the final result.
 
-You can use the `Run step-by-step` button (`F9`) to enter stepped execution mode. You can step through the program with the `Next step` button (`F9`). The position of the pointer will be reflected under the tape cells. The tape cell values will be replaced by each step. The current state and step number is displayed below the tape. The transition rule that was just followed to reach the current state will be highlighted in the editor. You can press the `Cancel` button (`Esc`) to halt the step-by-step execution. You can press `Run remaining` (`F8`) to execute the remaining steps of the program to the end without stepping.
+You can use the `Run step-by-step` button (<kbd>F9</kbd>) to enter stepped execution mode. You can step through the program with the `Next step` button (<kbd>F9</kbd>). The position of the pointer will be reflected under the tape cells. The tape cell values will be replaced by each step. The current state and step number is displayed below the tape. The transition rule that was just followed to reach the current state will be highlighted in the editor. You can press the `Cancel` button (<kbd>Esc</kbd>) to halt the step-by-step execution. You can press `Run remaining` (<kbd>F8</kbd>) to execute the remaining steps of the program to the end without stepping.
 
 You can name the program with the `Program name` field above the editor.
 
-You can download the program as a .ture file with the `Download .ture file` button (`Ctrl+S` or `Cmd+S`).
+You can download the program as a .ture file with the `Download .ture file` button (<kbd>Ctrl</kbd><span class="kbd-plus">+</span><kbd>S</kbd> or <kbd>Cmd</kbd><span class="kbd-plus">+</span><kbd>S</kbd>).
 
-You can upload either a .txt of just the rules or a .ture file with the rules and init state with the `Upload from file` button (`Ctrl+O` or `Cmd+O`). The file will be parsed and the rules will be loaded into the editor. If an init state is declared, it will be set as the initial state in the dropdown.
+You can upload either a .txt of just the rules or a .ture file with the rules and init state with the `Upload from file` button (<kbd>Ctrl</kbd><span class="kbd-plus">+</span><kbd>O</kbd> or <kbd>Cmd</kbd><span class="kbd-plus">+</span><kbd>O</kbd>). The file will be parsed and the rules will be loaded into the editor. If an init state is declared, it will be set as the initial state in the dropdown.
 
-You can copy a URL of the encoded program alongside the name, tape, and init state with the `Copy Share URL` button (`Ctrl+Alt+S` or `Cmd+Alt+S`). This URL can be shared with others to run the same program when they open the link.
+You can copy a URL of the encoded program alongside the name, tape, and init state with the `Copy Share URL` button (<kbd>Ctrl</kbd><span class="kbd-plus">+</span><kbd>Alt</kbd><span class="kbd-plus">+</span><kbd>S</kbd> or <kbd>Cmd</kbd><span class="kbd-plus">+</span><kbd>Alt</kbd><span class="kbd-plus">+</span><kbd>S</kbd>). This URL can be shared with others to run the same program when they open the link.
 
 ## Syntax
 

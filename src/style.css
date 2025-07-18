@@ -100,7 +100,7 @@ button:hover {
 }
 
 .hover-msg {
-    background-color: #f88;
+    background-color: #9f2d2d;
     color: #fff;
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
@@ -275,6 +275,10 @@ kbd {
     white-space: nowrap;
 }
 
+.kbd-plus {
+    font-family: monospace;
+}
+
 button kbd:first-of-type {
     margin-left: 0.25rem;
 }
@@ -282,6 +286,11 @@ button kbd:first-of-type {
 @media (hover: none) and (pointer: coarse) {
     kbd, .kbd-plus {
         display: none;
+    }
+
+    /* always show in readme */
+    #readme-content kbd, #readme-content .kbd-plus {
+        display: inline-block;
     }
 }
 
