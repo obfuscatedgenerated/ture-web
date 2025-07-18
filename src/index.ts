@@ -14,7 +14,7 @@ import {
     add_update_listener,
     apply_decoration_range, create_and_apply_decoration_range,
     create_decoration_range,
-    create_editor,
+    create_editor, DEFAULT_DOC,
     remove_all_decorations,
     remove_all_hover_messages, remove_decoration_by_id, set_readonly
 } from "./editor";
@@ -42,6 +42,8 @@ const tape_fns = setup_tape_input(tape_input, tape_visual);
 const upload_dialog = document.getElementById("upload-dialog") as HTMLDialogElement;
 const file_input = document.getElementById("file-input") as HTMLInputElement;
 const file_name = document.getElementById("file-name") as HTMLInputElement;
+
+const share_dialog = document.getElementById("share-dialog") as HTMLDialogElement;
 
 const step_state = document.getElementById("step-state") as HTMLSpanElement;
 const step_number = document.getElementById("step-number") as HTMLSpanElement;
@@ -360,10 +362,6 @@ const run_step = () => {
         step_state.innerText = init_state;
         step_number.innerText = "1";
 
-        // TODO: lock form elements
-        // TODO: bind cancel button
-        // TODO: better ux
-
         return;
     }
 
@@ -513,27 +511,49 @@ const download_file = () => {
     a.remove();
 }
 
-const get_share_url = () => {
-    // TODO: dialog to ask which properties to copy
 
+type ShareURLPropertyName = "script" | "name" | "init" | "tape";
+const share_prop_names: ShareURLPropertyName[] = ["script", "name", "init", "tape"];
+interface ShareURLProperty {
+    readonly: boolean;
+}
+type ShareURLProperties = Partial<Record<ShareURLPropertyName, ShareURLProperty>>;
+type ShareURLPropertiesWithValues = {
+    [K in ShareURLPropertyName]?: ShareURLProperty & { value: string };
+}
+
+const get_share_url = (properties: ShareURLProperties) => {
     const comp = compressToEncodedURIComponent(editor.state.doc.toString());
 
     const url = new URL(window.location.href);
     url.hash = ""; // clear hash (sometimes set by readme viewers)
+    url.search = ""; // clear search params to avoid conflicts
 
-    url.searchParams.set("script", comp);
+    if (properties.script) {
+        url.searchParams.set("script", comp);
 
-    if (file_name.value) {
+        if (properties.script.readonly) {
+            url.searchParams.set("script_ro", "true");
+        }
+    }
+
+    if (properties.name && file_name.value) {
         url.searchParams.set("name", file_name.value);
+
+        if (properties.name.readonly) {
+            url.searchParams.set("name_ro", "true");
+        }
     }
 
-    if (state_select.value) {
+    if (properties.init && state_select.value) {
         url.searchParams.set("init", state_select.value);
-    } else {
-        url.searchParams.delete("init");
+
+        if (properties.init.readonly) {
+            url.searchParams.set("init_ro", "true");
+        }
     }
 
-    if (tape_input.value) {
+    if (properties.tape && tape_input.value) {
         let tape = tape_input.value;
 
         // remove trailing empty characters from tape input
@@ -548,14 +568,49 @@ const get_share_url = () => {
 
         const trimmed = tape.substring(0, last_non_empty);
         url.searchParams.set("tape", trimmed);
-    } else {
-        url.searchParams.delete("tape");
+
+        if (properties.tape.readonly) {
+            url.searchParams.set("tape_ro", "true");
+        }
     }
 
     return url.toString();
 }
 
-const load_from_url = () => {
+const show_share_dialog = () => {
+    // if certain properties dont have a value to share, disable the checkbox
+    const script_enable = (editor.state.doc.toString() !== "" && editor.state.doc.toString() !== DEFAULT_DOC);
+    if (!script_enable) {
+        document.getElementById("include-script")!.setAttribute("disabled", "true");
+    } else {
+        document.getElementById("include-script")!.removeAttribute("disabled");
+    }
+
+    const name_enable = (file_name.value !== "");
+    if (!name_enable) {
+        document.getElementById("include-name")!.setAttribute("disabled", "true");
+    } else {
+        document.getElementById("include-name")!.removeAttribute("disabled");
+    }
+
+    const init_enable = (state_select.value !== "");
+    if (!init_enable) {
+        document.getElementById("include-init")!.setAttribute("disabled", "true");
+    } else {
+        document.getElementById("include-init")!.removeAttribute("disabled");
+    }
+
+    const tape_enable = (tape_input.value !== "" && tape_input.value !== EMPTY.repeat(tape_input.value.length));
+    if (!tape_enable) {
+        document.getElementById("include-tape")!.setAttribute("disabled", "true");
+    } else {
+        document.getElementById("include-tape")!.removeAttribute("disabled");
+    }
+
+    share_dialog.showModal();
+}
+
+const load_from_url = (): ShareURLPropertiesWithValues => {
     // TODO: support loading a file from a remote url
 
     const url = new URL(window.location.href);
@@ -564,7 +619,7 @@ const load_from_url = () => {
     const tape = url.searchParams.get("tape");
     const name = url.searchParams.get("name");
 
-    const loaded: {script?: string, init?: string, tape?: string, name?: string} = {};
+    const loaded: ShareURLPropertiesWithValues = {};
 
     if (script) {
         const decompressed = decompressFromEncodedURIComponent(script);
@@ -573,7 +628,16 @@ const load_from_url = () => {
                 changes: {from: 0, to: editor.state.doc.length, insert: decompressed}
             });
 
-            loaded.script = decompressed;
+            const readonly = url.searchParams.get("script_ro") === "true";
+
+            if (readonly) {
+                set_readonly(editor, true);
+            }
+
+            loaded.script = {
+                readonly: readonly,
+                value: decompressed
+            };
         } else {
             console.error("Failed to decompress script from URL.");
             add_error("Failed to decompress script from URL", "decompress");
@@ -581,21 +645,52 @@ const load_from_url = () => {
     }
 
     if (init_state) {
-        // cant do anything for this since not parsed yet, so need to deal with it after
-        loaded.init = init_state;
+        const readonly = url.searchParams.get("init_ro") === "true";
+
+        if (readonly) {
+            state_select.disabled = true;
+        }
+
+        // cant do anything for this value since not parsed yet, so need to deal with it after
+
+        loaded.init = {
+            readonly: readonly,
+            value: init_state
+        };
     }
 
     if (tape) {
         tape_input.value = tape;
         tape_fns.set_value(tape);
-        loaded.tape = tape;
+
+        const readonly = url.searchParams.get("tape_ro") === "true";
+
+        if (readonly) {
+            tape_fns.set_locked(true);
+        }
+
+        loaded.tape = {
+            readonly: readonly,
+            value: tape
+        };
     }
 
     if (name) {
         file_name.value = name;
-        loaded.name = name;
+
+        const readonly = url.searchParams.get("name_ro") === "true";
+
+        if (readonly) {
+            file_name.disabled = true;
+        }
+
+        loaded.name = {
+            readonly: readonly,
+            value: name
+        };
     }
 
+    console.table(loaded);
     return loaded;
 }
 
@@ -608,11 +703,11 @@ log_errors();
 
 if (from_url.init) {
     // check init state from url
-    if (!state_select.querySelector(`option[value="${from_url.init}"]`)) {
-        add_error(`Initial state declared in URL "${from_url.init}" is not defined in the program.`, "no-init");
+    if (!state_select.querySelector(`option[value="${from_url.init.value}"]`)) {
+        add_error(`Initial state declared in URL "${from_url.init.value}" is not defined in the program.`, "no-init");
         state_select.value = "";
     } else {
-        state_select.value = from_url.init;
+        state_select.value = from_url.init.value;
     }
 }
 
@@ -694,11 +789,50 @@ document.getElementById("document-close")!.addEventListener("click", () => {
 // bind download button
 document.getElementById("download-button")!.addEventListener("click", download_file);
 
+// bind share dialog button
+document.getElementById("share-dialog-button")!.addEventListener("click", () => {
+    show_share_dialog();
+});
+
+// bind share dialog close button
+document.getElementById("share-close")!.addEventListener("click", () => {
+    share_dialog.close();
+});
+
+// bind checkbox suboptions
+share_prop_names.forEach(id => {
+    const checkbox = document.getElementById(`include-${id}`) as HTMLInputElement;
+    const sub_div = document.getElementById(`${id}-sub`);
+
+    if (checkbox && sub_div) {
+        checkbox.addEventListener("change", () => {
+            sub_div.classList.toggle("hidden", !checkbox.checked);
+        });
+    }
+});
+
+const get_share_checkbox_values = (): ShareURLProperties => {
+    const properties: ShareURLProperties = {};
+
+    share_prop_names.forEach(id => {
+        const include = document.getElementById(`include-${id}`) as HTMLInputElement;
+        const readonly = document.getElementById(`readonly-${id}`) as HTMLInputElement;
+
+        if (include.checked) {
+            properties[id] = {
+                readonly: readonly.checked
+            };
+        }
+    });
+
+    return properties;
+}
+
 // bind share button
 const share_button = document.getElementById("share-button") as HTMLButtonElement;
 const share_button_content = share_button.innerHTML;
 share_button.addEventListener("click", () => {
-    const share_url = get_share_url();
+    const share_url = get_share_url(get_share_checkbox_values());
 
     navigator.clipboard.writeText(share_url).then(() => {
         share_button.innerText = "Copied!";
@@ -775,20 +909,12 @@ document.addEventListener("keydown", (e) => {
     }
 
     if (control_key && e.altKey) {
-        // share: Ctrl + Alt + S
+        // share dialog: Ctrl + Alt + S
         if (e.key === "s" || e.key === "S") {
             e.preventDefault();
             override_kbd_hiding();
 
-            const share_url = get_share_url();
-            navigator.clipboard.writeText(share_url).then(() => {
-                share_button.innerText = "Copied!";
-                setTimeout(() => {
-                    share_button.innerHTML = share_button_content;
-                }, 2000);
-            }).catch((err) => {
-                console.error("Failed to copy share URL: ", err);
-            });
+            show_share_dialog();
             return;
         }
     }

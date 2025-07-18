@@ -57,10 +57,10 @@
     <h3>Transition rules editor</h3>
 
     <label for="file-name">Program name:</label>
-    <input id="file-name" type="text" placeholder="Program name" value="LastFirst" />
+    <input id="file-name" type="text" placeholder="Program name" value="My Program" />
     <button id="download-button">Download .ture file <kbd class="mac-cmd">Ctrl</kbd> <span class="kbd-plus">+</span> <kbd>S</kbd></button>
     <button id="upload-button">Upload from file <kbd class="mac-cmd">Ctrl</kbd> <span class="kbd-plus">+</span> <kbd>O</kbd></button>
-    <button id="share-button">Copy share URL <kbd class="mac-cmd">Ctrl</kbd> <span class="kbd-plus">+</span> <kbd>Alt</kbd> <span class="kbd-plus">+</span> <kbd>S</kbd></button>
+    <button id="share-dialog-button">Create share URL <kbd class="mac-cmd">Ctrl</kbd> <span class="kbd-plus">+</span> <kbd>Alt</kbd> <span class="kbd-plus">+</span> <kbd>S</kbd></button>
     <button id="copy-empty">Copy empty letter <kbd>Alt</kbd> <span class="kbd-plus">+</span> <kbd>E</kbd></button>
 
     <div id="editor"></div>
@@ -76,6 +76,50 @@
             <button id="upload-cancel" class="icon" title="Close uploader">x</button>
         </div>
         <input type="file" id="file-input" accept=".txt,.ture">
+    </dialog>
+
+    <dialog id="share-dialog">
+        <div id="share-header" class="header">
+            <h4>Share URL builder</h4>
+            <button id="share-close" class="icon" title="Close share dialog">x</button>
+        </div>
+
+        <p>Select the properties you wish to share:</p>
+        <form id="share-form">
+            <label>
+                <input type="checkbox" id="include-script">
+                Transition rule script
+            </label>
+            <div class="hidden sub-option" id="script-sub">
+                <label><input type="checkbox" id="readonly-script"> Read only?</label>
+            </div>
+
+            <label>
+                <input type="checkbox" id="include-name">
+                Program name
+            </label>
+            <div class="hidden sub-option" id="name-sub">
+                <label><input type="checkbox" id="readonly-name"> Read only?</label>
+            </div>
+
+            <label>
+                <input type="checkbox" id="include-init">
+                Initial state
+            </label>
+            <div class="hidden sub-option" id="init-sub">
+                <label><input type="checkbox" id="readonly-init"> Read only?</label>
+            </div>
+
+            <label>
+                <input type="checkbox" id="include-tape">
+                Tape
+            </label>
+            <div class="hidden sub-option" id="tape-sub">
+                <label><input type="checkbox" id="readonly-tape"> Read only?</label>
+            </div>
+        </form>
+
+        <p style="text-align: center"><button id="share-button">Copy URL</button></p>
     </dialog>
 
     <dialog id="document-dialog">

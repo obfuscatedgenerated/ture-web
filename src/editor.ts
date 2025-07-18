@@ -8,25 +8,7 @@ import {
     Extension
 } from "@codemirror/state";
 
-const DEFAULT = `% Store the first letter in the word as a state
-(qInit, a) -> (qA, a, right)
-(qInit, b) -> (qB, b, right)
-
-% Move to the end of the tape
-(qA, a) -> (qA, a, right)
-(qA, b) -> (qA, b, right)
-(qB, a) -> (qB, a, right)
-(qB, b) -> (qB, b, right)
-
-% Backtrack once when we reach the end of the tape
-(qA, ⬚) -> (qEndA, ⬚, left)
-(qB, ⬚) -> (qEndB, ⬚, left)
-
-% Replace the last letter with the first letter and enter the trap state
-(qEndA, a) -> (qHalt, a, right)
-(qEndA, b) -> (qHalt, a, right)
-(qEndB, a) -> (qHalt, b, right)
-(qEndB, b) -> (qHalt, b, right)`;
+export const DEFAULT_DOC = `% Write your transition rules here!`;
 
 // chatgpt ended up rewriting this
 // the way codemirror handles extensions is terrible
@@ -52,7 +34,7 @@ const decorationsField = StateField.define<DecorationSet>({
 
 export const create_editor = () => {
     return new EditorView({
-        doc: DEFAULT,
+        doc: DEFAULT_DOC,
         parent: document.querySelector("#editor") as HTMLElement,
         extensions: [basicSetup, decorationsField]
     });
