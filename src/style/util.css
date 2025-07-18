@@ -1,0 +1,19 @@
+.hidden {
+    display: none !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.no-double-tap {
+    touch-action: manipulation;
+}
+
+.sub-option {
+    margin-left: 1.5rem;
+}
+
+.mobile-only {
+    display: none;
+}

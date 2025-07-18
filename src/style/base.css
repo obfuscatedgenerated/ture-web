@@ -118,29 +118,10 @@ dialog .header {
     align-items: center;
     margin-bottom: 0.5rem;
 }
+
 dialog .header h4 {
     margin: 0;
     font-size: 1rem;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.cursor-pointer {
-    cursor: pointer;
-}
-
-.no-double-tap {
-    touch-action: manipulation;
-}
-
-.sub-option {
-    margin-left: 1.5rem;
-}
-
-.mobile-only {
-    display: none;
 }
 
 kbd {
