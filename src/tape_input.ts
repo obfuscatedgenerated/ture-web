@@ -37,6 +37,21 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
         return tile;
     }
 
+    let is_locked = false;
+    const set_locked = (locked: boolean) => {
+        is_locked = locked;
+
+        tape_visual.classList.toggle("locked", locked);
+
+        const tiles = tape_visual.querySelectorAll(".tile");
+        tiles.forEach((t) => {
+            const tile = t as HTMLDivElement;
+
+            tile.contentEditable = locked ? "false" : "true";
+            tile.classList.toggle("locked", locked);
+        });
+    }
+
     let done_easter_egg = false;
     const easter_egg = () => {
         done_easter_egg = true;
@@ -56,6 +71,7 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
             add_tile(char);
         });
 
+        set_locked(is_locked);
         check_easter_egg(tape_str);
     };
 
@@ -190,16 +206,9 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
         update_hidden_input,
         focus_next_tile,
         focus_previous_tile,
-        mark_pointer
-    } as TapeInputFunctions;
-}
-
-export interface TapeInputFunctions {
-    set_value: (value: string) => void;
-    update_hidden_input: () => void;
-    focus_next_tile: (current: HTMLElement) => HTMLElement;
-    focus_previous_tile: (current: HTMLElement) => HTMLElement;
-    mark_pointer: (pos: number | null) => void;
+        mark_pointer,
+        set_locked,
+    };
 }
 
 // TODO: this is all so jank

@@ -65,6 +65,24 @@ button:hover {
     background-color: #1e5cb0;
 }
 
+button.danger {
+    background-color: #e33;
+    color: white;
+}
+
+button.icon {
+    background: none;
+    color: #444;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+button[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
 /* Editor & spacing */
 #editor {
     border: 0.0625rem solid #ccc;
@@ -107,6 +125,11 @@ button:hover {
     font-size: 0.9rem;
 }
 
+.cm-editor.readonly {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
 /* Upload dialog */
 dialog {
     border: none;
@@ -130,14 +153,6 @@ dialog .header {
 dialog .header h4 {
     margin: 0;
     font-size: 1rem;
-}
-
-button.icon {
-    background: none;
-    color: #444;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
 }
 
 #copy-empty {
@@ -194,12 +209,19 @@ button.icon {
     margin-right: 0.5rem;
     outline: none;
     box-sizing: border-box;
+    cursor: text;
 }
+
 .tile:focus {
     border-color: #2b72d6;
 }
+
 .tile.pointer {
     border-bottom: solid 0.2rem #111;
+}
+
+.tile.locked {
+    cursor: default;
 }
 
 .tape-grid {
@@ -210,15 +232,14 @@ button.icon {
     padding: 0.5rem;
 }
 
+.tape-grid.locked {
+    background: repeating-linear-gradient(-45deg, #f0f0f0 0px, #f0f0f0 2px,rgb(211,211,211) 2px, rgb(211,211,211) 4px);
+}
+
 .control-group.full {
     flex: 1 1 100%;
     min-width: 0;
     width: auto;
-}
-
-button.danger {
-    background-color: #e33;
-    color: white;
 }
 
 .hidden {
@@ -257,7 +278,7 @@ small a {
     max-height: calc(90vh - 4rem);
 }
 
-.pointer {
+.cursor-pointer {
     cursor: pointer;
 }
 

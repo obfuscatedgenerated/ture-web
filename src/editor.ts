@@ -243,3 +243,21 @@ export const highlight_line = (view: EditorView, line_num: number, class_name = 
     // Optionally return the ID for later removal
     return id;
 }
+
+export const set_readonly = (view: EditorView, readonly: boolean) => {
+    view.dispatch({
+        effects: StateEffect.reconfigure.of([
+            basicSetup,
+            decorationsField,
+            ...hover_extensions.values(),
+            ...(update_listener_extension ? [update_listener_extension] : []),
+            EditorView.editable.of(!readonly)
+        ])
+    });
+
+    if (readonly) {
+        view.dom.classList.add("readonly");
+    } else {
+        view.dom.classList.remove("readonly");
+    }
+}

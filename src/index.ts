@@ -14,9 +14,9 @@ import {
     add_update_listener,
     apply_decoration_range, create_and_apply_decoration_range,
     create_decoration_range,
-    create_editor, highlight_line,
+    create_editor,
     remove_all_decorations,
-    remove_all_hover_messages, remove_decoration_by_id
+    remove_all_hover_messages, remove_decoration_by_id, set_readonly
 } from "./editor";
 
 import {compressToEncodedURIComponent, decompressFromEncodedURIComponent} from "lz-string";
@@ -225,7 +225,11 @@ const cancel_steps = () => {
     document.getElementById("stepper-controls")!.classList.add("hidden");
     document.getElementById("run-step")!.classList.remove("hidden");
 
+    set_readonly(editor, false);
+    document.getElementById("upload-button")!.removeAttribute("disabled");
+    state_select.disabled = false;
     tape_fns.mark_pointer(null);
+    tape_fns.set_locked(false);
 
     if (step_highlight_id) {
         remove_decoration_by_id(editor, step_highlight_id);
@@ -267,14 +271,18 @@ const run_step = () => {
         step_iterator = exec.get_step_iterator(tape_input.value);
         step_idx = 0;
 
-        console.log("Prepared new step iterator.")
+        console.log("Prepared new step iterator.");
 
         // hide run button and show stepper controls
         document.getElementById("run")!.classList.add("hidden");
         document.getElementById("stepper-controls")!.classList.remove("hidden");
         document.getElementById("run-step")!.classList.add("hidden");
+        document.getElementById("upload-button")!.setAttribute("disabled", "true");
+        state_select.disabled = true;
 
         // set initial positions
+        set_readonly(editor, true);
+        tape_fns.set_locked(true);
         tape_fns.mark_pointer(0);
         step_state.innerText = init_state;
         step_number.innerText = "1";
