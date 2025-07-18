@@ -8,7 +8,7 @@ import {CharStream, CommonTokenStream, ErrorListener, Token} from "antlr4";
 
 import TuringLexer from "./grammar/TuringLexer";
 import TuringParser, {ProgramContext} from "./grammar/TuringParser";
-import TuringExecutor, {EMPTY, ExecResultStatus, StepIterator} from "./TuringExecutor";
+import TuringExecutor, {DEFAULT_STEP_LIMIT, EMPTY, ExecResultStatus, StepIterator} from "./TuringExecutor";
 import TuringStateNameVisitor from "./TuringStateNameVisitor";
 
 import {setup as setup_tape_input} from "./tape_input";
@@ -330,6 +330,45 @@ const run_step = () => {
     }
 }
 
+const run_remaining_steps = () => {
+    if (!step_iterator) {
+        console.warn("No step iterator available. Please run the program first.");
+        return;
+    }
+
+    document.getElementById("run")!.classList.remove("hidden");
+    document.getElementById("stepper-controls")!.classList.add("hidden");
+    document.getElementById("run-step")!.classList.remove("hidden");
+
+    tape_fns.mark_pointer(null);
+
+    if (step_highlight_id) {
+        remove_decoration_by_id(editor, step_highlight_id);
+    }
+
+    let halted = false;
+    let value = tape_input.value;
+    for (step_idx; step_idx < DEFAULT_STEP_LIMIT; step_idx++) {
+        const res = step_iterator.next();
+        if (res.status === ExecResultStatus.Halt) {
+            console.log("Execution finished.");
+            halted = true;
+            break;
+        }
+
+        value = res.value;
+    }
+
+    tape_fns.set_value(value);
+
+    step_iterator = null; // reset iterator
+
+    if (!halted) {
+        console.warn(`Reached step limit of ${DEFAULT_STEP_LIMIT} without halting.`);
+        add_error(`Reached step limit of ${DEFAULT_STEP_LIMIT} without halting.`, "step-limit");
+    }
+}
+
 const open_file_uploader = () => {
     file_input.value = "";
     upload_dialog.showModal();
@@ -534,6 +573,14 @@ document.getElementById("run")!.addEventListener("click", () => {
 document.getElementById("run-step")!.addEventListener("click", run_step);
 document.getElementById("next-step")!.addEventListener("click", run_step);
 
+// bind run remaining steps
+document.getElementById("run-remaining")!.addEventListener("click", run_remaining_steps);
+
+// bind cancel step
+document.getElementById("cancel-step")!.addEventListener("click", () => {
+    // TODO
+});
+
 // bind copy empty
 const copy_empty = document.getElementById("copy-empty") as HTMLButtonElement;
 const copy_empty_content = copy_empty.innerHTML;
@@ -681,13 +728,19 @@ document.addEventListener("keydown", (e) => {
         }
     }
 
-    // run: F8
+    // run / run remaining steps: F8
     if (e.key === "F8") {
         e.preventDefault();
         override_kbd_hiding();
 
+        if (step_iterator) {
+            run_remaining_steps();
+            return;
+        }
+
         const input = editor.state.doc.toString();
         run(input);
+
         return;
     }
 

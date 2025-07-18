@@ -4,6 +4,8 @@ import {ParseTree} from "antlr4";
 
 // basically a direct port of the java code. not ideal but just want an mvp
 
+export const DEFAULT_STEP_LIMIT = 1000000;
+
 export enum ExecResultStatus {
     Left,
     Right,
@@ -129,7 +131,7 @@ export default class TuringExecutor extends TuringVisitor<string> {
         }
     }
 
-    execute = (tape: string, pos: number = 0, step_limit: number = 1000000) => {
+    execute = (tape: string, pos: number = 0, step_limit: number = DEFAULT_STEP_LIMIT) => {
         if (!this.parsed) {
             throw new Error("Rules have not been parsed yet. Call visit first.");
         }
