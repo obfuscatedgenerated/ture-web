@@ -285,6 +285,10 @@ small a {
     cursor: pointer;
 }
 
+.no-double-tap {
+    touch-action: manipulation;
+}
+
 kbd {
     background-color: #eee;
     border-radius: 3px;
