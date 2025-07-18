@@ -1,6 +1,9 @@
 import path from "path";
 import { fileURLToPath } from "url";
 
+import { execSync } from "child_process";
+
+import webpack from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
@@ -12,6 +15,18 @@ const is_server = process.env.WEBPACK_SERVE === "true";
 const css_strategy = !is_server ? MiniCssExtractPlugin.loader : "style-loader";
 
 console.log("css_strategy:", css_strategy);
+
+const get_commit_details = () => {
+    try {
+        // get hash, name, and date
+        return execSync(`git log -1 --pretty=format:"%h: %s (%ad)" --date=short`, { encoding: 'utf8' })
+    } catch (error) {
+        console.error("Error getting commit details:", error);
+        return "";
+    }
+}
+
+let commit_details = get_commit_details();
 
 export default {
     entry: "./src/index.ts",
@@ -45,7 +60,6 @@ export default {
     output: {
         filename: "[name].[contenthash].bundle.js",
         path: path.resolve(__dirname, "dist"),
-
     },
     devServer: {
         port: 3000,
@@ -55,10 +69,23 @@ export default {
         },
     },
     plugins: [
+        {
+            apply: (compiler) => {
+                compiler.hooks.beforeRun.tap("BeforeRunPlugin", () => {
+                    commit_details = get_commit_details();
+                });
+            }
+        },
+
+        new webpack.DefinePlugin({
+            "__COMMIT_DETAILS__": JSON.stringify(commit_details),
+        }),
+
         new HtmlWebpackPlugin({
             template: "./src/index.html",
             //inject: false
         }),
+
         new MiniCssExtractPlugin({
             filename: "[name].[contenthash].css",
         }),

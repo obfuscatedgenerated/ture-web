@@ -25,6 +25,11 @@ import levenshtein from "js-levenshtein";
 import {TuringErrorStrategy} from "./TuringErrorStrategy";
 import {documents, hide_document, show_document} from "./documents";
 
+declare var __COMMIT_DETAILS__: string;
+
+console.log(__COMMIT_DETAILS__);
+document.getElementById("commit-details")!.innerText = __COMMIT_DETAILS__;
+
 const editor = create_editor();
 
 let errors: { type: "syntax" | string, message: string }[] = [];
