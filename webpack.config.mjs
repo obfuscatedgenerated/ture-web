@@ -50,7 +50,8 @@ export default {
     devServer: {
         port: 3000,
         static: {
-            directory: path.join(__dirname, "dist"),
+            directory: path.join(__dirname, "public"),
+            publicPath: "/public",
         },
     },
     plugins: [

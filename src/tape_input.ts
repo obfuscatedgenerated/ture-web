@@ -36,11 +36,35 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
         return tile;
     }
 
+    let done_easter_egg = false;
+    const easter_egg = () => {
+        done_easter_egg = true;
+
+        const dialog = document.createElement("dialog");
+        dialog.innerHTML = `<p style="text-align: center">Congratulations! You have solved the halting problem!</p>
+        <p style="text-align: center"><img src="./public/confetti.gif" style="text-align: center; width: 50%" /></p>`;
+        document.body.appendChild(dialog);
+        dialog.showModal();
+
+       setTimeout(() => {
+          dialog.close();
+          document.body.removeChild(dialog);
+       }, 5000);
+    }
+
+    const check_easter_egg = (tape_str: string) => {
+        if (!done_easter_egg && tape_str.toLowerCase().includes("↑↑↓↓←→←→ba")) {
+            easter_egg();
+        }
+    }
+
     const render_tape = (tape_str: string) => {
         tape_visual.innerHTML = "";
         [...tape_str].forEach(char => {
             add_tile(char);
         });
+
+        check_easter_egg(tape_str);
     };
 
     const update_hidden_input = () => {
@@ -48,6 +72,8 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
         // @ts-ignore
         const chars = [...all_tiles].map(el => (el.textContent || EMPTY).slice(0, 1));
         tape_input.value = chars.join("");
+
+        check_easter_egg(tape_input.value);
     };
 
     const focus_next_tile = (current: HTMLElement) => {
@@ -104,7 +130,6 @@ export const setup = (tape_input: HTMLInputElement, tape_visual: HTMLDivElement)
         let current = document.activeElement;
 
         if (current && current instanceof HTMLElement && current.classList.contains("tile")) {
-            debugger
             // split the text into characters and fill tiles from the selected tile onwards
             let chars = text.split("");
             while (chars.length > 0) {
