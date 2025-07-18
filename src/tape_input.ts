@@ -1,3 +1,5 @@
+import "./style/tape_input.css";
+
 import {EMPTY} from "./TuringExecutor";
 import {documents, show_document} from "./documents";
 

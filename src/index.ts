@@ -1,4 +1,4 @@
-import "./style.css";
+import "./style/index.css";
 
 import * as editor from "./editor";
 import * as error_log from "./error_log";

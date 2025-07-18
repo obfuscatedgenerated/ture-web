@@ -1,3 +1,5 @@
+import "./style/editor.css";
+
 import { basicSetup } from "codemirror";
 import { EditorView, Decoration, hoverTooltip, DecorationSet } from "@codemirror/view";
 import {

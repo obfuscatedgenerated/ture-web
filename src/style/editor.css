@@ -1,0 +1,54 @@
+#editor {
+    border: 0.0625rem solid var(--on-body-bg);
+    border-radius: 0.375rem;
+    background-color: var(--white-bg);
+    margin-top: 1rem;
+    font-family: monospace;
+    white-space: pre;
+    overflow-x: auto;
+    width: 100%;
+}
+
+.cm-gutter {
+    background-color: var(--white-bg);
+    color: var(--text-secondary);
+}
+
+.cm-gutters {
+    border-color: var(--on-body-bg);
+}
+
+.cm-activeLine {
+    background-color: var(--active-line-bg) !important;
+}
+
+.cm-activeLineGutter {
+    background-color: var(--active-line-gutter-bg) !important;
+}
+
+.cm-error {
+    text-decoration: var(--danger) wavy underline;
+}
+
+.cm-highlight {
+    background-color: var(--highlighter-bg);
+    color: var(--highlighter-text);
+}
+
+.cm-hover-msg {
+    background-color: var(--accent);
+    color: var(--on-accent);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.cm-hover-msg.error {
+    background-color: var(--light-danger);
+    color: var(--on-light-danger);
+}
+
+.cm-editor.readonly {
+    background-color: var(--disabled-white-bg);
+    color: var(--text-body);
+}

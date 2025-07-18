@@ -1,0 +1,38 @@
+body {
+    margin: 1rem;
+}
+
+.top-controls {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.control-group.horizontal {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.control-group.end {
+    justify-content: flex-start;
+}
+
+#upload-dialog {
+    width: 100%;
+    max-width: 20rem;
+}
+
+#document-dialog {
+    max-height: 100dvh;
+    max-width: 100vw;
+    height: 100dvh;
+}
+
+#document-content {
+    max-height: calc(100dvh - 4rem);
+}
+
+label {
+    margin-top: 0.5rem;
+}
+
+/* TODO: improve editor top buttons on mobile */

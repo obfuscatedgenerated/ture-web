@@ -1,0 +1,40 @@
+.tile {
+    height: 2rem;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-size: 1.1rem;
+    border: 1px solid var(--on-body-bg);
+    border-radius: 4px;
+    background: var(--white-bg);
+    margin-right: 0.5rem;
+    outline: none;
+    box-sizing: border-box;
+    cursor: text;
+}
+
+.tile:focus {
+    border-color: var(--accent);
+}
+
+.tile.pointer {
+    border-bottom: solid 0.2rem var(--step-pointer);
+}
+
+.tile.locked {
+    cursor: default;
+}
+
+.tape-grid {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    background-color: var(--tape-bg);
+    padding: 0.5rem;
+}
+
+.tape-grid.locked {
+    background: repeating-linear-gradient(-45deg, var(--tape-bg) 0px, var(--tape-bg) 2px, var(--on-tape-bg) 2px, var(--on-tape-bg) 4px);
+}

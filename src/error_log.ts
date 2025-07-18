@@ -5,7 +5,7 @@ import type TuringParser from "./grammar/TuringParser";
 import * as editor from "./editor";
 
 let errors: { type: "syntax" | string, message: string }[] = [];
-const errors_textarea = document.getElementById("errors") as HTMLTextAreaElement;
+const errors_textarea = document.getElementById("error-list") as HTMLTextAreaElement;
 const errors_container = document.getElementById("errors-container") as HTMLDivElement;
 
 export const get_list = () => {

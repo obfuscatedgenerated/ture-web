@@ -1,0 +1,36 @@
+.top-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+}
+
+.control-group {
+    flex: 1;
+    min-width: 12rem;
+}
+
+.control-group.horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.control-group.three-quarters {
+    flex: 0 1 75%;
+    min-width: 0;
+}
+
+.control-group.end {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.control-group.full {
+    flex: 1 1 100%;
+    min-width: 0;
+    width: auto;
+}
