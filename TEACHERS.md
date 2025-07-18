@@ -8,6 +8,8 @@ You may wish to:
 - Set the website as a practical exercise for students to practice the transition rule syntax
 - Include screenshots or videos of the website in slides or handouts
 
+Iframe embedding is permitted, allowing you to include the Ture interface directly in your materials.
+
 For linking and embedding the website, you will want to use the `Copy share URL` button. This will give you the option of what you wish to share, such as the script contents, tape contents, and initial state. You can also set fields as read-only to prevent accidental modification, useful for embedding demonstrations in your materials.
 
 Ture is provided under an MIT license. You are free to adapt the codebase for your own use case. Please note, individual support, advice, or troubleshooting is **not provided**. For technical issues or feature requests, you may wish to [open an issue on the GitHub repository](https://github.com/obfuscatedgenerated/ture-web/issues).
