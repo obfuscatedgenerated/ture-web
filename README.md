@@ -14,7 +14,7 @@ You can select the initial state to start the program from with the dropdown. Th
 
 You can use the `Run program` button (`F8`) to run the program in one go. This will replace the contents of the tape with the final result.
 
-You can use the `Run step-by-step` button (`F9`) to enter stepped execution mode. You can step through the program with the `Next step` button (`F9`). The position of the pointer will be reflected under the tape cells. The tape cell values will be replaced by each step. The current state and step number is displayed below the tape. The transition rule that was just followed to reach the current state will be highlighted in the editor. You can press the `Cancel` button (`Esc`) to halt the step-by-step execution.
+You can use the `Run step-by-step` button (`F9`) to enter stepped execution mode. You can step through the program with the `Next step` button (`F9`). The position of the pointer will be reflected under the tape cells. The tape cell values will be replaced by each step. The current state and step number is displayed below the tape. The transition rule that was just followed to reach the current state will be highlighted in the editor. You can press the `Cancel` button (`Esc`) to halt the step-by-step execution. You can press `Run remaining` (`F8`) to execute the remaining steps of the program to the end without stepping.
 
 You can name the program with the `Program name` field above the editor.
 
