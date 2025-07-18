@@ -133,6 +133,8 @@ export const load_from_url = (): ShareURLPropertiesWithValues => {
                 editor.set_readonly(true);
             }
 
+            editor.clear_dirty();
+
             loaded.script = {
                 readonly: readonly,
                 value: decompressed
