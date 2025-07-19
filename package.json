@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "start": "webpack serve",
+    "build": "webpack --mode production",
+    "start": "webpack serve --mode production --no-hot",
     "dev": "webpack --mode development",
     "dev-server": "webpack serve --mode development --host 127.0.0.1 --open",
     "grammar": "java -Dfile.encoding=UTF-8 -jar ./lib/antlr-4.13.2-complete.jar -Dlanguage=TypeScript -no-listener -visitor -o src/grammar grammar/Turing.g4",
