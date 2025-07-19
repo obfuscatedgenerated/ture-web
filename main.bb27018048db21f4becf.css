@@ -456,12 +456,21 @@ label {
     border-color: var(--on-body-bg);
 }
 
+.cm-editor .cm-cursor {
+    border-left-color: var(--text-body);
+}
+
 .cm-activeLine {
     background-color: var(--active-line-bg) !important;
 }
 
 .cm-activeLineGutter {
     background-color: var(--active-line-gutter-bg) !important;
+}
+
+.readonly .cm-activeLine,
+.readonly .cm-activeLineGutter {
+    background-color: transparent !important;
 }
 
 .cm-error {
