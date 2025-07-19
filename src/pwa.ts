@@ -60,8 +60,8 @@ sw_update_doc.style.textAlign = "center";
 
 const sw_update_button = document.createElement("button");
 sw_update_button.innerText = "Update";
-sw_update_button.addEventListener("click", () => {
-    clear_cache();
+sw_update_button.addEventListener("click", async () => {
+    await clear_cache();
     localStorage.removeItem("sw_update_available");
     window.location.reload();
 });
@@ -86,17 +86,10 @@ window.addEventListener("offline", () => {
 sw_update_doc.appendChild(sw_update_button);
 
 // not sure if this is the ideal apporach but it sure as hell works
-const clear_cache = () => {
+const clear_cache = async () => {
     if ("caches" in window) {
-        caches.keys().then(cacheNames => {
-            cacheNames.forEach(cacheName => {
-                caches.delete(cacheName).then(() => {
-                    console.log(`Cache ${cacheName} cleared.`);
-                }).catch(err => {
-                    console.error(`Failed to clear cache ${cacheName}: `, err);
-                });
-            });
-        });
+        const keys = await caches.keys();
+        await Promise.all(keys.map(key => caches.delete(key)));
     }
 }
 
