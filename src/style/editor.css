@@ -30,6 +30,11 @@
     background-color: var(--active-line-gutter-bg) !important;
 }
 
+.readonly .cm-activeLine,
+.readonly .cm-activeLineGutter {
+    background-color: transparent !important;
+}
+
 .cm-error {
     text-decoration: var(--danger) wavy underline;
 }
