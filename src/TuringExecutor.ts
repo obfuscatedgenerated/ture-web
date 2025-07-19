@@ -1,6 +1,6 @@
 import TuringVisitor from "./grammar/TuringVisitor";
 import {LetterContext, LhsContext, RhsContext, StateContext, Turing_ruleContext} from "./grammar/TuringParser";
-import {ParseTree} from "antlr4";
+import {ParseTree, TerminalNode} from "antlr4";
 
 // basically a direct port of the java code. not ideal but just want an mvp
 
@@ -46,7 +46,14 @@ export default class TuringExecutor extends TuringVisitor<string> {
     private parsed = false;
 
     visitLetter = (ctx: LetterContext) => {
-        return ctx.getText();
+        const text = ctx.getText();
+
+        // unescape percent
+        if (text === "\\%") {
+            return "%";
+        }
+
+        return text;
     }
 
     visitState = (ctx: StateContext) => {
