@@ -4,13 +4,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode production",
+    "build": "webpack --mode production && copyfiles public/**/* dist",
     "start": "webpack serve --mode production --no-hot",
     "dev": "webpack --mode development",
     "dev-server": "webpack serve --mode development --host 127.0.0.1 --open",
     "grammar": "java -Dfile.encoding=UTF-8 -jar ./lib/antlr-4.13.2-complete.jar -Dlanguage=TypeScript -no-listener -visitor -o src/grammar grammar/Turing.g4",
     "clean": "rimraf dist",
-    "publish": "npm run clean && npm run build && copyfiles public/**/* dist && gh-pages -d dist --cname ture.ollieg.codes"
+    "publish": "npm run clean && npm run build && gh-pages -d dist --cname ture.ollieg.codes"
   },
   "keywords": [],
   "author": "obfuscatedgenerated",

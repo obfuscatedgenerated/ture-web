@@ -1,10 +1,14 @@
 # Ture
 
-A turing machine interpreter.
+> A turing machine interpreter.
 
 See also: <a href="https://github.com/obfuscatedgenerated/Ture" target="_blank">the original Java implementation</a>.
 
 ## Usage
+
+> If you're looking to run Ture locally, see <a href="https://github.com/obfuscatedgenerated/ture-web/blob/main/SETUP.md" target="_blank">SETUP.md</a> in the repository.
+
+> If you're an educator looking to use Ture in your materials, click the "Teachers" link in the top navigation bar, or see <a href="https://github.com/obfuscatedgenerated/ture-web/blob/main/TEACHERS.md" target="_blank">TEACHERS.md</a> in the repository.
 
 You can enter the formal descriptions of transition rules as described in the [syntax section](#syntax) in the text area at the bottom. This will be validated against syntax errors in real time.
 
