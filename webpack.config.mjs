@@ -30,7 +30,7 @@ const LONG_TITLE = "Ture - Turing machine interpreter"
 const get_commit_details = () => {
     try {
         // get hash, name, and date
-        return execSync(`git log -1 --pretty=format:"%h: %s (%ad)" --date=short`, {encoding: 'utf8'})
+        return execSync(`git log -1 --pretty=format:"%h: %s (%ad)" --date=short`, {encoding: "utf8"})
     } catch (error) {
         console.error("Error getting commit details:", error);
         return "";
@@ -122,6 +122,24 @@ export default {
             new WorkboxPlugin.GenerateSW({
                 clientsClaim: true,
                 skipWaiting: true,
+                runtimeCaching: [
+                    {
+                        // use network first for index.html
+                        urlPattern: ({request}) => request.mode === "navigate",
+                        handler: "NetworkFirst",
+                        options: {
+                            cacheName: "html-cache",
+                        },
+                    },
+                    {
+                        // use standard caching for all other assets (as they are hashed)
+                        urlPattern: /.*/,
+                        handler: "StaleWhileRevalidate",
+                        options: {
+                            cacheName: "asset-cache",
+                        },
+                    },
+                ],
             })
         ] : []),
     ]
