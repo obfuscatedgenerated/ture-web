@@ -183,6 +183,12 @@ button[disabled] {
     cursor: not-allowed;
 }
 
+hr {
+    border: none;
+    border-top: 0.0625rem solid var(--on-body-bg);
+    margin: 0.75rem 0;
+}
+
 dialog {
     border: none;
     border-radius: 0.625rem;
