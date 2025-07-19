@@ -19,4 +19,4 @@ if (__USE_SW__) {
 }
 
 export const is_using_sw = __USE_SW__;
-export const is_standalone = window.matchMedia("(display-mode: standalone)").matches;
+export let is_standalone = () => window.matchMedia("(display-mode: standalone)").matches;

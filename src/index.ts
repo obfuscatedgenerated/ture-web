@@ -8,6 +8,7 @@ import * as pwa from "./pwa";
 
 import "./ui_binding";
 import "./keybinds";
+import {is_standalone} from "./pwa";
 
 declare var __COMMIT_DETAILS__: string;
 console.log(__COMMIT_DETAILS__);
@@ -41,12 +42,16 @@ const file_name = document.getElementById("file-name") as HTMLInputElement;
 const update_title = () => {
     let title = "";
 
-    if (!pwa.is_standalone) {
+    if (!pwa.is_standalone()) {
         title = "Ture";
     }
 
     if (file_name.value) {
-        title = `${file_name.value} - ${title}`;
+        if (pwa.is_standalone()) {
+            title = file_name.value;
+        } else {
+            title = `${file_name.value} - ${title}`;
+        }
     }
 
     if (editor.is_dirty()) {
@@ -58,4 +63,5 @@ const update_title = () => {
 
 file_name.addEventListener("input", update_title);
 editor.add_dirty_change_listener(update_title);
+window.addEventListener("appinstalled", update_title);
 update_title();
