@@ -14,6 +14,8 @@
     --text-ghost: #aaa;
     --text-link: var(--accent);
 
+    --code-select-bg: #95aec9;
+
     --accent: #2b72d6;
     --accent-hover: #1e5cb0;
     --on-accent: #fff;

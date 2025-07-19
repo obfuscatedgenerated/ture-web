@@ -35,6 +35,10 @@
     background-color: transparent !important;
 }
 
+.cm-selectionBackground {
+    background-color: var(--code-select-bg) !important;
+}
+
 .cm-error {
     text-decoration: var(--danger) wavy underline;
 }
