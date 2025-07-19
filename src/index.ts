@@ -13,13 +13,13 @@ declare var __COMMIT_DETAILS__: string;
 console.log(__COMMIT_DETAILS__);
 document.getElementById("commit-details")!.innerText = __COMMIT_DETAILS__;
 
-const from_url = sharing.load_from_url();
+sharing.load_from_url();
 
 // parse default value immediately
 runner.parse(editor.get_text());
 error_log.log_to_console();
 
-sharing.finish_load_from_url(from_url);
+sharing.finish_load_from_url();
 
 // listen for navigating away from the page
 window.addEventListener("beforeunload", (e) => {

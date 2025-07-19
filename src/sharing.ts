@@ -109,6 +109,7 @@ export const show_share_dialog = () => {
     share_dialog.showModal();
 }
 
+let loaded: ShareURLPropertiesWithValues | null = null;
 export const load_from_url = (): ShareURLPropertiesWithValues => {
     // TODO: support loading a file from a remote url
 
@@ -118,7 +119,7 @@ export const load_from_url = (): ShareURLPropertiesWithValues => {
     const tape = url.searchParams.get("tape");
     const name = url.searchParams.get("name");
 
-    const loaded: ShareURLPropertiesWithValues = {};
+    loaded = {};
 
     if (script) {
         const decompressed = decompressFromEncodedURIComponent(script);
@@ -194,16 +195,24 @@ export const load_from_url = (): ShareURLPropertiesWithValues => {
     return loaded;
 }
 
-export const finish_load_from_url = (from_url: ShareURLPropertiesWithValues) => {
-    if (from_url.init) {
+export const finish_load_from_url = () => {
+    if (!loaded) {
+        throw new Error("No properties loaded from URL. Call load_from_url() first.");
+    }
+
+    if (loaded.init) {
         // check init state from url
-        if (!state_select.querySelector(`option[value="${from_url.init.value}"]`)) {
-            error_log.add(`Initial state declared in URL "${from_url.init.value}" is not defined in the program.`, "no-init");
+        if (!state_select.querySelector(`option[value="${loaded.init.value}"]`)) {
+            error_log.add(`Initial state declared in URL "${loaded.init.value}" is not defined in the program.`, "no-init");
             state_select.value = "";
         } else {
-            state_select.value = from_url.init.value;
+            state_select.value = loaded.init.value;
         }
     }
+}
+
+export const get_loaded_properties = (): ShareURLPropertiesWithValues | null => {
+    return loaded;
 }
 
 const get_share_checkbox_values = (): ShareURLProperties => {
