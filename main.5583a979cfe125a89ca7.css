@@ -256,8 +256,12 @@ blockquote {
     margin: 1rem 0;
 }
 
-.hidden {
+.hidden:not(.reserve) {
     display: none !important;
+}
+
+.hidden.reserve {
+    visibility: hidden !important;
 }
 
 .cursor-pointer {
