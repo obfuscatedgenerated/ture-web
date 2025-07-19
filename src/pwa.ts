@@ -66,6 +66,23 @@ sw_update_button.addEventListener("click", () => {
     window.location.reload();
 });
 
+// check for internet
+if (!navigator.onLine) {
+    sw_update_button.innerText = "Connect to internet to update";
+    sw_update_button.disabled = true;
+}
+
+// check if internet access changed
+window.addEventListener("online", () => {
+    sw_update_button.disabled = false;
+    sw_update_button.innerText = "Update";
+});
+
+window.addEventListener("offline", () => {
+    sw_update_button.disabled = true;
+    sw_update_button.innerText = "Connect to internet to update";
+});
+
 sw_update_doc.appendChild(sw_update_button);
 
 // not sure if this is the ideal apporach but it sure as hell works
