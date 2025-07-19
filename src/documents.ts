@@ -6,9 +6,9 @@ import teachers_html from "../TEACHERS.md";
 import examples_html from "../examples.md";
 
 export const documents = {
-    readme: readme_html,
-    teachers: teachers_html,
-    examples: examples_html,
+    readme: readme_html.replaceAll("https://ture.ollieg.codes/?", "./?"),
+    teachers: teachers_html.replaceAll("https://ture.ollieg.codes/?", "./?"),
+    examples: examples_html.replaceAll("https://ture.ollieg.codes/?", "./?"),
     easter_egg: `<p style="text-align: center">Congratulations! You have solved the halting problem!</p>
         <p style="text-align: center"><img src="./public/confetti.gif" style="text-align: center; width: 50%" /></p>`
 }
