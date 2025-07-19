@@ -109,6 +109,7 @@ dialog {
     box-shadow: 0 0 0.625rem var(--shadow);
     background: var(--white-bg);
     color: inherit;
+    box-sizing: border-box;
 }
 
 dialog .header {

@@ -57,7 +57,12 @@
 
 #document-content {
     overflow-y: auto;
-    max-height: calc(90vh - 4rem);
+    max-height: calc(90vh - 9.5rem);
+}
+
+#document-dialog[data-known_doc="examples"] {
+    min-width: 50vw;
+    min-height: 75vh;
 }
 
 #commit-details {

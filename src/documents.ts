@@ -21,6 +21,16 @@ export const show_document = (title: string, content_html: string) => {
     document_title.innerText = title;
     document_content.innerHTML = content_html;
 
+    document_dialog.dataset.title = title;
+
+    // see if content can be resolved to a built in document
+    const doc_key = (Object.keys(documents) as (keyof typeof documents)[]).find(key => documents[key] === content_html);
+    if (doc_key) {
+        document_dialog.dataset.known_doc = doc_key;
+    } else if (document_dialog.dataset.known_doc) {
+        delete document_dialog.dataset.known_doc;
+    }
+
     document_dialog.showModal();
     document_content.scrollTop = 0;
 }
