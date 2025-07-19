@@ -4,6 +4,8 @@ import "../public/icon_192x192.png";
 import "../public/icon_436x436.png";
 import "../public/icon_512x512.png";
 
+import {documents, show_document} from "./documents";
+
 declare var __USE_SW__: boolean;
 
 if (__USE_SW__) {
@@ -11,6 +13,23 @@ if (__USE_SW__) {
         window.addEventListener("load", () => {
             navigator.serviceWorker.register("service-worker.js").then(registration => {
                 console.log("SW registered: ", registration);
+
+                registration.addEventListener("updatefound", () => {
+                    const new_worker = registration.installing;
+
+                    if (!new_worker) {
+                        console.error("No new worker found during update.");
+                        return;
+                    }
+
+                    new_worker.addEventListener("statechange", () => {
+                        if (new_worker.state === "installed") {
+                            if (navigator.serviceWorker.controller) {
+                                show_document("Update", documents.sw_update);
+                            }
+                        }
+                    });
+                });
             }).catch(registrationError => {
                 console.log("SW registration failed: ", registrationError);
             });

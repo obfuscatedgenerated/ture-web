@@ -10,7 +10,9 @@ export const documents = {
     teachers: teachers_html.replaceAll("https://ture.ollieg.codes/?", "./?"),
     examples: examples_html.replaceAll("https://ture.ollieg.codes/?", "./?"),
     easter_egg: `<p style="text-align: center">Congratulations! You have solved the halting problem!</p>
-        <p style="text-align: center"><img src="./public/precache/confetti.gif" style="text-align: center; width: 50%" /></p>`
+        <p style="text-align: center"><img src="./public/precache/confetti.gif" style="text-align: center; width: 50%" /></p>`,
+    sw_update: `<p style="text-align: center">A new version of Ture is available!<br>Please reload the page to get the latest features and fixes.<br><br>
+<button onclick="window.location.reload()">Reload</button></p>`,
 }
 
 const document_dialog = document.getElementById("document-dialog") as HTMLDialogElement;

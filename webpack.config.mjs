@@ -123,7 +123,7 @@ export default (env, argv) => {
             ...(!using_hmr ? [
                 new WorkboxPlugin.GenerateSW({
                     clientsClaim: true,
-                    skipWaiting: true,
+                    skipWaiting: false,
 
                     // forcibly cache the public/precache directory
                     additionalManifestEntries: [
