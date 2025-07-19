@@ -142,9 +142,9 @@ export default {
                     },
                 ],
 
-                // forcibly cache the public directory
+                // forcibly cache the public/precache directory
                 additionalManifestEntries: [
-                    ...glob.sync("public/**/*", {cwd: __dirname, nodir: true}).map(file => ({
+                    ...glob.sync("public/precache/**/*", {cwd: __dirname, nodir: true}).map(file => ({
                         url: `/${file}`,
                         revision: null,
                     })),
