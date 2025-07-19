@@ -35,10 +35,8 @@ You can check the example programs, such as <a target="_blank" href="https://tur
 Rules are defined in the following format:
 
 ```
-(state, letter) -> (state, letter, direction)
+(from_state, from_letter) -> (to_state, to_letter, direction)
 ```
-
-Where `state` is the name of the state, `letter` is the symbol on the tape at the current position, `direction` is either `left` or `right` and `state` is the name of the next state.
 
 When the pointer is over the given letter whilst in the given state on the LHS, it overwrites the letter with the new letter, changes to the new state, and moves the pointer in the direction specified on the RHS.
 
