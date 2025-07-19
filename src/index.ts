@@ -4,6 +4,7 @@ import * as editor from "./editor";
 import * as error_log from "./error_log";
 import * as runner from "./runner";
 import * as sharing from "./sharing";
+import * as pwa from "./pwa";
 
 import "./ui_binding";
 import "./keybinds";
@@ -38,7 +39,11 @@ document.querySelectorAll(".mac-cmd").forEach((el) => {
 const file_name = document.getElementById("file-name") as HTMLInputElement;
 
 const update_title = () => {
-    let title = "Ture";
+    let title = "";
+
+    if (!pwa.is_standalone) {
+        title = "Ture";
+    }
 
     if (file_name.value) {
         title = `${file_name.value} - ${title}`;

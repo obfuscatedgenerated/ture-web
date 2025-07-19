@@ -6,6 +6,8 @@ import {execSync} from "child_process";
 import webpack from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import WorkboxPlugin from "workbox-webpack-plugin";
+import AppManifestPlugin from "webpack-web-app-manifest-plugin";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,6 +15,12 @@ const __dirname = path.dirname(__filename);
 // detect if server is running or this is a build
 const is_server = process.env.WEBPACK_SERVE === "true";
 const css_strategy = !is_server ? MiniCssExtractPlugin.loader : "style-loader";
+
+// note: service worker generation not enabled if hmr enabled
+// unregister the sw and restart the server if changing this setting
+// with hmr off, unregister the sw and reload when you make a change
+const USE_HMR = true;
+const using_hmr = is_server && USE_HMR;
 
 console.log("css_strategy:", css_strategy);
 
@@ -52,6 +60,13 @@ export default {
                         loader: "markdown-loader",
                     },
                 ],
+            },
+            {
+                test: /\.png$/,
+                type: "asset/resource",
+                generator: {
+                    filename: "manifest/[name]-[contenthash:8][ext][query]",
+                },
             }
         ],
     },
@@ -61,8 +76,10 @@ export default {
     output: {
         filename: "[name].[contenthash].bundle.js",
         path: path.resolve(__dirname, "dist"),
+        publicPath: "/",
     },
     devServer: {
+        hot: USE_HMR,
         port: 3000,
         static: {
             directory: path.join(__dirname, "public"),
@@ -73,6 +90,7 @@ export default {
         // note: doesnt update on watch mode but doesnt matter
         new webpack.DefinePlugin({
             __COMMIT_DETAILS__: JSON.stringify(get_commit_details()),
+            __USE_SW__: !using_hmr,
         }),
 
         new HtmlWebpackPlugin({
@@ -80,13 +98,31 @@ export default {
             template: "./src/index.html",
             templateParameters: {
                 commit_details: get_commit_details(),
-            }
+            },
         }),
 
         new MiniCssExtractPlugin({
             filename: "[name].[contenthash].css",
         }),
 
+        new AppManifestPlugin({
+            content: {
+                name: TITLE,
+                short_name: TITLE,
+                background_color: "#111",
+                start_url: "/",
+                display: "standalone",
+            },
+            destination: "/manifest",
+            useDigest: false
+        }),
 
+        // disable service worker if hmr is enabled
+        ...(!using_hmr ? [
+            new WorkboxPlugin.GenerateSW({
+                clientsClaim: true,
+                skipWaiting: true,
+            })
+        ] : []),
     ]
 }
