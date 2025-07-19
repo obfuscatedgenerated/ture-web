@@ -20,6 +20,7 @@ export type ShareURLPropertiesWithValues = {
 const share_dialog = document.getElementById("share-dialog") as HTMLDialogElement;
 const file_name = document.getElementById("file-name") as HTMLInputElement;
 const state_select = document.getElementById("init-state") as HTMLSelectElement;
+const upload_button = document.getElementById("upload-button") as HTMLButtonElement;
 
 export const get_share_url = (properties: ShareURLProperties) => {
     const comp = compressToEncodedURIComponent(editor.get_text());
@@ -132,6 +133,8 @@ export const load_from_url = (): ShareURLPropertiesWithValues => {
 
             if (readonly) {
                 editor.set_readonly(true);
+                upload_button.disabled = true;
+                // TODO: hide upload entirely?
             }
 
             editor.clear_dirty();
