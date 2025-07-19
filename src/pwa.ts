@@ -66,6 +66,8 @@ sw_update_button.addEventListener("click", async () => {
     window.location.reload();
 });
 
+// TODO: this doesnt actually show internet connectivity status
+
 // check for internet
 if (!navigator.onLine) {
     sw_update_button.innerText = "Connect to internet to update";
