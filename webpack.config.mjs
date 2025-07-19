@@ -20,7 +20,7 @@ const css_strategy = !is_server ? MiniCssExtractPlugin.loader : "style-loader";
 console.log("css_strategy:", css_strategy);
 
 const TITLE = "Ture";
-const LONG_TITLE = "Ture - Turing machine interpreter"
+const LONG_TITLE = "Ture - Turing machine interpreter";
 
 const get_commit_details = () => {
     try {
@@ -36,8 +36,10 @@ export default (env, argv) => {
     // note: service worker generation not enabled if hmr enabled
     // unregister the sw and restart the server if changing this setting
     // with hmr off, unregister the sw and reload when you make a change
-    const USE_HMR = argv.hot;
+    const USE_HMR = argv.hot || argv.mode === "development";
     const using_hmr = is_server && USE_HMR;
+
+    console.log("hot module replacement enabled:", USE_HMR);
 
     return {
         entry: "./src/index.ts",
