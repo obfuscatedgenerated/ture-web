@@ -11,17 +11,24 @@ export const documents = {
     examples: examples_html.replaceAll("https://ture.ollieg.codes/?", "./?"),
     easter_egg: `<p style="text-align: center">Congratulations! You have solved the halting problem!</p>
         <p style="text-align: center"><img src="./public/precache/confetti.gif" style="text-align: center; width: 50%" /></p>`,
-    sw_update: `<p style="text-align: center">A new version of Ture is available!<br>Please reload the page to get the latest features and fixes.<br><br>
-<button onclick="window.location.reload()">Reload</button></p>`,
 }
 
 const document_dialog = document.getElementById("document-dialog") as HTMLDialogElement;
 const document_title = document.getElementById("document-title") as HTMLHeadingElement;
 const document_content = document.getElementById("document-content") as HTMLDivElement;
 
-export const show_document = (title: string, content_html: string) => {
+export const show_document = (title: string, content_html: string | HTMLElement) => {
     document_title.innerText = title;
-    document_content.innerHTML = content_html;
+
+    if (typeof content_html === "string") {
+        document_content.innerHTML = content_html;
+    } else if (content_html instanceof HTMLElement) {
+        // clear existing content
+        document_content.innerHTML = "";
+
+        // append the provided HTML element
+        document_content.appendChild(content_html);
+    }
 
     document_dialog.dataset.title = title;
 

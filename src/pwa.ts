@@ -41,7 +41,8 @@ if (__USE_SW__) {
                     new_worker.addEventListener("statechange", () => {
                         if (new_worker.state === "installed") {
                             if (navigator.serviceWorker.controller) {
-                                show_document("Update", documents.sw_update);
+                                localStorage.setItem("sw_update_available", "true");
+                                show_document("Update", sw_update_doc);
                             }
                         }
                     });
@@ -51,6 +52,40 @@ if (__USE_SW__) {
             });
         });
     }
+}
+
+const sw_update_doc = document.createElement("p");
+sw_update_doc.innerHTML = "A new version of Ture is available!<br><br>";
+sw_update_doc.style.textAlign = "center";
+
+const sw_update_button = document.createElement("button");
+sw_update_button.innerText = "Update";
+sw_update_button.addEventListener("click", () => {
+    clear_cache();
+    localStorage.removeItem("sw_update_available");
+    window.location.reload();
+});
+
+sw_update_doc.appendChild(sw_update_button);
+
+// not sure if this is the ideal apporach but it sure as hell works
+const clear_cache = () => {
+    if ("caches" in window) {
+        caches.keys().then(cacheNames => {
+            cacheNames.forEach(cacheName => {
+                caches.delete(cacheName).then(() => {
+                    console.log(`Cache ${cacheName} cleared.`);
+                }).catch(err => {
+                    console.error(`Failed to clear cache ${cacheName}: `, err);
+                });
+            });
+        });
+    }
+}
+
+// on page load, check if an update is meant to be applied
+if (localStorage.getItem("sw_update_available") === "true") {
+    show_document("Update", sw_update_doc);
 }
 
 export const is_using_sw = __USE_SW__;
