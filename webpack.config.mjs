@@ -2,6 +2,7 @@ import path from "path";
 import {fileURLToPath} from "url";
 
 import {execSync} from "child_process";
+import {glob} from "glob";
 
 import webpack from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
@@ -62,7 +63,7 @@ export default {
                 ],
             },
             {
-                test: /\.png$/,
+                test: [/\.png$/, /\.jpg$/, /\.jpeg$/, /\.gif$/, /\.svg$/],
                 type: "asset/resource",
                 generator: {
                     filename: "manifest/[name]-[contenthash:8][ext][query]",
@@ -122,6 +123,14 @@ export default {
             new WorkboxPlugin.GenerateSW({
                 clientsClaim: true,
                 skipWaiting: true,
+
+                // forcibly cache the public/precache directory
+                additionalManifestEntries: [
+                    ...glob.sync("public/precache/**/*", {cwd: __dirname, nodir: true}).map(file => ({
+                        url: `/${file}`,
+                        revision: null,
+                    })),
+                ],
             })
         ] : []),
     ]
