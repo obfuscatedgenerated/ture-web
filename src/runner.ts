@@ -282,6 +282,7 @@ export const run_step = () => {
         editor.set_readonly(true);
         tape_input.set_locked(true);
         tape_input.mark_pointer(0);
+        tape_input.scroll_cell_into_view(0);
         step_state.innerText = init_state;
         step_number.innerText = "1";
 
@@ -302,6 +303,7 @@ export const run_step = () => {
 
                 tape_input.set_value(res.value);
                 tape_input.mark_pointer(res.pos);
+                tape_input.scroll_cell_into_view(res.pos);
 
                 if (step_highlight_id) {
                     editor.remove_decoration_by_id(step_highlight_id);

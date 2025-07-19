@@ -125,6 +125,19 @@ export const mark_pointer = (pos: number | null) => {
     });
 }
 
+export const scroll_cell_into_view = (pos: number) => {
+    const tile = tape_visual.children[pos];
+    if (tile) {
+        tile.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "center"
+        });
+    } else {
+        console.warn("Tile at position", pos, "does not exist.");
+    }
+}
+
 const focus_next_tile = (current: HTMLElement) => {
     const next = current.nextElementSibling;
     if (next && next.classList.contains("tile")) {
