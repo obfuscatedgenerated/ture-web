@@ -148,7 +148,8 @@ export const add_hover_message = (
             basicSetup,
             decorationsField,
             ...hover_extensions.values(),
-            ...update_listener_extensions.values()
+            ...update_listener_extensions.values(),
+            EditorView.editable.of(!readonly_state)
         ])
     });
 
@@ -165,7 +166,8 @@ export const remove_hover_message_by_id = (id: number) => {
             basicSetup,
             decorationsField,
             ...remaining,
-            ...update_listener_extensions.values()
+            ...update_listener_extensions.values(),
+            EditorView.editable.of(!readonly_state)
         ])
     });
 }
@@ -177,7 +179,8 @@ export const remove_all_hover_messages = () => {
         effects: StateEffect.reconfigure.of([
             basicSetup,
             decorationsField,
-            ...update_listener_extensions.values()
+            ...update_listener_extensions.values(),
+            EditorView.editable.of(!readonly_state)
         ])
     });
 }
@@ -197,7 +200,8 @@ export const add_update_listener = (callback: (view: EditorView) => void, events
             basicSetup,
             decorationsField,
             ...hover_extensions.values(),
-            ...update_listener_extensions.values()
+            ...update_listener_extensions.values(),
+            EditorView.editable.of(!readonly_state)
         ])
     });
 }
@@ -212,12 +216,17 @@ export const remove_update_listener_by_id = (id: number) => {
             basicSetup,
             decorationsField,
             ...hover_extensions.values(),
-            ...remaining
+            ...remaining,
+            EditorView.editable.of(!readonly_state)
         ])
     });
 }
 
+let readonly_state = false;
+export const is_readonly = () => readonly_state;
 export const set_readonly = (readonly: boolean) => {
+    readonly_state = readonly;
+
     view.dispatch({
         effects: StateEffect.reconfigure.of([
             basicSetup,
