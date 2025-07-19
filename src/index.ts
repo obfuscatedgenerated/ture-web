@@ -9,9 +9,7 @@ import "./ui_binding";
 import "./keybinds";
 
 declare var __COMMIT_DETAILS__: string;
-
 console.log(__COMMIT_DETAILS__);
-document.getElementById("commit-details")!.innerText = __COMMIT_DETAILS__;
 
 sharing.load_from_url();
 

@@ -16,6 +16,9 @@ const css_strategy = !is_server ? MiniCssExtractPlugin.loader : "style-loader";
 
 console.log("css_strategy:", css_strategy);
 
+const TITLE = "Ture";
+const LONG_TITLE = "Ture - Turing machine interpreter"
+
 const get_commit_details = () => {
     try {
         // get hash, name, and date
@@ -73,12 +76,17 @@ export default {
         }),
 
         new HtmlWebpackPlugin({
+            title: LONG_TITLE,
             template: "./src/index.html",
-            //inject: false
+            templateParameters: {
+                commit_details: get_commit_details(),
+            }
         }),
 
         new MiniCssExtractPlugin({
             filename: "[name].[contenthash].css",
         }),
+
+
     ]
 }
