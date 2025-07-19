@@ -163,3 +163,10 @@ button kbd:first-of-type {
         display: inline-block;
     }
 }
+
+blockquote {
+    border-left: 0.25rem solid var(--accent);
+    padding-left: 1rem;
+    color: var(--text-secondary);
+    margin: 1rem 0;
+}
