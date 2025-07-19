@@ -1,0 +1,29 @@
+{
+  "name": "Ture",
+  "short_name": "Ture",
+  "background_color": "#111",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    {
+      "type": "image/png",
+      "sizes": "192x192",
+      "src": "/manifest/icon_192x192-b812a9cc.png"
+    },
+    {
+      "type": "image/png",
+      "sizes": "436x436",
+      "src": "/manifest/icon_436x436-954c03d8.png"
+    },
+    {
+      "type": "image/png",
+      "sizes": "436x211",
+      "src": "/manifest/icon_436x211-631a0a44.png"
+    },
+    {
+      "type": "image/png",
+      "sizes": "512x512",
+      "src": "/manifest/icon_512x512-1dc5d68d.png"
+    }
+  ]
+}
