@@ -373,7 +373,7 @@ export const run_remaining_steps = () => {
 
     final_label.classList.remove("hidden");
     final_state.innerText = state;
-    final_steps.innerText = `${--step_num}`;
+    final_steps.innerText = `${step_num}`;
     final_steps_plural.classList.toggle("hidden", step_num === 1);
 
     if (!halted) {
