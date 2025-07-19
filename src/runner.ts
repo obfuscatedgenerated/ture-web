@@ -1,6 +1,7 @@
 import * as error_log from "./error_log";
 import * as editor from "./editor";
 import * as tape_input from "./tape_input";
+import * as sharing from "./sharing";
 
 import {CharStream, CommonTokenStream} from "antlr4";
 
@@ -202,15 +203,29 @@ export const cancel_steps = () => {
     document.getElementById("stepper-controls")!.classList.add("hidden");
     document.getElementById("run-step")!.classList.remove("hidden");
 
-    editor.set_readonly(false);
-    document.getElementById("upload-button")!.removeAttribute("disabled");
-    state_select.disabled = false;
     tape_input.mark_pointer(null);
-    tape_input.set_locked(false);
 
     if (step_highlight_id) {
         editor.remove_decoration_by_id(step_highlight_id);
     }
+
+    // restore to original lock state
+    const url_props = sharing.get_loaded_properties();
+
+    const script_ro = url_props?.script?.readonly ?? false;
+    const init_ro = url_props?.init?.readonly ?? false;
+    const tape_ro = url_props?.tape?.readonly ?? false;
+
+    editor.set_readonly(script_ro);
+
+    if (!script_ro) {
+        document.getElementById("upload-button")!.removeAttribute("disabled");
+
+    }
+
+    state_select.disabled = init_ro;
+
+    tape_input.set_locked(tape_ro);
 }
 
 export const run_step = () => {
