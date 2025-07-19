@@ -14,6 +14,8 @@
     --text-ghost: #aaa;
     --text-link: var(--accent);
 
+    --code-select-bg: #95aec9;
+
     --accent: #2b72d6;
     --accent-hover: #1e5cb0;
     --on-accent: #fff;
@@ -56,6 +58,8 @@
     --text-tertiary: #888;
     --text-ghost: #666;
     --text-link: #6ab7ff;
+
+    --code-select-bg: #104f88;
 
     --accent: #1255a1;
     --accent-hover: #0e3f7d;
@@ -477,6 +481,10 @@ label {
 .readonly .cm-activeLine,
 .readonly .cm-activeLineGutter {
     background-color: transparent !important;
+}
+
+.cm-selectionBackground {
+    background-color: var(--code-select-bg) !important;
 }
 
 .cm-error {
