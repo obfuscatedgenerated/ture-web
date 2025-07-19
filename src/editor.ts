@@ -10,7 +10,8 @@ import {
     Extension
 } from "@codemirror/state";
 
-export const DEFAULT_DOC = `% Write your transition rules here!`;
+export const DEFAULT_DOC = `% Write your transition rules here!
+`;
 
 // chatgpt ended up rewriting this
 // the way codemirror handles extensions is terrible
