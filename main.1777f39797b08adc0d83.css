@@ -249,6 +249,13 @@ button kbd:first-of-type {
     }
 }
 
+blockquote {
+    border-left: 0.25rem solid var(--accent);
+    padding-left: 1rem;
+    color: var(--text-secondary);
+    margin: 1rem 0;
+}
+
 .hidden {
     display: none !important;
 }
