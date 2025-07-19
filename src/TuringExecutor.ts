@@ -153,7 +153,8 @@ export default class TuringExecutor extends TuringVisitor<string> {
         }
 
         let halted = false;
-        for (let i = 0; i < step_limit; i++) {
+        let step_idx = 0;
+        for (step_idx; step_idx < step_limit; step_idx++) {
             const res = this.execute_step(tape, pos);
 
             // update tape
@@ -180,7 +181,7 @@ export default class TuringExecutor extends TuringVisitor<string> {
             throw new Error(`Step limit of ${step_limit} reached without halting.`);
         }
 
-        return tape;
+        return {tape, pos, step_idx, state: this.current_state};
     }
 
     get_step_iterator = (tape: string, pos: number = 0): StepIterator => {

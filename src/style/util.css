@@ -1,5 +1,9 @@
-.hidden {
+.hidden:not(.reserve) {
     display: none !important;
+}
+
+.hidden.reserve {
+    visibility: hidden !important;
 }
 
 .cursor-pointer {

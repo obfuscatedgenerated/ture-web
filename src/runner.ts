@@ -20,6 +20,11 @@ const states_options = document.getElementById("states") as HTMLOptGroupElement;
 const step_state = document.getElementById("step-state") as HTMLSpanElement;
 const step_number = document.getElementById("step-number") as HTMLSpanElement;
 
+const final_label = document.getElementById("final-label") as HTMLLabelElement;
+const final_state = document.getElementById("final-state") as HTMLSpanElement;
+const final_steps = document.getElementById("final-steps") as HTMLSpanElement;
+const final_steps_plural = document.getElementById("final-steps-plural") as HTMLSpanElement;
+
 const set_state_names = (names: string[]) => {
     let existing_state = state_select.value;
 
@@ -160,6 +165,8 @@ export const run = (input: string) => {
 
     exec.set_state(init_state);
 
+    final_label.classList.add("hidden");
+
     const in_tape = tape_input.get_value();
     console.log(`Running Turing machine with initial state "${init_state}" and tape input "${in_tape}"`);
 
@@ -168,7 +175,9 @@ export const run = (input: string) => {
     }
 
     try {
-        let tape = exec.execute(in_tape);
+        const res = exec.execute(in_tape);
+        let tape = res.tape;
+
         console.log(tape);
 
         // trim trailing empties by finding first non empty character from the end
@@ -182,6 +191,13 @@ export const run = (input: string) => {
 
         tape = tape.substring(0, last_non_empty);
         tape_input.set_value(tape);
+
+        final_label.classList.remove("hidden");
+        final_state.innerText = res.state;
+
+        let step_num = res.step_idx + 1;
+        final_steps.innerText = `${step_num}`;
+        final_steps_plural.classList.toggle("hidden", step_num === 1);
     } catch (e: any) {
         console.error(e);
         error_log.add("Execution error: " + e.message, "exec");
@@ -189,7 +205,7 @@ export const run = (input: string) => {
 }
 
 let step_iterator: StepIterator | null = null;
-let step_idx = 1;
+let step_num = 1;
 let step_highlight_id: number | undefined;
 
 export const is_stepping = () => {
@@ -267,12 +283,13 @@ export const run_step = () => {
 
         exec.set_state(init_state);
         step_iterator = exec.get_step_iterator(tape_input.get_value());
-        step_idx = 1;
+        step_num = 1;
 
         console.log("Prepared new step iterator.");
 
         // hide run button and show stepper controls
         document.getElementById("run")!.classList.add("hidden");
+        final_label.classList.add("hidden");
         document.getElementById("stepper-controls")!.classList.remove("hidden");
         document.getElementById("run-step")!.classList.add("hidden");
         document.getElementById("upload-button")!.setAttribute("disabled", "true");
@@ -292,12 +309,17 @@ export const run_step = () => {
     // if step_iterator is not null, execute the next step
     if (step_iterator) {
         try {
-            step_number.innerText = `${++step_idx}`;
+            step_number.innerText = `${++step_num}`;
 
             const res = step_iterator.next();
             if (res.status === ExecResultStatus.Halt) {
                 console.log("Execution finished.");
                 cancel_steps();
+
+                final_label.classList.remove("hidden");
+                final_state.innerText = res.state;
+                final_steps.innerText = `${--step_num}`;
+                final_steps_plural.classList.toggle("hidden", step_num === 1);
             } else {
                 console.log(`Tape: ${res.value}, Position: ${res.pos}, State: ${res.state} (Text range: ${res.text_range?.start} - ${res.text_range?.end})`);
 
@@ -334,7 +356,8 @@ export const run_remaining_steps = () => {
 
     let halted = false;
     let value = tape_input.get_value();
-    for (step_idx; step_idx < DEFAULT_STEP_LIMIT; step_idx++) {
+    let state = step_state.innerText;
+    for (step_num; step_num < DEFAULT_STEP_LIMIT; step_num++) {
         const res = save_iterator.next();
         if (res.status === ExecResultStatus.Halt) {
             console.log("Execution finished.");
@@ -343,9 +366,15 @@ export const run_remaining_steps = () => {
         }
 
         value = res.value;
+        state = res.state;
     }
 
     tape_input.set_value(value);
+
+    final_label.classList.remove("hidden");
+    final_state.innerText = state;
+    final_steps.innerText = `${--step_num}`;
+    final_steps_plural.classList.toggle("hidden", step_num === 1);
 
     if (!halted) {
         console.warn(`Reached step limit of ${DEFAULT_STEP_LIMIT} without halting.`);
