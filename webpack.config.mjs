@@ -98,6 +98,7 @@ export default (env, argv) => {
             new HtmlWebpackPlugin({
                 title: LONG_TITLE,
                 template: "./src/index.html",
+                inject: false,
                 templateParameters: {
                     commit_details: get_commit_details(),
                 },
