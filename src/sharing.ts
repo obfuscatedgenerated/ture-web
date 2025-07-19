@@ -79,32 +79,42 @@ export const get_share_url = (properties: ShareURLProperties) => {
 
 export const show_share_dialog = () => {
     // if certain properties dont have a value to share, disable the checkbox
+    const include_script = document.getElementById("include-script") as HTMLInputElement;
+    const include_name = document.getElementById("include-name") as HTMLInputElement;
+    const include_init = document.getElementById("include-init") as HTMLInputElement;
+    const include_tape = document.getElementById("include-tape") as HTMLInputElement;
+
     const script_enable = (editor.get_text() !== "" && editor.get_text() !== editor.DEFAULT_DOC);
+
     if (!script_enable) {
-        document.getElementById("include-script")!.setAttribute("disabled", "true");
+        include_script.disabled = true;
+        include_script.checked = false;
     } else {
-        document.getElementById("include-script")!.removeAttribute("disabled");
+        include_script.disabled = false;
     }
 
     const name_enable = (file_name.value !== "");
     if (!name_enable) {
-        document.getElementById("include-name")!.setAttribute("disabled", "true");
+        include_name.disabled = true;
+        include_name.checked = false;
     } else {
-        document.getElementById("include-name")!.removeAttribute("disabled");
+        include_name.disabled = false;
     }
 
     const init_enable = (state_select.value !== "");
     if (!init_enable) {
-        document.getElementById("include-init")!.setAttribute("disabled", "true");
+        include_init.disabled = true;
+        include_init.checked = false;
     } else {
-        document.getElementById("include-init")!.removeAttribute("disabled");
+        include_init.disabled = false;
     }
 
     const tape_enable = (tape_input.get_value() !== "" && tape_input.get_value() !== EMPTY.repeat(tape_input.get_value().length));
     if (!tape_enable) {
-        document.getElementById("include-tape")!.setAttribute("disabled", "true");
+        include_tape.disabled = true;
+        include_tape.checked = false;
     } else {
-        document.getElementById("include-tape")!.removeAttribute("disabled");
+        include_tape.disabled = false;
     }
 
     share_dialog.showModal();
@@ -248,9 +258,64 @@ share_prop_names.forEach(id => {
     const checkbox = document.getElementById(`include-${id}`) as HTMLInputElement;
     const sub_div = document.getElementById(`${id}-sub`);
 
-    if (checkbox && sub_div) {
+    if (checkbox ) {
         checkbox.addEventListener("change", () => {
-            sub_div.classList.toggle("hidden", !checkbox.checked);
+            // re-evaluate select all checkbox
+            const select_all = document.getElementById("select-all") as HTMLInputElement;
+            const all_checked = share_prop_names.every(name => {
+                const include = document.getElementById(`include-${name}`) as HTMLInputElement;
+                return include.checked || include.disabled;
+            });
+            select_all.checked = all_checked;
+
+            if (sub_div) {
+                sub_div.classList.toggle("hidden", !checkbox.checked);
+            }
+        });
+    }
+});
+
+// bind checkbox select all
+document.getElementById("select-all")!.addEventListener("change", (event) => {
+    const select_all = event.target as HTMLInputElement;
+
+    if (select_all.checked) {
+        // if turning on, select all checkboxes
+
+        share_prop_names.forEach(id => {
+            const include = document.getElementById(`include-${id}`) as HTMLInputElement;
+
+            if (include.disabled) {
+                // if the checkbox is disabled, skip it
+                return;
+            }
+
+            include.checked = true;
+
+            // toggle sub options visibility
+            const sub_div = document.getElementById(`${id}-sub`);
+            if (sub_div) {
+                sub_div.classList.remove("hidden");
+            }
+        });
+    } else {
+        // if turning off, unselect all checkboxes
+
+        share_prop_names.forEach(id => {
+            const include = document.getElementById(`include-${id}`) as HTMLInputElement;
+
+            if (include.disabled) {
+                // if the checkbox is disabled, skip it
+                return;
+            }
+
+            include.checked = false;
+
+            // toggle sub options visibility
+            const sub_div = document.getElementById(`${id}-sub`);
+            if (sub_div) {
+                sub_div.classList.add("hidden");
+            }
         });
     }
 });
