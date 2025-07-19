@@ -14,6 +14,22 @@ if (__USE_SW__) {
             navigator.serviceWorker.register("service-worker.js").then(registration => {
                 console.log("SW registered: ", registration);
 
+                // force update check on registration
+                registration.update().then(() => {
+                    console.log("SW update check complete.");
+                }).catch(updateError => {
+                    console.error("SW update check failed: ", updateError);
+                });
+
+                // check for updates every hour
+                setInterval(() => {
+                    registration.update().then(() => {
+                        console.log("SW update check complete.");
+                    }).catch(updateError => {
+                        console.error("SW update check failed: ", updateError);
+                    });
+                }, 60 * 60 * 1000); // every hour
+
                 registration.addEventListener("updatefound", () => {
                     const new_worker = registration.installing;
 
