@@ -3,6 +3,15 @@ on:
   push:
     branches:
       - main
+    paths:
+      - src/**
+      - public/**
+      - webpack.config.mjs
+      - examples.md
+      - README.md
+      - TEACHERS.md
+      - package.json
+      - package-lock.json
 
 jobs:
   publish:
