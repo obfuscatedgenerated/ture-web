@@ -403,7 +403,7 @@ open_share_url_input.addEventListener("paste", (event) => {
 
     const pasted_text = event.clipboardData.getData("text/plain");
 
-    // sanity check 1: the url is valid
+    // sanity check: the url is valid
     let pasted_url: URL;
     try {
         pasted_url = new URL(pasted_text);
