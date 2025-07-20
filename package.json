@@ -20,7 +20,8 @@
     "antlr4": "4.13.2",
     "codemirror": "^6.0.2",
     "js-levenshtein": "^1.1.6",
-    "lz-string": "^1.5.0"
+    "lz-string": "^1.5.0",
+    "tippy.js": "^6.3.7"
   },
   "devDependencies": {
     "@types/js-levenshtein": "^1.1.3",

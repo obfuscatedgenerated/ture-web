@@ -154,13 +154,8 @@ button kbd:first-of-type {
 }
 
 @media (hover: none) and (pointer: coarse) {
-    kbd, .kbd-plus {
+    kbd.auto-hide, .kbd-plus.auto-hide {
         display: none;
-    }
-
-    /* always show in readme */
-    #document-content kbd, #document-content .kbd-plus {
-        display: inline-block;
     }
 }
 

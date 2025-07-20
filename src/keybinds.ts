@@ -15,7 +15,7 @@ const override_kbd_hiding = () => {
 
     const style = document.createElement("style");
     style.innerHTML = `
-        kbd, .kbd-plus {
+        kbd.auto-hide, .kbd-plus.auto-hide {
             display: inline-block !important;
         }
     `;

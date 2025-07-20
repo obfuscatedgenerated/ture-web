@@ -8,6 +8,7 @@ import * as pwa from "./pwa";
 
 import "./ui_binding";
 import "./keybinds";
+import "./tooltips";
 
 console.log(__COMMIT_DETAILS__);
 
