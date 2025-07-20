@@ -79,3 +79,5 @@ Clean, build, and deploy to GitHub Pages:
 ```bash
 npm run publish
 ```
+
+Note: if you have enabled the included GitHub Action `Deploy from main`, you won't need to do this manually. Changes to main will be automatically deployed to GitHub Pages.
