@@ -7,11 +7,17 @@ const file_input = document.getElementById("file-input") as HTMLInputElement;
 const file_name = document.getElementById("file-name") as HTMLInputElement;
 const state_select = document.getElementById("init-state") as HTMLSelectElement;
 
+/**
+ * Opens the file uploader dialog.
+ */
 export const open_file_uploader = () => {
     file_input.value = "";
     upload_dialog.showModal();
 }
 
+/**
+ * Reads the file input and uploads the content to the editor.
+ */
 const upload_file = () => {
     if (!file_input.files) {
         upload_dialog.close();
@@ -41,10 +47,12 @@ const upload_file = () => {
                 content = content.replace(init_regex, "");
             }
 
+            // load the content into the editor
             editor.view.dispatch({
                 changes: {from: 0, to: editor.view.state.doc.length, insert: content}
             });
 
+            // parse now
             runner.parse(content);
             error_log.log_to_console();
 
@@ -65,22 +73,32 @@ const upload_file = () => {
         upload_dialog.close();
     }
 
+    // invoke
     reader.readAsText(file, "UTF-8");
 }
 
+/**
+ * Downloads the current editor content as a file.<br>
+ * An initial state must be selected before downloading
+ */
 export const download_file = () => {
     // TODO: more advanced dialog allowing file name, option to download just txt, dropdown for init state etc
 
     const init_state = state_select.value;
     if (init_state === "") {
+        // TODO: switch to error_log.add?
         alert("Please select an initial state before downloading.");
         return;
     }
 
+    // prepend INIT declaration to the content
     const content = `INIT ${init_state}\n\n` + editor.get_text();
+
+    // create a blob url
     const blob = new Blob([content], {type: "text/plain"});
     const url = URL.createObjectURL(blob);
 
+    // download via dom click
     const a = document.createElement("a");
     a.href = url;
     a.download = `${file_name.value || "program"}.ture`;

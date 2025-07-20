@@ -34,13 +34,20 @@ document.getElementById("cancel-step")!.addEventListener("click", runner.cancel_
 // bind copy empty
 const copy_empty = document.getElementById("copy-empty") as HTMLButtonElement;
 const copy_empty_content = copy_empty.innerHTML;
-copy_empty.addEventListener("click", () => {
-    navigator.clipboard.writeText(EMPTY).then(() => {
-        copy_empty.innerText = "Copied!";
-        setTimeout(() => {
-            copy_empty.innerHTML = copy_empty_content;
-        }, 2000);
-    });
+copy_empty.addEventListener("click", async () => {
+    try {
+        await navigator.clipboard.writeText(EMPTY);
+    } catch (e) {
+        console.error("Failed to copy empty tape to clipboard:", e);
+        return;
+    }
+
+    copy_empty.innerText = "Copied!";
+
+    // reset text after 2 seconds
+    setTimeout(() => {
+        copy_empty.innerHTML = copy_empty_content;
+    }, 2000);
 });
 
 // bind state select change

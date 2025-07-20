@@ -9,28 +9,35 @@ import {documents, show_document} from "./documents";
 declare var __USE_SW__: boolean;
 
 if (__USE_SW__) {
+    // service worker should be injected for offline support
+
     if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-            navigator.serviceWorker.register("service-worker.js").then(registration => {
+        window.addEventListener("load", async () => {
+            try {
+                const registration = await navigator.serviceWorker.register("service-worker.js");
                 console.log("SW registered: ", registration);
 
                 // force update check on registration
-                registration.update().then(() => {
+                try {
+                    await registration.update();
                     console.log("SW update check complete.");
-                }).catch(updateError => {
-                    console.error("SW update check failed: ", updateError);
-                });
+                } catch (e) {
+                    console.error("SW update check failed: ", e);
+                }
 
                 // check for updates every hour
-                setInterval(() => {
-                    registration.update().then(() => {
+                setInterval(async () => {
+                    try {
+                        await registration.update();
                         console.log("SW update check complete.");
-                    }).catch(updateError => {
-                        console.error("SW update check failed: ", updateError);
-                    });
-                }, 60 * 60 * 1000); // every hour
+                    } catch (e) {
+                        console.error("SW update check failed: ", e);
+                    }
+                }, 60 * 60 * 1000);
 
                 registration.addEventListener("updatefound", () => {
+                    // a new service worker is waiting to be installed
+
                     const new_worker = registration.installing;
 
                     if (!new_worker) {
@@ -41,25 +48,31 @@ if (__USE_SW__) {
                     new_worker.addEventListener("statechange", () => {
                         if (new_worker.state === "installed") {
                             if (navigator.serviceWorker.controller) {
+                                // inform the user that a new version is available
+
                                 localStorage.setItem("sw_update_available", "true");
                                 show_document("Update", sw_update_doc);
                             }
                         }
                     });
                 });
-            }).catch(registrationError => {
-                console.log("SW registration failed: ", registrationError);
-            });
+            } catch (e) {
+                console.error("SW registration failed: ", e);
+            }
         });
     }
 }
+// TODO: unregister if not __USE_SW__
 
+// construct document to show when an update is available
 const sw_update_doc = document.createElement("p");
 sw_update_doc.innerHTML = "A new version of Ture is available!<br><br>";
 sw_update_doc.style.textAlign = "center";
 
 const sw_update_button = document.createElement("button");
 sw_update_button.innerText = "Update";
+
+// bind the update button to clear the cache and reload the page
 sw_update_button.addEventListener("click", async () => {
     await clear_cache();
     localStorage.removeItem("sw_update_available");
@@ -74,7 +87,7 @@ if (!navigator.onLine) {
     sw_update_button.disabled = true;
 }
 
-// check if internet access changed
+// check if internet access changed, and update the button enabled state accordingly
 window.addEventListener("online", () => {
     sw_update_button.disabled = false;
     sw_update_button.innerText = "Update";
@@ -87,7 +100,7 @@ window.addEventListener("offline", () => {
 
 sw_update_doc.appendChild(sw_update_button);
 
-// not sure if this is the ideal apporach but it sure as hell works
+// not sure if this is the ideal approach but it sure as hell works
 const clear_cache = async () => {
     if ("caches" in window) {
         const keys = await caches.keys();

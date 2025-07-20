@@ -6,6 +6,9 @@ import * as sharing from "./sharing";
 import * as runner from "./runner";
 import * as pwa from "./pwa";
 
+/**
+ * Forcibly overrides the .auto-hide class on kbd elements to keep them visible regardless of the pointer detected.
+ */
 const override_kbd_hiding = () => {
     // if the hide media query applies, inject an override !important rule to keep the kbd elements visible
     const media = window.matchMedia("(hover: none) and (pointer: coarse)");

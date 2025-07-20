@@ -1,13 +1,23 @@
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 
-const kbd_builder = (keys: string[]) => {
+/**
+ * Builds a container of <kbd> elements for the given key combo.<br>
+ * @param keys A list of keys to include in the key combo, e.g. ["Ctrl", "S"] for "Ctrl + S"
+ * @param auto_hide Whether to add the "auto-hide" class to the <kbd> elements, which will hide them if there is not likely a physical keyboard present
+ */
+const kbd_builder = (keys: string[], auto_hide = false) => {
     const container = document.createElement("div");
 
     for (const key of keys) {
         const kbd = document.createElement("kbd");
         kbd.innerText = key;
 
+        if (auto_hide) {
+            kbd.classList.add("auto-hide");
+        }
+
+        // replace Ctrl with Cmd on mac
         if (key === "Ctrl") {
             kbd.classList.add("mac-cmd");
             if (navigator.platform.startsWith("Mac")) {
@@ -17,6 +27,7 @@ const kbd_builder = (keys: string[]) => {
 
         container.appendChild(kbd);
 
+        // if not the last key, add plus separator
         if (key !== keys[keys.length - 1]) {
             const separator = document.createElement("span");
             separator.innerText = " + ";

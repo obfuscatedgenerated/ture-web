@@ -5,32 +5,42 @@ import * as editor from "./editor";
 import * as error_log from "./error_log";
 import * as tape_input from "./tape_input";
 
-// TODO: necessary? at least clean up all this sharing logic
+// TODO: is this typing necessary? at least clean up all this sharing logic
+// TODO: these should really be separate. without value is used as input and with value as an output. the way "includes" are defined by existing are weird because flags are boolean
+
+// define properties that are parsed from the URL (both includes and flags)
 type ShareURLPropertyIncludeName = "script" | "name" | "init" | "tape";
 type ShareURLPropertyFlagName = "lock_restrict" | "unrestrict";
 export type ShareURLPropertyName = ShareURLPropertyIncludeName | ShareURLPropertyFlagName;
 
+// convenience lists for includes and flags
 const share_prop_names_include: ShareURLPropertyIncludeName[] = ["script", "name", "init", "tape"];
 const share_prop_names_flags: ShareURLPropertyFlagName[] = ["lock_restrict", "unrestrict"];
 
 export const share_prop_names: ShareURLPropertyName[] = [...share_prop_names_include, ...share_prop_names_flags];
 
+// base field of include properties
 interface ShareURLPropertyIncludeBase {
     readonly: boolean;
 }
 
+// base field of flag properties
 type ShareURLPropertyFlagBase = boolean | undefined;
 
+// helper to return the property base type based on the property name
 type ShareURLPropertyFor<K extends ShareURLPropertyName> =
     K extends ShareURLPropertyFlagName ? ShareURLPropertyFlagBase : ShareURLPropertyIncludeBase;
 
+// helper to return the property base type with a value based on the property name. flags are already a value, but includes have "value" as a separate field
 type ShareURLPropertyWithValueFor<K extends ShareURLPropertyName> =
     K extends ShareURLPropertyFlagName ? ShareURLPropertyFlagBase : ShareURLPropertyIncludeBase & { value: string };
 
+// define the properties that can be shared via URL
 export type ShareURLProperties = Partial<{
     [K in ShareURLPropertyName]?: ShareURLPropertyFor<K>;
 }>;
 
+// define the properties that can be shared via URL, with values included
 export type ShareURLPropertiesWithValues = {
     [K in ShareURLPropertyName]?: ShareURLPropertyWithValueFor<K>;
 };
@@ -44,14 +54,19 @@ const restrict_checkbox = document.getElementById("restrict-input") as HTMLInput
 const open_share_dialog = document.getElementById("open-share-dialog") as HTMLDialogElement;
 const open_share_url_input = document.getElementById("open-share-url") as HTMLInputElement;
 
+/**
+ * Generates a share URL based on the provided properties.
+ * @param properties The properties to include in the share URL
+ * @return The generated share URL as a string
+ */
 export const get_share_url = (properties: ShareURLProperties) => {
-    const comp = compressToEncodedURIComponent(editor.get_text());
-
     const url = new URL(window.location.href);
     url.hash = ""; // clear hash (sometimes set by readme viewers)
     url.search = ""; // clear search params to avoid conflicts
 
-    if (properties.script) {
+    if (properties.script && editor.get_text() !== "" && editor.get_text() !== editor.DEFAULT_DOC) {
+        // compress script with lz-string and encode it in the url
+        const comp = compressToEncodedURIComponent(editor.get_text());
         url.searchParams.set("script", comp);
 
         if (properties.script.readonly) {
@@ -75,6 +90,7 @@ export const get_share_url = (properties: ShareURLProperties) => {
         }
     }
 
+    // add tape value to url if filled
     if (properties.tape && tape_input.get_value()) {
         let tape = tape_input.get_value();
 
@@ -111,12 +127,16 @@ export const get_share_url = (properties: ShareURLProperties) => {
     return url.toString();
 }
 
+/**
+ * Shows the create share dialog and enables/disables checkboxes based on current values.
+ */
 export const show_create_share_dialog = () => {
-    // if certain properties dont have a value to share, disable the checkbox
     const include_script = document.getElementById("include-script") as HTMLInputElement;
     const include_name = document.getElementById("include-name") as HTMLInputElement;
     const include_init = document.getElementById("include-init") as HTMLInputElement;
     const include_tape = document.getElementById("include-tape") as HTMLInputElement;
+
+    // if certain properties dont have a value to share, disable the checkbox
 
     const script_enable = (editor.get_text() !== "" && editor.get_text() !== editor.DEFAULT_DOC);
 
@@ -154,7 +174,14 @@ export const show_create_share_dialog = () => {
     create_share_dialog.showModal();
 }
 
+// store a reference to the loaded properties from the url
 let loaded: ShareURLPropertiesWithValues | null = null;
+
+/**
+ * Loads properties from the current URL and applies them to the editor and UI elements.<br>
+ * Note: this function does not parse the script or init state, it only loads the values and sets them in the UI. Parse after calling this, then call `finish_load_from_url()` to finalise the loading process.<br>
+ * @return The loaded properties with values, or an empty object if no properties were loaded.
+ */
 export const load_from_url = (): ShareURLPropertiesWithValues => {
     // TODO: support loading a file from a remote url
 
@@ -276,10 +303,18 @@ export const finish_load_from_url = () => {
     }
 }
 
+/**
+ * Returns the loaded properties from the URL, or null if no properties were loaded.
+ * @return The loaded properties with values, or null if no properties were loaded.
+ */
 export const get_loaded_properties = (): ShareURLPropertiesWithValues | null => {
     return loaded;
 }
 
+/**
+ * Collects checkbox values from the share dialog and returns them as a ShareURLProperties object.
+ * @return The collected properties as a ShareURLProperties object.
+ */
 const get_share_checkbox_values = (): ShareURLProperties => {
     const properties: ShareURLProperties = {};
 
@@ -334,6 +369,7 @@ share_prop_names.forEach(id => {
             });
             select_all.checked = all_checked;
 
+            // show suboption div if checkbox is checked
             if (sub_div) {
                 sub_div.classList.toggle("hidden", !checkbox.checked);
             }
@@ -395,24 +431,31 @@ document.getElementById("select-all")!.addEventListener("change", (event) => {
 // bind share button
 const share_button = document.getElementById("share-button") as HTMLButtonElement;
 const share_button_content = share_button.innerHTML;
-share_button.addEventListener("click", () => {
+share_button.addEventListener("click", async () => {
+    // generate share url from collected checkbox values
     const share_url = get_share_url(get_share_checkbox_values());
 
-    navigator.clipboard.writeText(share_url).then(() => {
-        editor.clear_dirty();
-        share_button.innerText = "Copied!";
-        setTimeout(() => {
-            share_button.innerHTML = share_button_content;
-        }, 2000);
-    }).catch((err) => {
-        console.error("Failed to copy share URL: ", err);
-    });
+    try {
+        await navigator.clipboard.writeText(share_url);
+    } catch (e) {
+        console.error("Failed to copy share URL: ", e);
+        return;
+    }
+
+    editor.clear_dirty();
+    share_button.innerText = "Copied!";
+
+    // reset text after 2 seconds
+    setTimeout(() => {
+        share_button.innerHTML = share_button_content;
+    }, 2000);
 });
 
 // bind share iframe button
 const share_iframe_button = document.getElementById("share-iframe-button") as HTMLButtonElement;
 const share_iframe_button_content = share_iframe_button.innerHTML;
-share_iframe_button.addEventListener("click", () => {
+share_iframe_button.addEventListener("click", async () => {
+    // generate share url from collected checkbox values
     const props = get_share_checkbox_values();
     const share_url = get_share_url(props);
 
@@ -427,6 +470,7 @@ share_iframe_button.addEventListener("click", () => {
     // calculate height based on content
     let height = 520;
 
+    // determine ideal height based on script line count
     if (props.script) {
         const line_count = (editor.get_text().match(/\n/g) || []).length + 1;
         height += line_count * 18; // 18px per line
@@ -434,13 +478,20 @@ share_iframe_button.addEventListener("click", () => {
 
     iframe.height = height.toString();
 
-    navigator.clipboard.writeText(iframe.outerHTML).then(() => {
-        editor.clear_dirty();
-        share_iframe_button.innerText = "Copied!";
-        setTimeout(() => {
-            share_iframe_button.innerHTML = share_iframe_button_content;
-        }, 2000);
-    });
+    try {
+        await navigator.clipboard.writeText(iframe.outerHTML);
+    } catch (e) {
+        console.error("Failed to copy share URL: ", e);
+        return;
+    }
+
+    editor.clear_dirty();
+    share_button.innerText = "Copied!";
+
+    // reset text after 2 seconds
+    setTimeout(() => {
+        share_button.innerHTML = share_button_content;
+    }, 2000);
 });
 
 // fill input placeholder
@@ -459,6 +510,7 @@ document.getElementById("open-share-cancel")!.addEventListener("click", () => {
 // bind open share url input
 open_share_url_input.addEventListener("paste", (event) => {
     event.preventDefault();
+
     error_log.clear_type("open-url");
 
     if (!event.clipboardData) {

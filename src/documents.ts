@@ -17,6 +17,11 @@ const document_dialog = document.getElementById("document-dialog") as HTMLDialog
 const document_title = document.getElementById("document-title") as HTMLHeadingElement;
 const document_content = document.getElementById("document-content") as HTMLDivElement;
 
+/**
+ * Renders and shows a document in the dialog.
+ * @param title The title to present in the heading
+ * @param content_html The HTML or element to display in the dialog
+ */
 export const show_document = (title: string, content_html: string | HTMLElement) => {
     document_title.innerText = title;
 
@@ -44,6 +49,9 @@ export const show_document = (title: string, content_html: string | HTMLElement)
     document_content.scrollTop = 0;
 }
 
+/**
+ * Closes the document dialog.
+ */
 export const hide_document = () => {
     document_dialog.close();
 }

@@ -25,6 +25,10 @@ const final_state = document.getElementById("final-state") as HTMLSpanElement;
 const final_steps = document.getElementById("final-steps") as HTMLSpanElement;
 const final_steps_plural = document.getElementById("final-steps-plural") as HTMLSpanElement;
 
+/**
+ * Sets the state names available in the init state select box.
+ * @param names A list of state names
+ */
 const set_state_names = (names: string[]) => {
     let existing_state = state_select.value;
 
@@ -45,6 +49,15 @@ const set_state_names = (names: string[]) => {
     }
 }
 
+/**
+ * Try to determine the initial state based on the available states, following the algorithm:<br>
+ * 1. check if theres a single state and choose that<br>
+ * 2. calculate levenshtein distance between each state and ["init", "start"]<br>
+ * 3. award bonus to distance score if contains either keyword fully<br>
+ * 4. if best state has score within threshold pick it<br>
+ * 5. or else give up and alert user<br>
+ * This will set the init state select box value to the guessed state, or leave it empty and add an error to the log if it cannot guess.
+ */
 const guess_init_state = () => {
     // TODO: explore behavioural guessing i.e. compare lhs frequency to rhs frequency. a state with no transitions into it is likely an initial state
 
@@ -77,13 +90,13 @@ const guess_init_state = () => {
 
         for (const keyword of keywords) {
             const distance = levenshtein(value, keyword);
-            const normalized = distance / value.length;
+            const normalised = distance / value.length;
 
             // award a small bonus if the value includes the keyword
             const includes = value.includes(keyword);
-            const adjusted = normalized - (includes ? 0.4 : 0);
+            const adjusted = normalised - (includes ? 0.4 : 0);
 
-            console.log(`${value} vs ${keyword}: distance=${distance}, normalized=${normalized}, adjusted=${adjusted}`);
+            console.log(`${value} vs ${keyword}: distance=${distance}, normalised=${normalised}, adjusted=${adjusted}`);
 
             // only accept if the adjusted score is below the threshold
             if (adjusted <= threshold && adjusted < best_score) {
@@ -104,16 +117,23 @@ const guess_init_state = () => {
     error_log.add("Could not guess initial state. Please select one.", "no-init");
 }
 
-export const parse = (input: string): ProgramContext => {
+/**
+ * Parses the input string as a Turing machine program and returns the parse tree.<br>
+ * This also invokes housekeeping tasks such as clearing error logs, removing decorations, as well as collecting metadata to populate legal state names and tape letters.
+ * @param code The code to parse
+ * @return The parse tree of the program
+ */
+export const parse = (code: string): ProgramContext => {
     error_log.clear_type("syntax");
 
     editor.remove_all_decorations();
     editor.remove_all_hover_messages();
 
-    const chars = new CharStream(input);
+    const chars = new CharStream(code);
     const lexer = new TuringLexer(chars);
     const tokens = new CommonTokenStream(lexer);
 
+    // use custom error listener and strategy
     const parser = new TuringParser(tokens);
     parser.removeErrorListeners();
     parser.addErrorListener(new error_log.CustomErrorListener());
@@ -133,16 +153,23 @@ export const parse = (input: string): ProgramContext => {
     return tree;
 }
 
-export const run = (input: string) => {
+/**
+ * Runs the Turing machine with the provided code all the way through.<br>
+ * This will parse the code, validate the tape input from the DOM, and execute the program using the TuringExecutor.
+ * @param code The code to run, typically from the editor input
+ */
+export const run = (code: string) => {
     error_log.clear();
-    const tree = parse(input);
+    const tree = parse(code);
 
+    // print any errors to the console and scroll error log into view if there are any
     if (error_log.get_list().length > 0) {
         error_log.log_to_console();
         error_log.get_textarea().scrollIntoView({behavior: "smooth", block: "end"});
         return;
     }
 
+    // validate tape input if in "restrict tape alphabet" mode
     if (tape_input.is_restricted()) {
         const valid = tape_input.validate_cells();
 
@@ -153,6 +180,7 @@ export const run = (input: string) => {
         }
     }
 
+    // walk and validate the parse tree
     const exec = new TuringExecutor();
     try {
         tree.accept(exec);
@@ -205,6 +233,7 @@ export const run = (input: string) => {
         tape = tape.substring(0, last_non_empty);
         tape_input.set_value(tape);
 
+        // populate final state and steps message
         final_label.classList.remove("hidden");
         final_state.innerText = res.state;
 
@@ -217,6 +246,7 @@ export const run = (input: string) => {
     }
 }
 
+// keep reference to the step iterator and step number, as well as the highlighted rule so it can be removed later
 let step_iterator: StepIterator | null = null;
 let step_num = 1;
 let step_highlight_id: number | undefined;
@@ -225,9 +255,14 @@ export const is_stepping = () => {
     return step_iterator !== null;
 }
 
+/**
+ * Cancels the current step-by-step execution.<br>
+ * This is also called at the end of a completed step-by-step execution to reset the UI state.
+ */
 export const cancel_steps = () => {
     step_iterator = null; // reset iterator
 
+    // hide stepper controls and show run button
     document.getElementById("run")!.classList.remove("hidden");
     document.getElementById("stepper-controls")!.classList.add("hidden");
     document.getElementById("run-step")!.classList.remove("hidden");
@@ -257,6 +292,10 @@ export const cancel_steps = () => {
     tape_input.set_locked(tape_ro);
 }
 
+/**
+ * Runs a single step in the step-by-step execution of the Turing machine.<br>
+ * If no step iterator is available, it will parse the input and create a new iterator.
+ */
 export const run_step = () => {
     // if step_iterator is null, parse the input and create a new iterator
     if (!step_iterator) {
@@ -265,12 +304,14 @@ export const run_step = () => {
         const input = editor.get_text();
         const tree = parse(input);
 
+        // print any errors to the console and scroll error log into view if there are any
         if (error_log.get_list().length > 0) {
             error_log.log_to_console();
             error_log.get_textarea().scrollIntoView({behavior: "smooth", block: "end"});
             return;
         }
 
+        // validate tape input if in "restrict tape alphabet" mode
         if (tape_input.is_restricted()) {
             const valid = tape_input.validate_cells();
 
@@ -281,6 +322,7 @@ export const run_step = () => {
             }
         }
 
+        // walk and validate the parse tree
         const exec = new TuringExecutor();
         try {
             tree.accept(exec);
@@ -304,6 +346,7 @@ export const run_step = () => {
             }
         }
 
+        // create a step iterator
         exec.set_state(init_state);
         step_iterator = exec.get_step_iterator(tape_input.get_value());
         step_num = 1;
@@ -332,13 +375,16 @@ export const run_step = () => {
     // if step_iterator is not null, execute the next step
     if (step_iterator) {
         try {
+            // increment step number and update ui
             step_number.innerText = `${++step_num}`;
 
+            // perform one iteration (i.e. a single step)
             const res = step_iterator.next();
             if (res.status === ExecResultStatus.Halt) {
                 console.log("Execution finished.");
                 cancel_steps();
 
+                // show final state and steps
                 final_label.classList.remove("hidden");
                 final_state.innerText = res.state;
                 final_steps.innerText = `${--step_num}`;
@@ -346,6 +392,7 @@ export const run_step = () => {
             } else {
                 console.log(`Tape: ${res.value}, Position: ${res.pos}, State: ${res.state} (Text range: ${res.text_range?.start} - ${res.text_range?.end})`);
 
+                // update positions
                 tape_input.set_value(res.value);
                 tape_input.mark_pointer(res.pos);
                 tape_input.scroll_cell_into_view(res.pos);
@@ -354,6 +401,7 @@ export const run_step = () => {
                     editor.remove_decoration_by_id(step_highlight_id);
                 }
 
+                // highlight the rule that was just executed in the editor
                 if (res.text_range) {
                     step_highlight_id = editor.create_and_apply_decoration_range(res.text_range.start, res.text_range.end, "cm-highlight");
                 }
@@ -377,6 +425,7 @@ export const run_remaining_steps = () => {
     const save_iterator = step_iterator;
     cancel_steps();
 
+    // run until halt or step limit is reached, keeping reference to the latest tape value and state
     let halted = false;
     let value = tape_input.get_value();
     let state = step_state.innerText;
@@ -394,6 +443,7 @@ export const run_remaining_steps = () => {
 
     tape_input.set_value(value);
 
+    // populate final state and steps message
     final_label.classList.remove("hidden");
     final_state.innerText = state;
     final_steps.innerText = `${step_num}`;

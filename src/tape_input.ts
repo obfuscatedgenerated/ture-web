@@ -11,9 +11,14 @@ const tape_visual = document.getElementById("tape-visual") as HTMLDivElement;
 let restrict = true;
 let valid_letters: string[] = [];
 
-const add_tile = (char?: string) => {
+/**
+ * Adds a new tile to the tape visual.
+ * @param char The character to display in the tile, defaults to EMPTY
+ * @return A reference to the inserted tile element
+ */
+const add_tile = (char: string = EMPTY) => {
     const tile = document.createElement("div");
-    tile.textContent = char || EMPTY;
+    tile.textContent = char;
     tile.className = "tile";
     tile.contentEditable = "true";
 
@@ -22,12 +27,16 @@ const add_tile = (char?: string) => {
         update_hidden_input();
     });
 
+    /**
+     * Moves the caret to the start of the tile when it is focused or clicked.
+     */
     const control_caret = () => {
-        // put caret before
         const range = document.createRange();
         const selection = window.getSelection();
+
         range.setStart(tile, 0);
         range.collapse(true);
+
         selection?.removeAllRanges();
         selection?.addRange(range);
     }
@@ -36,6 +45,7 @@ const add_tile = (char?: string) => {
     tile.addEventListener("click", control_caret);
 
     tile.addEventListener("blur", () => {
+        // update invalid state
         tile.classList.toggle("invalid", restrict && !valid_letters.includes(tile.textContent || EMPTY));
 
         // ensure tile is not actually empty
@@ -51,6 +61,12 @@ const add_tile = (char?: string) => {
 }
 
 let is_locked = false;
+
+/**
+ * Sets the locked state of the tape visual.<br>
+ * When locked, the tiles cannot be edited.
+ * @param locked Whether the tape visual should be locked or not
+ */
 export const set_locked = (locked: boolean) => {
     is_locked = locked;
 
@@ -78,6 +94,10 @@ const check_easter_egg = (tape_str: string) => {
     }
 }
 
+/**
+ * Renders the tape visual based on the provided tape string.
+ * @param tape_str The string representing the tape content, where each character is a tile.
+ */
 export const render_tape = (tape_str: string) => {
     tape_visual.innerHTML = "";
     [...tape_str].forEach(char => {
@@ -88,19 +108,36 @@ export const render_tape = (tape_str: string) => {
     check_easter_egg(tape_str);
 };
 
+/**
+ * Updates the hidden input field with the current tape visual content.<br>
+ * This is used to keep the input field in sync with the visual representation of the tape.
+ */
 export const update_hidden_input = () => {
     const all_tiles = tape_visual.querySelectorAll(".tile");
-    // @ts-ignore
-    const chars = [...all_tiles].map(el => (el.textContent || EMPTY).slice(0, 1));
-    tape_input.value = chars.join("");
 
-    check_easter_egg(tape_input.value);
+    // collect content from tiles as string
+    let tape_value = "";
+    all_tiles.forEach(tile => {
+        const char = tile.textContent || EMPTY;
+        tape_value += char;
+    });
+
+    tape_input.value = tape_value;
+    check_easter_egg(tape_value);
 };
 
+/**
+ * Gets the current value of the tape input field.
+ * @return The current tape value as a string
+ */
 export const get_value = () => {
     return tape_input.value;
 }
 
+/**
+ * Sets the value of the tape input field and updates the visual representation.
+ * @param value The value to set the tape to, as a string
+ */
 export const set_value = (value: string) => {
     tape_input.value = value;
 
@@ -114,9 +151,14 @@ export const set_value = (value: string) => {
         const diff = min_tiles - value.length;
         value += EMPTY.repeat(diff);
     }
+
     render_tape(value);
 }
 
+/**
+ * Marks a specific tile as being under the pointer/tapehead in the tape visual.
+ * @param pos The position of the tile to mark as pointer, or null to remove pointer
+ */
 export const mark_pointer = (pos: number | null) => {
     const tiles = tape_visual.querySelectorAll(".tile");
 
@@ -129,12 +171,19 @@ export const mark_pointer = (pos: number | null) => {
         console.warn("Pointer position out of bounds");
         return;
     }
+
     tiles.forEach((tile, index) => {
         tile.classList.toggle("pointer", index === pos);
     });
 }
 
+/**
+ * Scrolls the tile at the specified position into view.
+ * @param pos The position of the tile to scroll into view
+ */
 export const scroll_cell_into_view = (pos: number) => {
+    // TODO: make it only affect the container and only the x axis (issue #17)
+
     const tile = tape_visual.children[pos];
     if (tile) {
         tile.scrollIntoView({
@@ -147,14 +196,26 @@ export const scroll_cell_into_view = (pos: number) => {
     }
 }
 
+/**
+ * Sets whether the tape input is in "restrict to alphabet" mode.
+ * @param restricted Whether to restrict
+ */
 export const set_restricted = (restricted: boolean) => {
     restrict = restricted;
 }
 
+/**
+ * Checks if the tape input is in "restrict to alphabet" mode.
+ * @return If restricted mode is enabled
+ */
 export const is_restricted = () => {
     return restrict;
 }
 
+/**
+ * Sets the valid letters for the tape input when under "restrict to alphabet" mode.
+ * @param letters A list of valid letters to restrict the tape input to.<br>
+ */
 export const set_valid_letters = (letters: string[]) => {
     if (!letters.includes(EMPTY)) {
         letters.push(EMPTY); // ensure EMPTY is always included
@@ -163,6 +224,11 @@ export const set_valid_letters = (letters: string[]) => {
     valid_letters = letters;
 }
 
+/**
+ * Validates the current tape visual content against the valid letters.<br>
+ * This will highlight invalid tiles and return whether the tape is valid.
+ * @return Whether the tape visual is valid
+ */
 export const validate_cells = () => {
     let safe = true;
 
@@ -181,6 +247,11 @@ export const validate_cells = () => {
     return safe;
 }
 
+/**
+ * Validates the current tape input value against the valid letters.<br>
+ * This is similar to `validate_cells`, but operates on the input value directly, so is more efficient but does not highlight invalid tiles.
+ * @return Whether the tape input value is valid
+ */
 export const validate_value = (): boolean => {
     const value = tape_input.value;
     if (restrict) {
@@ -195,6 +266,12 @@ export const validate_value = (): boolean => {
     return true; // all characters are valid
 }
 
+/**
+ * Focuses the next tile in the tape visual.<br>
+ * This will add a new tile at the end if there are no more tiles to focus on.
+ * @param current The currently focused tile element
+ * @return The newly focused tile element, or the new tile if added
+ */
 const focus_next_tile = (current: HTMLElement) => {
     const next = current.nextElementSibling;
     if (next && next.classList.contains("tile")) {
@@ -208,24 +285,34 @@ const focus_next_tile = (current: HTMLElement) => {
     }
 };
 
+/**
+ * Focuses the previous tile in the tape visual.<br>
+ * This will focus the previous tile if it exists, otherwise does nothing.
+ * @param current The currently focused tile element
+ * @return The newly focused tile element, or null if no previous tile exists
+ */
 const focus_previous_tile = (current: HTMLElement) => {
     const prev = current.previousElementSibling;
     if (prev && prev.classList.contains("tile")) {
         (prev as HTMLElement).focus();
         return (prev as HTMLElement);
     }
+
+    return null;
 };
 
 tape_visual.addEventListener("keydown", e => {
+    // check if a tile is focused
     const current = document.activeElement;
     if (!current || !(current instanceof HTMLElement)) return;
     if (!current.classList.contains("tile")) return;
 
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+
         // if restrict is enabled, check if the key is valid
         if (restrict && !valid_letters.includes(e.key)) {
             current.classList.add("invalid");
-            e.preventDefault();
             return;
         }
 
@@ -239,30 +326,35 @@ tape_visual.addEventListener("keydown", e => {
         if (restrict && validate_value()) {
             error_log.clear_type("tape-invalid");
         }
-
-        e.preventDefault();
     } else if (e.key === "Backspace") {
+        e.preventDefault();
+
         current.textContent = "";
         update_hidden_input();
         focus_previous_tile(current);
-        e.preventDefault();
+
         // TODO: cull empty fields above min_tiles
+        // TODO: improve cursor UX when backspacing then entering character immediately after
     } else if (e.key === "ArrowRight") {
+        e.preventDefault();
         focus_next_tile(current);
-        e.preventDefault();
     } else if (e.key === "ArrowLeft") {
-        focus_previous_tile(current);
         e.preventDefault();
+        focus_previous_tile(current);
     }
 
+    // housekeeping to ensure single character input
     current.textContent = current.textContent?.slice(0, 1) || "";
 });
 
 tape_visual.addEventListener("paste", e => {
     e.preventDefault();
-    const text = e.clipboardData?.getData("text/plain") || "";
-    let current = document.activeElement;
 
+    // fetch clipboard data
+    const text = e.clipboardData?.getData("text/plain") || "";
+
+    // check if tile is focused
+    let current = document.activeElement;
     if (current && current instanceof HTMLElement && current.classList.contains("tile")) {
         // split the text into characters and fill tiles from the selected tile onwards
         let chars = text.split("");
@@ -270,6 +362,8 @@ tape_visual.addEventListener("paste", e => {
             if (current.textContent === EMPTY) {
                 current.textContent = chars.shift() || EMPTY;
             }
+
+            // move to next tile then write next character
             current = focus_next_tile(current as HTMLElement);
             current.textContent = current.textContent?.slice(0, 1) || "";
         }
@@ -313,4 +407,3 @@ const min_tiles = 5;
 render_tape(EMPTY.repeat(min_tiles));
 
 // TODO: this is somewhat jank
-// TODO: maybe an option to show old school input?

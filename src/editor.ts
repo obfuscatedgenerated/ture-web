@@ -35,16 +35,29 @@ const decorationsField = StateField.define<DecorationSet>({
     provide: f => EditorView.decorations.from(f)
 });
 
+/**
+ * The CodeMirror EditorView instance. (singleton)
+ */
 export const view = new EditorView({
     doc: DEFAULT_DOC,
     parent: document.querySelector("#editor") as HTMLElement,
     extensions: [basicSetup, decorationsField]
 });
 
+/**
+ * Gets the current text content of the editor.
+ */
 export const get_text = () => {
     return view.state.doc.toString();
 }
 
+/**
+ * Creates a decoration range with the specified start and end positions.
+ * @param start Start index in the document
+ * @param end End index
+ * @param class_name CSS class to apply to the decoration
+ * @return A Range<Decoration> representing the decoration
+ */
 export const create_decoration_range = (
     start: number,
     end: number,
@@ -57,6 +70,9 @@ type DecorationData = { from: number, to: number, className: string };
 const active_decorations: Map<number, DecorationData> = new Map();
 let decoration_id_counter = 0;
 
+/**
+ * Rebuilds the decoration set from the active decorations and applies it to the editor.
+ */
 const rebuild_and_apply_decorations = () => {
     const docLength = view.state.doc.length;
     const builder = new RangeSetBuilder<Decoration>();
@@ -75,6 +91,11 @@ const rebuild_and_apply_decorations = () => {
     });
 }
 
+/**
+ * Applies a decoration range to the editor and returns an ID for it.
+ * @param decoration The Range<Decoration> to apply
+ * @returns An ID that can be used to remove the decoration later
+ */
 export const apply_decoration_range = (decoration: Range<Decoration>,) => {
     let id = ++decoration_id_counter;
 
@@ -89,6 +110,12 @@ export const apply_decoration_range = (decoration: Range<Decoration>,) => {
     return id;
 }
 
+/**
+ * Creates a decoration range and applies it to the editor.
+ * @param start Start index in the document
+ * @param end End index
+ * @param class_name CSS class to apply to the decoration
+ */
 export const create_and_apply_decoration_range = (
     start: number,
     end: number,
@@ -98,11 +125,18 @@ export const create_and_apply_decoration_range = (
     return apply_decoration_range(decoration);
 }
 
+/**
+ * Removes a decoration by its ID.
+ * @param id The ID of the decoration to remove
+ */
 export const remove_decoration_by_id = (id: number) => {
     active_decorations.delete(id);
     rebuild_and_apply_decorations();
 }
 
+/**
+ * Removes all active decorations from the editor.
+ */
 export const remove_all_decorations = () => {
     active_decorations.clear();
     view.dispatch({ effects: clearDecorationsEffect.of() });
@@ -129,9 +163,18 @@ const MessageHover = (start: number, end: number, message: string, class_name = 
     });
 }
 
+// store references to hover extensions to retain state across reconfigurations
 let update_listener_extensions: Map<number, Extension> = new Map();
 let update_listener_id_counter = 0;
 
+/**
+ * Adds a hover message to the editor at the specified range.
+ * @param message The message to display in the hover tooltip
+ * @param start Start index in the document
+ * @param end End index
+ * @param class_name CSS class to apply to the hover tooltip
+ * @return An ID that can be used to remove the hover message later
+ */
 export const add_hover_message = (
     message: string,
     start: number,
@@ -156,6 +199,10 @@ export const add_hover_message = (
     return id;
 }
 
+/**
+ * Removes a hover message by its ID.
+ * @param id The ID of the hover message to remove
+ */
 export const remove_hover_message_by_id = (id: number) => {
     hover_extensions.delete(id);
 
@@ -172,6 +219,9 @@ export const remove_hover_message_by_id = (id: number) => {
     });
 }
 
+/**
+ * Removes all hover messages from the editor.
+ */
 export const remove_all_hover_messages = () => {
     hover_extensions.clear();
 
@@ -185,6 +235,12 @@ export const remove_all_hover_messages = () => {
     });
 }
 
+/**
+ * Adds an update listener to the editor that triggers on specific events.
+ * @param callback The function to call when the specified events occur
+ * @param events The events to listen for
+ * @returns An ID that can be used to remove the listener later
+ */
 export const add_update_listener = (callback: (view: EditorView) => void, events: ("edit" | "select")[] = ["edit", "select"]) => {
     update_listener_extensions.set(
         ++update_listener_id_counter,
@@ -204,8 +260,14 @@ export const add_update_listener = (callback: (view: EditorView) => void, events
             EditorView.editable.of(!readonly_state)
         ])
     });
+
+    return update_listener_id_counter;
 }
 
+/**
+ * Removes an update listener by its ID.
+ * @param id The ID of the update listener to remove
+ */
 export const remove_update_listener_by_id = (id: number) => {
     update_listener_extensions.delete(id);
 
@@ -222,7 +284,9 @@ export const remove_update_listener_by_id = (id: number) => {
     });
 }
 
+// store readonly state so it is retained across reconfigurations
 let readonly_state = false;
+
 export const is_readonly = () => readonly_state;
 export const set_readonly = (readonly: boolean) => {
     readonly_state = readonly;
@@ -244,6 +308,7 @@ export const set_readonly = (readonly: boolean) => {
     }
 }
 
+// track dirty state automatically and run callbacks when it changes
 let dirty = false;
 add_update_listener((view => {
     console.log("Editor content changed, marking as dirty");
@@ -253,6 +318,10 @@ add_update_listener((view => {
 }), ["edit"]);
 
 export const is_dirty = () => dirty;
+
+/**
+ * Marks the editor as clean, indicating that the content has been saved.
+ */
 export const clear_dirty = () => {
     console.log("Editor content saved, clearing dirty flag");
     dirty = false;
@@ -261,6 +330,11 @@ export const clear_dirty = () => {
 }
 
 const dirty_change_callbacks: ((dirty: boolean) => void)[] = [];
+
+/**
+ * Adds a listener that will be called whenever the dirty state changes.
+ * @param callback The function to call with the new dirty state
+ */
 export const add_dirty_change_listener = (callback: (dirty: boolean) => void) => {
     dirty_change_callbacks.push(callback);
 }
