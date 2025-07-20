@@ -6,6 +6,9 @@ import {documents, show_document} from "./documents";
 const tape_input = document.getElementById("input") as HTMLInputElement;
 const tape_visual = document.getElementById("tape-visual") as HTMLDivElement;
 
+let restrict = true;
+let restriction_letters = [];
+
 const add_tile = (char?: string) => {
     const tile = document.createElement("div");
     tile.textContent = char || EMPTY;
@@ -138,6 +141,22 @@ export const scroll_cell_into_view = (pos: number) => {
     }
 }
 
+export const set_restricted = (restricted: boolean) => {
+    restrict = restricted;
+}
+// TODO: restriction logic
+export const is_restricted = () => {
+    return restrict;
+}
+
+export const set_restriction_letters = (letters: string[]) => {
+    if (!letters.includes(EMPTY)) {
+        letters.push(EMPTY); // ensure EMPTY is always included
+    }
+
+    restriction_letters = letters;
+}
+
 const focus_next_tile = (current: HTMLElement) => {
     const next = current.nextElementSibling;
     if (next && next.classList.contains("tile")) {
@@ -202,6 +221,16 @@ tape_visual.addEventListener("paste", e => {
             current.textContent = current.textContent?.slice(0, 1) || "";
         }
     }
+});
+
+// bind restricted checkbox
+document.getElementById("restrict-input")!.addEventListener("change", (e) => {
+    const do_restrict = (e.target as HTMLInputElement).checked;
+    set_restricted(do_restrict);
+
+    // also update flag-unrestrict
+    const unrestrict = document.getElementById("flag-unrestrict") as HTMLInputElement;
+    unrestrict.checked = do_restrict;
 });
 
 // initial render

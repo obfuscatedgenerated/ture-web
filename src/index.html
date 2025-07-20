@@ -40,7 +40,14 @@
     <div class="top-controls">
         <div class="control-group full horizontal">
             <div class="control-group three-quarters">
-                <label for="input">Input tape:</label>
+                <div class="control-group horizontal space">
+                    <label for="input">Input tape:</label>
+
+                    <label id="restrict-label">
+                        Restrict alphabet?
+                        <input type="checkbox" id="restrict-input" checked />
+                    </label>
+                </div>
                 <input type="hidden" id="input" value="" />
                 <div id="tape-visual" class="tape-grid" tabindex="0"></div>
             </div>
@@ -121,7 +128,7 @@
         <form id="share-form">
             <label>
                 <input type="checkbox" id="select-all">
-                Select all
+                Include all
             </label>
 
             <hr />
@@ -154,6 +161,16 @@
                 <input type="checkbox" id="include-tape">
                 Tape
             </label>
+            <div class="sub-option" id="tape-restrict-sub">
+            <label>
+                <input type="checkbox" id="flag-unrestrict" checked>
+                Restrict input alphabet?
+            </label>
+            <label>
+                <input type="checkbox" id="flag-lock_restrict" checked>
+                Allow changing restriction checkbox?
+            </label>
+            </div>
             <div class="hidden sub-option" id="tape-sub">
                 <label><input type="checkbox" id="readonly-tape"> Read only?</label>
             </div>

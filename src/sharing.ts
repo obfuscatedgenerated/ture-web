@@ -5,22 +5,41 @@ import * as editor from "./editor";
 import * as error_log from "./error_log";
 import * as tape_input from "./tape_input";
 
-export type ShareURLPropertyName = "script" | "name" | "init" | "tape";
-export const share_prop_names: ShareURLPropertyName[] = ["script", "name", "init", "tape"];
+// TODO: necessary? at least clean up all this sharing logic
+type ShareURLPropertyIncludeName = "script" | "name" | "init" | "tape";
+type ShareURLPropertyFlagName = "lock_restrict" | "unrestrict";
+export type ShareURLPropertyName = ShareURLPropertyIncludeName | ShareURLPropertyFlagName;
 
-export interface ShareURLProperty {
+const share_prop_names_include: ShareURLPropertyIncludeName[] = ["script", "name", "init", "tape"];
+const share_prop_names_flags: ShareURLPropertyFlagName[] = ["lock_restrict", "unrestrict"];
+
+export const share_prop_names: ShareURLPropertyName[] = [...share_prop_names_include, ...share_prop_names_flags];
+
+interface ShareURLPropertyIncludeBase {
     readonly: boolean;
 }
 
-export type ShareURLProperties = Partial<Record<ShareURLPropertyName, ShareURLProperty>>;
+type ShareURLPropertyFlagBase = boolean | undefined;
+
+type ShareURLPropertyFor<K extends ShareURLPropertyName> =
+    K extends ShareURLPropertyFlagName ? ShareURLPropertyFlagBase : ShareURLPropertyIncludeBase;
+
+type ShareURLPropertyWithValueFor<K extends ShareURLPropertyName> =
+    K extends ShareURLPropertyFlagName ? ShareURLPropertyFlagBase : ShareURLPropertyIncludeBase & { value: string };
+
+export type ShareURLProperties = Partial<{
+    [K in ShareURLPropertyName]?: ShareURLPropertyFor<K>;
+}>;
+
 export type ShareURLPropertiesWithValues = {
-    [K in ShareURLPropertyName]?: ShareURLProperty & { value: string };
-}
+    [K in ShareURLPropertyName]?: ShareURLPropertyWithValueFor<K>;
+};
 
 const create_share_dialog = document.getElementById("share-dialog") as HTMLDialogElement;
 const file_name = document.getElementById("file-name") as HTMLInputElement;
 const state_select = document.getElementById("init-state") as HTMLSelectElement;
 const upload_button = document.getElementById("upload-button") as HTMLButtonElement;
+const restrict_checkbox = document.getElementById("restrict-input") as HTMLInputElement;
 
 const open_share_dialog = document.getElementById("open-share-dialog") as HTMLDialogElement;
 const open_share_url_input = document.getElementById("open-share-url") as HTMLInputElement;
@@ -74,7 +93,19 @@ export const get_share_url = (properties: ShareURLProperties) => {
 
         if (properties.tape.readonly) {
             url.searchParams.set("tape_ro", "true");
+
+            // ignore unrestrict and lock_restrict if tape is readonly (user can't change tape anyway)
+            delete properties.unrestrict;
+            delete properties.lock_restrict;
         }
+    }
+
+    if (properties.unrestrict) {
+        url.searchParams.set("unrestrict", "");
+    }
+
+    if (properties.lock_restrict) {
+        url.searchParams.set("lock_restrict", "");
     }
 
     return url.toString();
@@ -132,6 +163,8 @@ export const load_from_url = (): ShareURLPropertiesWithValues => {
     const init_state = url.searchParams.get("init");
     const tape = url.searchParams.get("tape");
     const name = url.searchParams.get("name");
+    const unrestrict = url.searchParams.has("unrestrict");
+    const lock_restrict = url.searchParams.has("lock_restrict");
 
     loaded = {};
 
@@ -184,6 +217,9 @@ export const load_from_url = (): ShareURLPropertiesWithValues => {
 
         if (readonly) {
             tape_input.set_locked(true);
+
+            // hide restrict checkbox
+            document.getElementById("restrict-label")!.classList.add("hidden");
         }
 
         loaded.tape = {
@@ -205,6 +241,19 @@ export const load_from_url = (): ShareURLPropertiesWithValues => {
             readonly: readonly,
             value: name
         };
+    }
+
+    if (lock_restrict) {
+        restrict_checkbox.disabled = true;
+        loaded.lock_restrict = true;
+    }
+
+    // default is to be restricted
+    if (unrestrict) {
+        tape_input.set_restricted(false);
+        restrict_checkbox.checked = false;
+
+        loaded.unrestrict = true;
     }
 
     console.table(loaded);
@@ -234,7 +283,8 @@ export const get_loaded_properties = (): ShareURLPropertiesWithValues | null => 
 const get_share_checkbox_values = (): ShareURLProperties => {
     const properties: ShareURLProperties = {};
 
-    share_prop_names.forEach(id => {
+    // collect all includes
+    share_prop_names_include.forEach(id => {
         const include = document.getElementById(`include-${id}`) as HTMLInputElement;
         const readonly = document.getElementById(`readonly-${id}`) as HTMLInputElement;
 
@@ -244,6 +294,19 @@ const get_share_checkbox_values = (): ShareURLProperties => {
             };
         }
     });
+
+    // collect all flags
+    share_prop_names_flags.forEach(id => {
+        const flag = document.getElementById(`flag-${id}`) as HTMLInputElement;
+
+        if (flag.checked) {
+            properties[id] = true;
+        }
+    });
+
+    // invert unrestrict and lock_restrict as they are written in a negative way
+    properties.unrestrict = !properties.unrestrict;
+    properties.lock_restrict = !properties.lock_restrict;
 
     return properties;
 }
@@ -265,7 +328,7 @@ share_prop_names.forEach(id => {
         checkbox.addEventListener("change", () => {
             // re-evaluate select all checkbox
             const select_all = document.getElementById("select-all") as HTMLInputElement;
-            const all_checked = share_prop_names.every(name => {
+            const all_checked = share_prop_names_include.every(name => {
                 const include = document.getElementById(`include-${name}`) as HTMLInputElement;
                 return include.checked || include.disabled;
             });
@@ -278,6 +341,12 @@ share_prop_names.forEach(id => {
     }
 });
 
+// special case: making tape readonly hides restrict options
+const tape_ro_check = document.getElementById("readonly-tape") as HTMLInputElement;
+tape_ro_check.addEventListener("change", () => {
+    document.getElementById("tape-restrict-sub")!.classList.toggle("hidden", tape_ro_check.checked);
+});
+
 // bind checkbox select all
 document.getElementById("select-all")!.addEventListener("change", (event) => {
     const select_all = event.target as HTMLInputElement;
@@ -285,7 +354,7 @@ document.getElementById("select-all")!.addEventListener("change", (event) => {
     if (select_all.checked) {
         // if turning on, select all checkboxes
 
-        share_prop_names.forEach(id => {
+        share_prop_names_include.forEach(id => {
             const include = document.getElementById(`include-${id}`) as HTMLInputElement;
 
             if (include.disabled) {
@@ -304,7 +373,7 @@ document.getElementById("select-all")!.addEventListener("change", (event) => {
     } else {
         // if turning off, unselect all checkboxes
 
-        share_prop_names.forEach(id => {
+        share_prop_names_include.forEach(id => {
             const include = document.getElementById(`include-${id}`) as HTMLInputElement;
 
             if (include.disabled) {
