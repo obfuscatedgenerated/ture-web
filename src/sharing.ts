@@ -80,7 +80,7 @@ export const get_share_url = (properties: ShareURLProperties) => {
     return url.toString();
 }
 
-export const show_share_dialog = () => {
+export const show_create_share_dialog = () => {
     // if certain properties dont have a value to share, disable the checkbox
     const include_script = document.getElementById("include-script") as HTMLInputElement;
     const include_name = document.getElementById("include-name") as HTMLInputElement;
@@ -249,7 +249,7 @@ const get_share_checkbox_values = (): ShareURLProperties => {
 }
 
 // bind share dialog button
-document.getElementById("share-dialog-button")!.addEventListener("click", show_share_dialog);
+document.getElementById("share-dialog-button")!.addEventListener("click", show_create_share_dialog);
 
 // bind share dialog close button
 document.getElementById("share-close")!.addEventListener("click", () => {
@@ -378,10 +378,9 @@ share_iframe_button.addEventListener("click", () => {
 const current_url = new URL(window.location.href);
 open_share_url_input.placeholder = `${current_url.origin}${current_url.pathname}?script=...`;
 
-// bind pwa open share url link
-document.getElementById("open-share-link")!.addEventListener("click", (event) => {
-    open_share_dialog.showModal();
-});
+// bind pwa open share url button
+export const show_open_share_dialog = () => open_share_dialog.showModal();
+document.getElementById("open-share-button")!.addEventListener("click", show_open_share_dialog);
 
 // bind dialog close
 document.getElementById("open-share-cancel")!.addEventListener("click", () => {

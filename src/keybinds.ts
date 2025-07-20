@@ -4,6 +4,7 @@ import * as editor from "./editor";
 import * as files from "./files";
 import * as sharing from "./sharing";
 import * as runner from "./runner";
+import * as pwa from "./pwa";
 
 const override_kbd_hiding = () => {
     // if the hide media query applies, inject an override !important rule to keep the kbd elements visible
@@ -66,12 +67,23 @@ document.addEventListener("keydown", (e) => {
     }
 
     if (control_key && e.altKey) {
-        // share dialog: Ctrl + Alt + S
+        // create share dialog: Ctrl + Alt + S
         if (e.key === "s" || e.key === "S") {
             e.preventDefault();
             override_kbd_hiding();
 
-            sharing.show_share_dialog();
+            sharing.show_create_share_dialog();
+            return;
+        }
+
+        // open share dialog: Ctrl + Alt + O
+        // only allowed on standalone pwa
+        // some keyboards will type "ó" instead of "o" when Ctrl+Alt is pressed
+        if ((e.key === "o" || e.key === "O" || e.key === "ó") && pwa.is_standalone()) {
+            e.preventDefault();
+            override_kbd_hiding();
+
+            sharing.show_open_share_dialog();
             return;
         }
     }
