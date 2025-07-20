@@ -82,6 +82,15 @@ sw_update_button.innerText = "Update";
 // bind the update button to clear the cache and reload the page
 sw_update_button.addEventListener("click", async () => {
     await clear_cache();
+
+    // tell the service worker to skip waiting and activate the new worker
+    if ("serviceWorker" in navigator) {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration && registration.waiting) {
+            registration.waiting.postMessage({type: "SKIP_WAITING"});
+        }
+    }
+
     localStorage.removeItem("sw_update_available");
     window.location.reload();
 });
