@@ -315,6 +315,10 @@ blockquote {
     max-width: 100%;
 }
 
+.control-group.space {
+    justify-content: space-between;
+}
+
 .control-group.three-quarters {
     flex: 0 1 75%;
     min-width: 0;
@@ -562,6 +566,10 @@ label {
 
 .tile.locked {
     cursor: default;
+}
+
+.tile.invalid {
+    border-color: var(--danger);
 }
 
 .tape-grid {
