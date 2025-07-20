@@ -4,9 +4,7 @@ import "../public/icon_192x192.png";
 import "../public/icon_436x436.png";
 import "../public/icon_512x512.png";
 
-import {documents, show_document} from "./documents";
-
-declare var __USE_SW__: boolean;
+import {show_document} from "./documents";
 
 if (__USE_SW__) {
     // service worker should be injected for offline support
@@ -61,8 +59,17 @@ if (__USE_SW__) {
             }
         });
     }
+} else {
+    // unregister service worker if it was registered
+    // bit of a race condition but sometimes helps
+    if ("serviceWorker" in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+            await registration.unregister();
+            console.log("Unregistered service worker:", registration);
+        }
+    }
 }
-// TODO: unregister if not __USE_SW__
 
 // construct document to show when an update is available
 const sw_update_doc = document.createElement("p");
