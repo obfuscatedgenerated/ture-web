@@ -8,7 +8,6 @@ import * as pwa from "./pwa";
 
 import "./ui_binding";
 import "./keybinds";
-import {is_standalone} from "./pwa";
 
 declare var __COMMIT_DETAILS__: string;
 console.log(__COMMIT_DETAILS__);

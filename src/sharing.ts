@@ -17,10 +17,13 @@ export type ShareURLPropertiesWithValues = {
     [K in ShareURLPropertyName]?: ShareURLProperty & { value: string };
 }
 
-const share_dialog = document.getElementById("share-dialog") as HTMLDialogElement;
+const create_share_dialog = document.getElementById("share-dialog") as HTMLDialogElement;
 const file_name = document.getElementById("file-name") as HTMLInputElement;
 const state_select = document.getElementById("init-state") as HTMLSelectElement;
 const upload_button = document.getElementById("upload-button") as HTMLButtonElement;
+
+const open_share_dialog = document.getElementById("open-share-dialog") as HTMLDialogElement;
+const open_share_url_input = document.getElementById("open-share-url") as HTMLInputElement;
 
 export const get_share_url = (properties: ShareURLProperties) => {
     const comp = compressToEncodedURIComponent(editor.get_text());
@@ -117,7 +120,7 @@ export const show_share_dialog = () => {
         include_tape.disabled = false;
     }
 
-    share_dialog.showModal();
+    create_share_dialog.showModal();
 }
 
 let loaded: ShareURLPropertiesWithValues | null = null;
@@ -250,7 +253,7 @@ document.getElementById("share-dialog-button")!.addEventListener("click", show_s
 
 // bind share dialog close button
 document.getElementById("share-close")!.addEventListener("click", () => {
-    share_dialog.close();
+    create_share_dialog.close();
 });
 
 // bind checkbox suboptions
@@ -371,3 +374,57 @@ share_iframe_button.addEventListener("click", () => {
     });
 });
 
+// fill input placeholder
+const current_url = new URL(window.location.href);
+open_share_url_input.placeholder = `${current_url.origin}${current_url.pathname}?script=...`;
+
+// bind pwa open share url link
+document.getElementById("open-share-link")!.addEventListener("click", (event) => {
+    open_share_dialog.showModal();
+});
+
+// bind dialog close
+document.getElementById("open-share-cancel")!.addEventListener("click", () => {
+    open_share_dialog.close();
+});
+
+// bind open share url input
+open_share_url_input.addEventListener("paste", (event) => {
+    event.preventDefault();
+    error_log.clear_type("open-url");
+
+    if (!event.clipboardData) {
+        console.error("Clipboard data not available for paste event.");
+        error_log.add("Clipboard data not available.", "open-url");
+
+        open_share_dialog.close();
+        return;
+    }
+
+    const pasted_text = event.clipboardData.getData("text/plain");
+
+    // sanity check: the location host matches
+    let pasted_url: URL;
+    try {
+        pasted_url = new URL(pasted_text);
+    } catch (error) {
+        console.error("Invalid URL pasted: " + pasted_text, error);
+        error_log.add("Invalid URL pasted: " + pasted_text, "open-url");
+
+        open_share_dialog.close();
+        return;
+    }
+
+    if (pasted_url.host !== current_url.host) {
+        error_log.add("Pasted URL does not match the current host: " + pasted_text, "open-url");
+
+        open_share_dialog.close();
+        return;
+    }
+
+    // valid, load it in
+    // easier to just visit it to make it run as usual
+    // then don't need to worry about dirty state and pre-parsing
+    open_share_dialog.close();
+    window.location.assign(pasted_url.href);
+});

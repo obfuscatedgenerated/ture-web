@@ -30,10 +30,14 @@
             A turing machine interpreter <span class="not-mobile">·&nbsp;</span><br class="mobile-only" />
         </small>
         <small id="links">
-            <a id="help-link" class="cursor-pointer">Help</a> |
-            <a id="examples-link" class="cursor-pointer">Examples</a> |
-            <a href="https://github.com/obfuscatedgenerated/ture-web" target="_blank" rel="noopener noreferrer">Source code</a> |
-            <a id="teachers-link" class="cursor-pointer">Teachers</a>
+            <a id="help-link" class="cursor-pointer">Help</a>
+            | <a id="examples-link" class="cursor-pointer">Examples</a>
+            | <a href="https://github.com/obfuscatedgenerated/ture-web" target="_blank" rel="noopener noreferrer">Source code</a>
+            | <a id="teachers-link" class="cursor-pointer">Teachers</a>
+            <span class="pwa-standalone">
+                <span class="not-mobile">|&nbsp;</span><span class="break mobile-only"></span>
+                <a id="open-share-link" class="cursor-pointer">Open share URL</a>
+            </span>
         </small>
     </h1>
 
@@ -97,6 +101,17 @@
             <button id="upload-cancel" class="icon" title="Close uploader">x</button>
         </div>
         <input type="file" id="file-input" accept=".txt,.ture">
+    </dialog>
+
+    <dialog id="open-share-dialog">
+        <div id="open-share-header" class="header">
+            <h4>Open share URL</h4>
+            <button id="open-share-cancel" class="icon" title="Close dialog">x</button>
+        </div>
+        <label>
+            Paste URL:
+            <input type="url" id="open-share-url" />
+        </label>
     </dialog>
 
     <dialog id="share-dialog">

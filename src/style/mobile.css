@@ -58,10 +58,6 @@ label {
     margin-top: 0.5rem;
 }
 
-.mobile-only {
-    display: inline;
-}
-
 .not-mobile {
     display: none;
 }
