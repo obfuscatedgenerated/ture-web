@@ -417,12 +417,12 @@ open_share_url_input.addEventListener("paste", (event) => {
 
     // valid
 
-    // replace url host with current host
-    pasted_url.protocol = window.location.protocol;
-    pasted_url.host = window.location.host;
+    // copy out search params and apply to current url
+    const new_url = current_url;
+    new_url.search = pasted_url.search;
 
     // easier to just visit it to make it run as usual
     // then don't need to worry about dirty state and pre-parsing
     open_share_dialog.close();
-    window.location.assign(pasted_url.href);
+    window.location.assign(new_url.href);
 });
