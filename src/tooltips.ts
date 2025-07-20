@@ -26,7 +26,7 @@ const kbd_builder = (keys: string[]) => {
 }
 
 tippy("#restrict-label", {
-    content: "Restricts input tape to letters in the input alphabet Σ. Determined from letters found in the left-hand side of the rules.",
+    content: "Restricts input tape to letters in the input alphabet Σ.\nDetermined from letters found in the left-hand side of the rules.",
     placement: "bottom",
     touch: false
 });
