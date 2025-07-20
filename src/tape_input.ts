@@ -182,14 +182,16 @@ export const mark_pointer = (pos: number | null) => {
  * @param pos The position of the tile to scroll into view
  */
 export const scroll_cell_into_view = (pos: number) => {
-    // TODO: make it only affect the container and only the x axis (issue #17)
-
-    const tile = tape_visual.children[pos];
+    const tile = tape_visual.children[pos] as HTMLDivElement;
     if (tile) {
-        tile.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-            inline: "center"
+        const tile_pos = tile.offsetLeft;
+        const tile_width = tile.offsetWidth;
+        const container_width = tape_visual.offsetWidth;
+
+        const scroll_pos = tile_pos - (container_width - tile_width) / 2;
+        tape_visual.scrollTo({
+            left: scroll_pos,
+            behavior: "smooth"
         });
     } else {
         console.warn("Tile at position", pos, "does not exist.");
