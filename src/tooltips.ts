@@ -31,6 +31,7 @@ tippy("#restrict-label", {
     touch: false
 });
 
+// i just like having the single F key on the button, it looks cool. however, it means that the detection of keyboards in css is still a bit funny conceptually. at least if the user strikes any valid keybind, any hidden ones will become visible.
 // tippy("#run", {
 //     content: kbd_builder(["F8"]),
 //     placement: "bottom",
