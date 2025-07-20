@@ -134,6 +134,10 @@ export default (env, argv) => {
                     clientsClaim: true,
                     skipWaiting: false,
 
+                    // navigation fallback: it is effectively a SPA but we use search params for different scripts
+                    // therefore just force the index page to be served for all navigation requests
+                    navigateFallback: "/index.html",
+
                     // forcibly cache the public/precache directory
                     additionalManifestEntries: [
                         ...glob.sync("public/precache/**/*", {cwd: __dirname, nodir: true}).map(file => ({
