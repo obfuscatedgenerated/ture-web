@@ -143,6 +143,16 @@ export const run = (input: string) => {
         return;
     }
 
+    if (tape_input.is_restricted()) {
+        const valid = tape_input.validate_cells();
+
+        if (!valid) {
+            error_log.add("Tape input contains invalid characters. Please correct the input.", "tape-invalid");
+            error_log.get_textarea().scrollIntoView({behavior: "smooth", block: "end"});
+            return;
+        }
+    }
+
     const exec = new TuringExecutor();
     try {
         tree.accept(exec);
@@ -259,6 +269,16 @@ export const run_step = () => {
             error_log.log_to_console();
             error_log.get_textarea().scrollIntoView({behavior: "smooth", block: "end"});
             return;
+        }
+
+        if (tape_input.is_restricted()) {
+            const valid = tape_input.validate_cells();
+
+            if (!valid) {
+                error_log.add("Tape input contains invalid characters. Please correct the input.", "tape-invalid");
+                error_log.get_textarea().scrollIntoView({behavior: "smooth", block: "end"});
+                return;
+            }
         }
 
         const exec = new TuringExecutor();

@@ -3,11 +3,13 @@ import "./style/tape_input.css";
 import {EMPTY} from "./TuringExecutor";
 import {documents, show_document} from "./documents";
 
+import * as error_log from "./error_log";
+
 const tape_input = document.getElementById("input") as HTMLInputElement;
 const tape_visual = document.getElementById("tape-visual") as HTMLDivElement;
 
 let restrict = true;
-let valid_letters = [];
+let valid_letters: string[] = [];
 
 const add_tile = (char?: string) => {
     const tile = document.createElement("div");
@@ -16,6 +18,7 @@ const add_tile = (char?: string) => {
     tile.contentEditable = "true";
 
     tile.addEventListener("input", () => {
+        // not really called, but im too paranoid to remove it
         update_hidden_input();
     });
 
@@ -33,10 +36,13 @@ const add_tile = (char?: string) => {
     tile.addEventListener("click", control_caret);
 
     tile.addEventListener("blur", () => {
+        tile.classList.toggle("invalid", restrict && !valid_letters.includes(tile.textContent || EMPTY));
+
         // ensure tile is not actually empty
         if (tile.textContent === "") {
             tile.textContent = EMPTY;
         }
+
         update_hidden_input();
     });
 
@@ -144,7 +150,7 @@ export const scroll_cell_into_view = (pos: number) => {
 export const set_restricted = (restricted: boolean) => {
     restrict = restricted;
 }
-// TODO: restriction logic
+
 export const is_restricted = () => {
     return restrict;
 }
@@ -155,6 +161,38 @@ export const set_valid_letters = (letters: string[]) => {
     }
 
     valid_letters = letters;
+}
+
+export const validate_cells = () => {
+    let safe = true;
+
+    // check each letter and highlight invalid ones
+    const tiles = tape_visual.querySelectorAll(".tile");
+    tiles.forEach((tile, index) => {
+        const char = tile.textContent || EMPTY;
+        if (restrict && !valid_letters.includes(char)) {
+            tile.classList.add("invalid");
+            safe = false;
+        } else {
+            tile.classList.remove("invalid");
+        }
+    });
+
+    return safe;
+}
+
+export const validate_value = (): boolean => {
+    const value = tape_input.value;
+    if (restrict) {
+        // check if all characters are valid
+        for (const char of value) {
+            if (!valid_letters.includes(char)) {
+                return false; // invalid character found
+            }
+        }
+    }
+
+    return true; // all characters are valid
 }
 
 const focus_next_tile = (current: HTMLElement) => {
@@ -184,9 +222,24 @@ tape_visual.addEventListener("keydown", e => {
     if (!current.classList.contains("tile")) return;
 
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        // if restrict is enabled, check if the key is valid
+        if (restrict && !valid_letters.includes(e.key)) {
+            current.classList.add("invalid");
+            e.preventDefault();
+            return;
+        }
+
+        current.classList.remove("invalid");
         current.textContent = e.key;
+
         update_hidden_input();
         focus_next_tile(current);
+
+        // if all keys are now valid, clear error log of invalid input error
+        if (restrict && validate_value()) {
+            error_log.clear_type("tape-invalid");
+        }
+
         e.preventDefault();
     } else if (e.key === "Backspace") {
         current.textContent = "";
@@ -231,6 +284,16 @@ document.getElementById("restrict-input")!.addEventListener("change", (e) => {
     // also update flag-unrestrict
     const unrestrict = document.getElementById("flag-unrestrict") as HTMLInputElement;
     unrestrict.checked = do_restrict;
+
+    // clear invalid class from all tiles
+    const tiles = tape_visual.querySelectorAll(".tile");
+    tiles.forEach(tile => {
+        const t = tile as HTMLDivElement;
+        t.classList.remove("invalid");
+    });
+
+    // clear error log of invalid input error
+    error_log.clear_type("tape-invalid");
 });
 
 // initial render

@@ -27,6 +27,10 @@
     cursor: default;
 }
 
+.tile.invalid {
+    border-color: var(--danger);
+}
+
 .tape-grid {
     display: flex;
     flex-direction: row;
