@@ -10,6 +10,9 @@ const kbd_builder = (keys: string[]) => {
 
         if (key === "Ctrl") {
             kbd.classList.add("mac-cmd");
+            if (navigator.platform.startsWith("Mac")) {
+                kbd.textContent = "⌘";
+            }
         }
 
         container.appendChild(kbd);
