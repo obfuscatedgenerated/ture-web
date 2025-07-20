@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode production && copyfiles public/**/* dist",
+    "build": "webpack --mode production && copyfiles 'public/**/*' dist",
     "start": "webpack serve --mode production --no-hot",
     "dev": "webpack --mode development",
     "dev-server": "webpack serve --mode development --host 127.0.0.1 --open",
