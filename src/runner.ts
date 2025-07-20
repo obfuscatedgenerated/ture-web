@@ -10,7 +10,7 @@ import TuringParser, {ProgramContext} from "./grammar/TuringParser";
 
 import TuringExecutor, {DEFAULT_STEP_LIMIT, EMPTY, ExecResultStatus, StepIterator} from "./TuringExecutor";
 import {TuringErrorStrategy} from "./TuringErrorStrategy";
-import TuringStateNameVisitor from "./TuringStateNameVisitor";
+import TuringMetadataVisitor from "./TuringMetadataVisitor";
 
 import levenshtein from "js-levenshtein";
 
@@ -123,9 +123,12 @@ export const parse = (input: string): ProgramContext => {
     //console.log(tree.toStringTree(parser.ruleNames, parser));
 
     // collect state names and add to select box
-    const collector = new TuringStateNameVisitor();
+    // also collects letters to tell tape what characters are valid
+    const collector = new TuringMetadataVisitor();
     tree.accept(collector);
+
     set_state_names(collector.state_names);
+    tape_input.set_valid_letters(collector.letters);
 
     return tree;
 }

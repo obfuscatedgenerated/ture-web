@@ -7,7 +7,7 @@ const tape_input = document.getElementById("input") as HTMLInputElement;
 const tape_visual = document.getElementById("tape-visual") as HTMLDivElement;
 
 let restrict = true;
-let restriction_letters = [];
+let valid_letters = [];
 
 const add_tile = (char?: string) => {
     const tile = document.createElement("div");
@@ -149,12 +149,12 @@ export const is_restricted = () => {
     return restrict;
 }
 
-export const set_restriction_letters = (letters: string[]) => {
+export const set_valid_letters = (letters: string[]) => {
     if (!letters.includes(EMPTY)) {
         letters.push(EMPTY); // ensure EMPTY is always included
     }
 
-    restriction_letters = letters;
+    valid_letters = letters;
 }
 
 const focus_next_tile = (current: HTMLElement) => {

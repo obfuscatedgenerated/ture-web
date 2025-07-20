@@ -1,8 +1,9 @@
 import TuringVisitor from "./grammar/TuringVisitor";
 import {StateContext} from "./grammar/TuringParser";
 
-export default class TuringStateNameVisitor extends TuringVisitor<string> {
+export default class TuringMetadataVisitor extends TuringVisitor<string> {
     state_names: string[] = [];
+    letters: string[] = [];
 
     visitState = (ctx: StateContext) => {
         const name = ctx.getText();
@@ -11,5 +12,14 @@ export default class TuringStateNameVisitor extends TuringVisitor<string> {
         }
 
         return ctx.getText();
+    }
+
+    visitLetter = (ctx: any) => {
+        const letter = ctx.getText();
+        if (!this.letters.includes(letter)) {
+            this.letters.push(letter);
+        }
+
+        return letter;
     }
 }
