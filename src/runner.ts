@@ -147,7 +147,7 @@ export const run = (input: string) => {
         const valid = tape_input.validate_cells();
 
         if (!valid) {
-            error_log.add("Tape input contains invalid characters. Please correct the input.", "tape-invalid");
+            error_log.add("Invalid input: tape contains letters not in the input alphabet Σ (determined from LHS letters).", "tape-invalid");
             error_log.get_textarea().scrollIntoView({behavior: "smooth", block: "end"});
             return;
         }
@@ -275,7 +275,7 @@ export const run_step = () => {
             const valid = tape_input.validate_cells();
 
             if (!valid) {
-                error_log.add("Tape input contains invalid characters. Please correct the input.", "tape-invalid");
+                error_log.add("Invalid input: tape contains letters not in the input alphabet Σ (determined from LHS letters).", "tape-invalid");
                 error_log.get_textarea().scrollIntoView({behavior: "smooth", block: "end"});
                 return;
             }
