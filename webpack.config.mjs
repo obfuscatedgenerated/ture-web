@@ -10,6 +10,16 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import WorkboxPlugin from "workbox-webpack-plugin";
 import AppManifestPlugin from "webpack-web-app-manifest-plugin";
 
+// config
+
+// the short title of the app
+const TITLE = "Ture";
+
+// the longer title with tagline
+const LONG_TITLE = "Ture - Turing machine interpreter";
+
+// end config
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -18,10 +28,6 @@ const is_server = process.env.WEBPACK_SERVE === "true";
 const css_strategy = !is_server ? MiniCssExtractPlugin.loader : "style-loader";
 
 console.log("css_strategy:", css_strategy);
-
-const TITLE = "Ture";
-const LONG_TITLE = "Ture - Turing machine interpreter";
-
 const get_commit_details = () => {
     try {
         // get hash, name, and date

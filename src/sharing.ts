@@ -261,7 +261,7 @@ share_prop_names.forEach(id => {
     const checkbox = document.getElementById(`include-${id}`) as HTMLInputElement;
     const sub_div = document.getElementById(`${id}-sub`);
 
-    if (checkbox ) {
+    if (checkbox) {
         checkbox.addEventListener("change", () => {
             // re-evaluate select all checkbox
             const select_all = document.getElementById("select-all") as HTMLInputElement;
@@ -403,7 +403,7 @@ open_share_url_input.addEventListener("paste", (event) => {
 
     const pasted_text = event.clipboardData.getData("text/plain");
 
-    // sanity check: the location host matches
+    // sanity check 1: the url is valid
     let pasted_url: URL;
     try {
         pasted_url = new URL(pasted_text);
@@ -415,14 +415,12 @@ open_share_url_input.addEventListener("paste", (event) => {
         return;
     }
 
-    if (pasted_url.host !== current_url.host) {
-        error_log.add("Pasted URL does not match the current host: " + pasted_text, "open-url");
+    // valid
 
-        open_share_dialog.close();
-        return;
-    }
+    // replace url host with current host
+    pasted_url.protocol = window.location.protocol;
+    pasted_url.host = window.location.host;
 
-    // valid, load it in
     // easier to just visit it to make it run as usual
     // then don't need to worry about dirty state and pre-parsing
     open_share_dialog.close();
