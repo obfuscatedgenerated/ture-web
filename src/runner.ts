@@ -128,7 +128,7 @@ export const parse = (input: string): ProgramContext => {
     tree.accept(collector);
 
     set_state_names(collector.state_names);
-    tape_input.set_valid_letters(collector.letters);
+    tape_input.set_valid_letters(collector.lhs_letters);
 
     return tree;
 }
