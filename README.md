@@ -2,13 +2,13 @@
 
 > A turing machine interpreter.
 
-See also: <a href="https://github.com/obfuscatedgenerated/Ture" target="_blank">the original Java implementation</a>.
+See also: <a href="https://github.com/obfuscatedgenerated/Ture" target="_blank" rel="noopener noreferrer">the original Java implementation</a>.
 
 ## Usage
 
-> If you're looking to run Ture locally, see <a href="https://github.com/obfuscatedgenerated/ture-web/blob/main/SETUP.md" target="_blank">SETUP.md</a> in the repository.
+> If you're looking to run Ture locally, see <a href="https://github.com/obfuscatedgenerated/ture-web/blob/main/SETUP.md" target="_blank" rel="noopener noreferrer">SETUP.md</a> in the repository.
 
-> If you're an educator looking to use Ture in your materials, click the "Teachers" link in the top navigation bar, or see <a href="https://github.com/obfuscatedgenerated/ture-web/blob/main/TEACHERS.md" target="_blank">TEACHERS.md</a> in the repository.
+> If you're an educator looking to use Ture in your materials, click the "Teachers" link in the top navigation bar, or see <a href="https://github.com/obfuscatedgenerated/ture-web/blob/main/TEACHERS.md" target="_blank" rel="noopener noreferrer">TEACHERS.md</a> in the repository.
 
 You can enter the formal descriptions of transition rules as described in the [syntax section](#syntax) in the text area at the bottom. This will be validated against syntax errors in real time.
 
@@ -32,7 +32,7 @@ You can copy a URL of the encoded program alongside the name, tape, and init sta
 
 ## Syntax
 
-You can check the example programs, such as <a target="_blank" href="https://ture.ollieg.codes/?script=KQAgygLg9gTgpiCALBAzAljAzhEAbOCCOGEdAO0RRAHdYATEAQy2ZByeICgAKARwCS5dBAA0zAJQgAtAD4Q-AILim4mOgDmSCBN6DhYkACMpchXwBC4o2s3bdXUAFkoANwTQqCOOUZRUXohMAA5wesqSMvJKKrZaOuHWptF8ETYg6vG6-FaRZjmxGXYJBcbJ5rnpmfZcjiAWTADGANYQME3NIFDkjQg0KJQ0CPBNSIE%2BfgHIHiFhMSCAWNTl-ACivhEL4gSoJZbiS1Hma-S5m-hwOw6gAEpwwXhNHtQPOOdEJLQiY9MgGNi4BHepCYvhAPmIpB%2BbRC7AgnDmfGOESYyz4AAkmHhDKoilk9Eikod%2BBisYVqrtjrkUUT0ZjDFVitlEb5KqiSfS4vYgA&name=LastFirst&name_ro=true&init=qInit">LastFirst</a> for examples of valid syntax.
+You can check the example programs, such as <a target="_blank" rel="noopener" href="https://ture.ollieg.codes/?script=KQAgygLg9gTgpiCALBAzAljAzhEAbOCCOGEdAO0RRAHdYATEAQy2ZByeICgAKARwCS5dBAA0zAJQgAtAD4Q-AILim4mOgDmSCBN6DhYkACMpchXwBC4o2s3bdXUAFkoANwTQqCOOUZRUXohMAA5wesqSMvJKKrZaOuHWptF8ETYg6vG6-FaRZjmxGXYJBcbJ5rnpmfZcjiAWTADGANYQME3NIFDkjQg0KJQ0CPBNSIE%2BfgHIHiFhMSCAWNTl-ACivhEL4gSoJZbiS1Hma-S5m-hwOw6gAEpwwXhNHtQPOOdEJLQiY9MgGNi4BHepCYvhAPmIpB%2BbRC7AgnDmfGOESYyz4AAkmHhDKoilk9Eikod%2BBisYVqrtjrkUUT0ZjDFVitlEb5KqiSfS4vYgA&name=LastFirst&name_ro=true&init=qInit">LastFirst</a> for examples of valid syntax.
 
 ### Rules
 

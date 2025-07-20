@@ -12,7 +12,7 @@ For linking and embedding the website, you will want to use the `Create share UR
 
 Iframe embedding is permitted, allowing you to include the Ture interface directly in your materials. You can use the `Copy embed code` option in the sharing dialog for a nicely scaled iframe ready to go.
 
-Ture is provided under an MIT license. You are free to adapt the codebase for your own use case. Please note, individual support, advice, or troubleshooting is **not provided**. For technical issues or feature requests, you may wish to <a href="https://github.com/obfuscatedgenerated/ture-web/issues" target="_blank">open an issue on the GitHub repository</a>.
+Ture is provided under an MIT license. You are free to adapt the codebase for your own use case. Please note, individual support, advice, or troubleshooting is **not provided**. For technical issues or feature requests, you may wish to <a href="https://github.com/obfuscatedgenerated/ture-web/issues" target="_blank" rel="noopener noreferrer">open an issue on the GitHub repository</a>.
 
 ## Attribution
 
@@ -40,8 +40,8 @@ Author homepage: https://ollieg.codes
 ### HTML
 
 ```html
-<a href="https://ture.ollieg.codes" target="_blank">Ture – Turing machine interpreter</a> by <a href="https://ollieg.codes" target="_blank">Ollie G</a><br>
-<a href="https://github.com/obfuscatedgenerated/ture-web" target="_blank">Source code</a>
+<a href="https://ture.ollieg.codes" target="_blank" rel="noopener">Ture – Turing machine interpreter</a> by <a href="https://ollieg.codes" target="_blank">Ollie G</a><br>
+<a href="https://github.com/obfuscatedgenerated/ture-web" target="_blank" rel="noopener noreferrer">Source code</a>
 ```
 
 ### BibTeX

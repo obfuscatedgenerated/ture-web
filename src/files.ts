@@ -103,6 +103,7 @@ export const download_file = () => {
     a.href = url;
     a.download = `${file_name.value || "program"}.ture`;
     a.target = "_blank";
+    a.rel = "noopener";
     document.body.appendChild(a);
     a.click();
     a.remove();
