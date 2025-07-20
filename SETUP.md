@@ -30,7 +30,7 @@ npm run build
 
 ### Start
 
-Start the webpack dev server in production mode without hot reload, enabling PWA support:
+Start the webpack dev server in production mode without hot reload, enabling offline support:
 
 ```bash
 npm start
@@ -54,7 +54,7 @@ Start the webpack dev server in development mode, with hot module replacement (H
 npm run dev-server
 ```
 
-Note: this doesn't enable offline browsing and PWA. If you previously ran `npm start` and registered the service worker, you may need to unregister it in the browser's dev tools to avoid caching issues when HMR is enabled.
+Note: this doesn't enable offline browsing with the service worker. If you previously ran `npm start` and registered the service worker, you may need to unregister it in the browser's dev tools to avoid caching issues when HMR is enabled.
 
 ### Grammar Generation
 
