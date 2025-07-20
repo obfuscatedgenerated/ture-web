@@ -80,4 +80,6 @@ Clean, build, and deploy to GitHub Pages:
 npm run publish
 ```
 
+Make sure the CNAME in the publish script is the one you wish to use, or omit it to use the default GitHub Pages domain
+
 Note: if you have enabled the included GitHub Action `Deploy from main`, you won't need to do this manually. Changes to main will be automatically deployed to GitHub Pages.
