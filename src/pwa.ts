@@ -6,6 +6,22 @@ import "../public/icon_512x512.png";
 
 import {show_document} from "./documents";
 
+const show_update_doc = async () => {
+    // check that there is actually a waiting service worker
+    if (!("serviceWorker" in navigator) || !navigator.serviceWorker.controller) {
+        return;
+    }
+
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (!registration || !registration.waiting) {
+        console.warn("No waiting service worker found. Cancelling update dialog.");
+        localStorage.removeItem("sw_update_available");
+        return;
+    }
+
+    show_document("Update", sw_update_doc);
+}
+
 if (__USE_SW__) {
     // service worker should be injected for offline support
 
@@ -49,7 +65,7 @@ if (__USE_SW__) {
                                 // inform the user that a new version is available
 
                                 localStorage.setItem("sw_update_available", "true");
-                                show_document("Update", sw_update_doc);
+                                show_update_doc();
                             }
                         }
                     });
@@ -127,7 +143,7 @@ const clear_cache = async () => {
 
 // on page load, check if an update is meant to be applied
 if (localStorage.getItem("sw_update_available") === "true") {
-    show_document("Update", sw_update_doc);
+    show_update_doc();
 }
 
 // on page load, also check for any waiting service workers
