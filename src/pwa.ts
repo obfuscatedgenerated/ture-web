@@ -129,5 +129,14 @@ if (localStorage.getItem("sw_update_available") === "true") {
     show_document("Update", sw_update_doc);
 }
 
+// on page load, also check for any waiting service workers
+// tell the service worker to skip waiting and activate the new worker
+if ("serviceWorker" in navigator) {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (registration && registration.waiting) {
+        registration.waiting.postMessage({type: "SKIP_WAITING"});
+    }
+}
+
 export const is_using_sw = __USE_SW__;
 export let is_standalone = () => window.matchMedia("(display-mode: standalone)").matches;
