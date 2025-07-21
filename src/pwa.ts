@@ -92,6 +92,7 @@ sw_update_button.addEventListener("click", async () => {
     }
 
     localStorage.removeItem("sw_update_available");
+    localStorage.setItem("sw_may_try_reload", "true");
     window.location.reload();
 });
 
@@ -131,10 +132,14 @@ if (localStorage.getItem("sw_update_available") === "true") {
 
 // on page load, also check for any waiting service workers
 // tell the service worker to skip waiting and activate the new worker
-if ("serviceWorker" in navigator) {
+// then also try reloading, but only let this happen once to avoid a loop
+if ("serviceWorker" in navigator && localStorage.getItem("sw_may_try_reload") === "true") {
+    localStorage.setItem("sw_may_try_reload", "false");
+
     const registration = await navigator.serviceWorker.getRegistration();
     if (registration && registration.waiting) {
         registration.waiting.postMessage({type: "SKIP_WAITING"});
+        window.location.reload();
     }
 }
 
