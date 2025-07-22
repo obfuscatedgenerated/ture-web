@@ -5,6 +5,8 @@ import TuringTransitionVisitor from "./TuringTransitionVisitor";
 
 const container = document.getElementById("transition-graph") as HTMLDivElement;
 
+const root_style = getComputedStyle(document.documentElement);
+
 const vis_options: Options = {
     autoResize: false,
     layout: {
@@ -22,10 +24,21 @@ const vis_options: Options = {
     },
     edges: {
         arrows: "to",
-        font: { align: "middle" }
+        font: {
+            align: "middle",
+            strokeWidth: 0,
+            color: root_style.getPropertyValue("--on-accent") || "#fff",
+        }
     },
     nodes: {
-        shape: "ellipse"
+        shape: "ellipse",
+        color: root_style.getPropertyValue("--accent") || "#007bff",
+        font: {
+            color: root_style.getPropertyValue("--on-accent") || "#fff",
+            size: 16,
+            face: "Arial",
+            background: "none"
+        },
     }
 };
 
