@@ -4,6 +4,7 @@
 @import "base.css";
 @import "util.css";
 @import "ui.css";
+@import "tabs.css";
 
 @import "mobile.css" screen and (max-width: 600px);
 
@@ -72,4 +73,13 @@
     pointer-events: none;
     color: var(--text-ghost);
     font-size: 0.8rem;
+}
+
+#program-tabs {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+#transition-graph {
+    min-height: 20rem;
 }

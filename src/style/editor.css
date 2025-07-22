@@ -1,8 +1,5 @@
 #editor {
-    border: 0.0625rem solid var(--on-body-bg);
-    border-radius: 0.375rem;
     background-color: var(--white-bg);
-    margin-top: 1rem;
     font-family: monospace;
     white-space: pre;
     overflow-x: auto;

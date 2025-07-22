@@ -1,0 +1,33 @@
+.tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    background-color: var(--white-bg);
+}
+
+
+.tabs-buttons button {
+    border-radius: 0;
+    margin: 0;
+}
+
+.tabs-buttons button.active {
+    background-color: var(--accent);
+}
+
+.tabs-buttons button:not(.active) {
+    background-color: transparent;
+}
+
+.tabs-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 0;
+}
+
+.tabs-pane {
+    border: 0.0625rem solid var(--on-body-bg);
+    box-sizing: border-box;
+}

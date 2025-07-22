@@ -1,11 +1,12 @@
-import { DataSet, Network, Node, Edge } from "vis-network/standalone";
+import {DataSet, Network, Node, Edge, Options, network} from "vis-network/standalone";
 
 import {ParseTree} from "antlr4";
 import TuringTransitionVisitor from "./TuringTransitionVisitor";
 
 const container = document.getElementById("transition-graph") as HTMLDivElement;
 
-const vis_options = {
+const vis_options: Options = {
+    autoResize: false,
     layout: {
         hierarchical: {
             enabled: true,
@@ -32,6 +33,21 @@ const vis_options = {
 let last_parsed_tree: ParseTree | null = null;
 let outdated = false;
 let drawn_network: Network | null = null;
+
+// better autoResize implementation
+// even though we have a fixed height, this is still needed as there is a min-height expressed in em
+window.addEventListener("resize", () => {
+    if (drawn_network) {
+        const canvas = container.querySelector("canvas") as HTMLCanvasElement;
+        if (canvas) {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            drawn_network.fit();
+        } else {
+            console.warn("No canvas found in transition graph container.");
+        }
+    }
+});
 
 /**
  * Sets a parse tree as the last parsed tree (the one to display in the transition graph).
@@ -67,23 +83,66 @@ const prepare_vis_data = (tree: ParseTree): {nodes: DataSet<Node>, edges: DataSe
     return {nodes: new DataSet(nodes), edges: new DataSet(edges)};
 }
 
+const calculate_vis_graph_size = () => {
+    if (!drawn_network) {
+        return null;
+    }
+
+    const positions = drawn_network.getPositions();
+
+    const xs = Object.values(positions).map(pos => pos.x);
+    const ys = Object.values(positions).map(pos => pos.y);
+
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    const width = maxX - minX;
+    const height = maxY - minY;
+
+    return {
+        width,
+        height
+    };
+}
+
 /**
  * Updates the transition graph visualisation based on the last parsed tree.<br>
  * For efficiency, you can call this just-in-time when viewing the transition graph, rather than on every parse.<br>
  * It will only redraw the graph if it is outdated (i.e. if the last parsed tree has changed since the last draw).
  */
-export const update_vis_graph = () => {
+export const update_graph = () => {
     if (!last_parsed_tree) {
-        throw new Error("No parse tree available to draw the transition graph.");
+        container.innerText = "No parse tree available.";
+        return;
     }
 
     if (!outdated) {
-        // already drawn, no need to redraw
+        // no need to re-visit the tree if it hasn't changed
         return;
     }
 
     const data = prepare_vis_data(last_parsed_tree);
     drawn_network = new Network(container, data, vis_options);
 
+    // resize the container to fit all nodes
+    const graph_size = calculate_vis_graph_size()!;
+    container.style.height = `${graph_size.height}px`;
+
+    // autoResize is broken. need to fit canvas to container height properly ourselves. the event listener for resize will also handle this later
+    const canvas = container.querySelector("canvas") as HTMLCanvasElement;
+    if (canvas) {
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        drawn_network.fit();
+    } else {
+        console.warn("No canvas found in transition graph container.");
+    }
+
     outdated = false;
 }
+
+// TODO: scrolling ux
+// TODO: highlight nodes when stepping

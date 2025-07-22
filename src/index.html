@@ -94,8 +94,17 @@
     <button id="share-dialog-button">Create share URL</button>
     <button id="copy-empty">Copy empty letter</button>
 
-    <div id="editor"></div>
-    <div id="transition-graph"></div>
+    <div id="program-tabs" class="tabs">
+        <div class="tabs-buttons">
+            <button data-target="editor" class="active">Transition rules editor</button>
+            <button data-target="transition-graph">Transition graph</button>
+        </div>
+
+        <div class="tabs-pane">
+            <div id="editor"></div>
+            <div id="transition-graph" class="hidden"></div>
+        </div>
+    </div>
 
     <div id="errors-container" class="hidden">
         <h3>All errors:</h3>

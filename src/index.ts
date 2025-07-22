@@ -5,6 +5,9 @@ import * as error_log from "./error_log";
 import * as runner from "./runner";
 import * as sharing from "./sharing";
 import * as pwa from "./pwa";
+import * as transition_graphing from "./transition_graphing";
+
+import Tabs from "./tabs";
 
 import "./ui_binding";
 import "./keybinds";
@@ -19,6 +22,12 @@ runner.parse(editor.get_text());
 error_log.log_to_console();
 
 sharing.finish_load_from_url();
+
+// initialise program tabs
+const program_tabs = new Tabs(document.getElementById("program-tabs") as HTMLDivElement);
+
+// upon showing graph tabs pane, call update_graph (lazy loading)
+program_tabs.add_listener("transition-graph", transition_graphing.update_graph);
 
 // listen for navigating away from the page
 window.addEventListener("beforeunload", (e) => {
