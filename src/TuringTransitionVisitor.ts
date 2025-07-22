@@ -13,6 +13,12 @@ interface StateAndLetter {
 
 type VisitType = StateAndLetter | string | void;
 
+export interface TransitionEdge {
+    from: string;
+    letter: string;
+    to: string;
+}
+
 // TODO: maybe unite some of this behavior with TuringExecutor? perform execution separately and handle this data structure rather than the text based lookup?
 
 /**
@@ -29,6 +35,31 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
         }
 
         return this._graph;
+    }
+
+    get from_states(): string[] {
+        if (!this._visited) {
+            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing from_states.");
+        }
+
+        return Array.from(this._graph.keys());
+    }
+
+    get edge_list(): TransitionEdge[] {
+        if (!this._visited) {
+            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing the edge list.");
+        }
+
+        // unwrap the map to a list of edges
+        // TODO: should we just store an edge list in the first place? check how it ends up being used (maps are more flexible) then come back
+        const edges: TransitionEdge[] = [];
+        for (const [from_state, letter_to_state] of this._graph.entries()) {
+            for (const [letter, to_state] of letter_to_state.entries()) {
+                edges.push({from: from_state, letter, to: to_state});
+            }
+        }
+
+        return edges;
     }
 
     /**
