@@ -5,7 +5,7 @@ import TuringTransitionVisitor from "./TuringTransitionVisitor";
 
 const container = document.getElementById("transition-graph") as HTMLDivElement;
 
-const root_style = getComputedStyle(document.documentElement);
+let root_style = getComputedStyle(document.documentElement);
 
 const vis_options: Options = {
     autoResize: false,
@@ -25,9 +25,9 @@ const vis_options: Options = {
     edges: {
         arrows: "to",
         font: {
-            align: "middle",
+            align: "top",
             strokeWidth: 0,
-            color: root_style.getPropertyValue("--on-accent") || "#fff",
+            color: root_style.getPropertyValue("--text-body") || "#fff",
         }
     },
     nodes: {
@@ -41,6 +41,25 @@ const vis_options: Options = {
         },
     }
 };
+
+// on light/dark mode change, re-evaluate colors
+const dark_mode = window.matchMedia("(prefers-color-scheme: dark)");
+dark_mode.addEventListener("change", () => {
+    root_style = getComputedStyle(document.documentElement);
+
+    // @ts-ignore
+    vis_options.edges!.font!.color = root_style.getPropertyValue("--text-body") || "#fff";
+    // @ts-ignore
+    vis_options.nodes!.font!.color = root_style.getPropertyValue("--on-accent") || "#fff";
+    vis_options.nodes!.color = root_style.getPropertyValue("--accent") || "#007bff";
+
+    // if the graph is drawn, update it
+    if (drawn_network) {
+        drawn_network.setOptions(vis_options);
+        drawn_network.redraw();
+    }
+});
+
 
 // TODO: is this good design? should we redesign runner to have a singleton ParseTree and then just use that everywhere? it works fine for now
 let last_parsed_tree: ParseTree | null = null;
