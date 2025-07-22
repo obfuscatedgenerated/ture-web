@@ -1,4 +1,4 @@
-import {EMPTY} from "./TuringExecutor";
+import {EMPTY} from "./visitor/TuringExecutor";
 
 import * as editor from "./editor";
 import * as files from "./files";

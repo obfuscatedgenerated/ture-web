@@ -1,5 +1,5 @@
-import TuringVisitor from "./grammar/TuringVisitor";
-import {LetterContext, LhsContext, RhsContext, StateContext, Turing_ruleContext} from "./grammar/TuringParser";
+import TuringVisitor from "../grammar/TuringVisitor";
+import {LetterContext, LhsContext, RhsContext, StateContext, Turing_ruleContext} from "../grammar/TuringParser";
 import {ParseTree} from "antlr4";
 
 // originally a direct port of the java code

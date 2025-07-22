@@ -2,7 +2,7 @@ import * as error_log from "./error_log";
 import * as editor from "./editor";
 import * as runner from "./runner";
 
-import {EMPTY} from "./TuringExecutor";
+import {EMPTY} from "./visitor/TuringExecutor";
 import {documents, hide_document, show_document} from "./documents";
 
 const state_select = document.getElementById("init-state") as HTMLSelectElement;

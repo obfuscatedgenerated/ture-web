@@ -1,5 +1,5 @@
 import {compressToEncodedURIComponent, decompressFromEncodedURIComponent} from "lz-string";
-import {EMPTY} from "./TuringExecutor";
+import {EMPTY} from "./visitor/TuringExecutor";
 
 import * as editor from "./editor";
 import * as error_log from "./error_log";
