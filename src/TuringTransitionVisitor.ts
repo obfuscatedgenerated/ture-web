@@ -19,6 +19,12 @@ export interface TransitionEdge {
     to: string;
 }
 
+export interface MergedTransitionEdge {
+    from: string;
+    letters: string[];
+    to: string;
+}
+
 // TODO: maybe unite some of this behavior with TuringExecutor? perform execution separately and handle this data structure rather than the text based lookup?
 
 /**
@@ -88,16 +94,16 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
     }
 
     /**
-     * Returns a merged edge list, where multiple identical transitions with different letters are flattened to a comma-separated list of letters.<br>
+     * Returns a merged edge list, where multiple identical transitions with different letters are flattened to a list of letters.<br>
      * This is useful for rendering a transition graph as to avoid multiple overlapping transitions between the same states.
      */
-    get merged_edge_list(): TransitionEdge[] {
+    get merged_edge_list(): MergedTransitionEdge[] {
         if (!this._visited) {
             throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing the merged edge list.");
         }
 
         // create a map to hold the merged edges
-        const merged_edges: Map<string, TransitionEdge> = new Map();
+        const merged_edges: Map<string, MergedTransitionEdge> = new Map();
 
         // iterate over the edge list and merge edges
         for (const edge of this.edge_list) {
@@ -106,17 +112,21 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
             if (merged_edges.has(key)) {
                 // if the edge already exists, append the letter to the existing edge
                 const existing_edge = merged_edges.get(key)!;
-                existing_edge.letter += `, ${edge.letter}`;
+                existing_edge.letters.push(edge.letter);
             } else {
                 // otherwise, add a new edge
-                merged_edges.set(key, {...edge});
+                merged_edges.set(key, {
+                    from: edge.from,
+                    letters: [edge.letter],
+                    to: edge.to
+                });
             }
         }
 
         // return the merged edges as an array
         return Array.from(merged_edges.values()).map(edge => ({
             from: edge.from,
-            letter: edge.letter,
+            letters: edge.letters,
             to: edge.to
         }));
     }

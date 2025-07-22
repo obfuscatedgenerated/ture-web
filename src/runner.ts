@@ -274,6 +274,8 @@ export const cancel_steps = () => {
         editor.remove_decoration_by_id(step_highlight_id);
     }
 
+    transition_graphing.mark_edge(null);
+
     // restore to original lock state
     const url_props = sharing.get_loaded_properties();
 
@@ -406,6 +408,14 @@ export const run_step = () => {
                 if (res.text_range) {
                     step_highlight_id = editor.create_and_apply_decoration_range(res.text_range.start, res.text_range.end, "cm-highlight");
                 }
+
+                // determine the graph edge and mark it
+                const prev_letter = res.old_value[res.old_pos] || EMPTY;
+                transition_graphing.mark_edge({
+                    from: res.old_state,
+                    to: res.state,
+                    letter: prev_letter
+                });
 
                 step_state.innerText = res.state;
             }

@@ -245,6 +245,11 @@ export default class TuringExecutor extends TuringVisitor<string> {
 
         return {
             next: () => {
+                // store old values to return in the result
+                const old_value = tape;
+                const old_pos = pos;
+                const old_state = this.current_state;
+
                 // execute a step
                 const res = this.execute_step(tape, pos);
                 tape = res.new_tape;
@@ -261,7 +266,16 @@ export default class TuringExecutor extends TuringVisitor<string> {
                     }
                 }
 
-                return {status: res.status, value: tape, pos: pos, state: this.current_state, text_range: res.text_range};
+                return {
+                    status: res.status,
+                    old_value,
+                    value: tape,
+                    old_pos,
+                    pos: pos,
+                    old_state,
+                    state: this.current_state,
+                    text_range: res.text_range
+                };
             }
         };
     }
@@ -272,8 +286,11 @@ export default class TuringExecutor extends TuringVisitor<string> {
  */
 export interface StepResult {
     status: ExecResultStatus;
+    old_value: string;
     value: string;
+    old_pos: number;
     pos: number;
+    old_state: string;
     state: string;
     text_range?: TextRange;
 }

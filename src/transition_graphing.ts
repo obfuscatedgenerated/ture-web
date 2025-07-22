@@ -1,7 +1,7 @@
 import {DataSet, Network, Node, Edge, Options, network} from "vis-network/standalone";
 
 import {ParseTree} from "antlr4";
-import TuringTransitionVisitor from "./TuringTransitionVisitor";
+import TuringTransitionVisitor, {TransitionEdge} from "./TuringTransitionVisitor";
 
 const container = document.getElementById("transition-graph") as HTMLDivElement;
 
@@ -60,9 +60,13 @@ dark_mode.addEventListener("change", () => {
     }
 });
 
+type ExtendedEdge = Edge & {
+    letters: string[]; // to store the letters in the edge
+}
 
 // TODO: is this good design? should we redesign runner to have a singleton ParseTree and then just use that everywhere? it works fine for now
 let last_parsed_tree: ParseTree | null = null;
+let prepared_data: { nodes: DataSet<Node>, edges: DataSet<ExtendedEdge> } | null = null;
 let outdated = false;
 let drawn_network: Network | null = null;
 
@@ -90,12 +94,12 @@ export const remember_tree = (tree: ParseTree) => {
     outdated = true;
 }
 
-const prepare_vis_data = (tree: ParseTree): {nodes: DataSet<Node>, edges: DataSet<Edge>} => {
+const prepare_vis_data = (tree: ParseTree): { nodes: DataSet<Node>, edges: DataSet<ExtendedEdge> } => {
     const visitor = new TuringTransitionVisitor();
     visitor.visit(tree);
 
     const nodes: Node[] = [];
-    const edges: Edge[] = [];
+    const edges: ExtendedEdge[] = [];
 
     // add from states as nodes
     for (const state of visitor.all_states) {
@@ -107,7 +111,8 @@ const prepare_vis_data = (tree: ParseTree): {nodes: DataSet<Node>, edges: DataSe
         edges.push({
             from: edge.from,
             to: edge.to,
-            label: edge.letter,
+            label: edge.letters.join(", "), // join letters with comma
+            letters: edge.letters,
             arrows: "to",
         });
     }
@@ -157,7 +162,15 @@ export const update_graph = () => {
     }
 
     const data = prepare_vis_data(last_parsed_tree);
+    prepared_data = data;
+
     drawn_network = new Network(container, data, vis_options);
+
+    // highlight an edge if it was requested before the graph was drawn
+    if (need_to_highlight_edge) {
+        highlight_edge_on_graph(need_to_highlight_edge);
+        need_to_highlight_edge = null;
+    }
 
     // resize the container to fit all nodes
     const graph_size = calculate_vis_graph_size()!;
@@ -176,5 +189,78 @@ export const update_graph = () => {
     outdated = false;
 }
 
+// store the highlighted edge to be used later if the graph is not yet drawn
+let need_to_highlight_edge: TransitionEdge | null = null;
+
+/**
+ * Highlights an edge on the graph by changing its color.<br>
+ * If an edge is already highlighted, it will be replaced with the new one.<br>
+ * If the network is not yet drawn, it will wait until the graph is drawn to highlight the edge.
+ * @param edge the edge to highlight, or null to remove the highlight
+ */
+export const mark_edge = (edge: TransitionEdge | null) => {
+    if (!drawn_network) {
+        need_to_highlight_edge = edge;
+        return;
+    }
+
+    highlight_edge_on_graph(edge);
+}
+
+/**
+ * Highlights an edge on the graph by changing its color.<br>
+ * If an edge is already highlighted, it will be replaced with the new one.
+ * @param edge the edge to highlight, or null to remove the highlight
+ */
+const highlight_edge_on_graph = (edge: TransitionEdge | null) => {
+    if (!drawn_network) {
+        console.warn("No drawn network to highlight edge in.");
+        return;
+    }
+
+    if (!prepared_data) {
+        console.warn("No prepared data to highlight edge in.");
+        return;
+    }
+
+    if (!edge) {
+        // restore original data
+        drawn_network.setData(prepared_data);
+        return;
+    }
+
+    // find the edge with the given from, to and letter
+    // use the original prepared data to ensure only 1 is highlighted at once
+    const graph_edges = prepared_data.edges;
+
+    // need custom network edge filter because each edge may have multiple letters but we only receive 1
+    const filtered_edges = graph_edges.get({
+        filter: (item) => item.from === edge.from && item.to === edge.to && item.label!.includes(edge.letter)
+    });
+
+    if (!filtered_edges || filtered_edges.length === 0) {
+        console.warn("No edge found in the graph with the given from, to and letter.");
+        return;
+    }
+
+    const graph_edge = filtered_edges[0] as ExtendedEdge;
+
+    // highlight the edge by changing its color
+    const highlighted_edge: ExtendedEdge = {
+        ...graph_edge,
+        color: {
+            color: root_style.getPropertyValue("--edge-mark") || "#de00ff",
+        }
+    };
+
+    // update edge in original data and apply
+    const new_edges = new DataSet<ExtendedEdge>(prepared_data.edges.get());
+    new_edges.update(highlighted_edge);
+
+    drawn_network.setData({
+        nodes: prepared_data.nodes,
+        edges: new_edges
+    });
+}
+
 // TODO: scrolling ux
-// TODO: highlight nodes when stepping
