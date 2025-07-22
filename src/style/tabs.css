@@ -10,14 +10,21 @@
 .tabs-buttons button {
     border-radius: 0;
     margin: 0;
+    color: var(--text-secondary);
 }
 
 .tabs-buttons button.active {
     background-color: var(--accent);
+    color: var(--on-accent);
 }
 
 .tabs-buttons button:not(.active) {
     background-color: transparent;
+}
+
+.tabs-buttons button:not(.active):hover {
+    background-color: var(--general-hover);
+    color: var(--on-general-hover);
 }
 
 .tabs-buttons {

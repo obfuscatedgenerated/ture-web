@@ -21,6 +21,9 @@
     --on-accent: #fff;
     --accent-secondary: #619be5;
 
+    --general-hover: #bbb;
+    --on-general-hover: #000;
+
     --danger: #e33;
     --on-danger: #fff;
     --light-danger: #fdd;
