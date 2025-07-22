@@ -21,6 +21,9 @@
     --on-accent: #fff;
     --accent-secondary: #619be5;
 
+    --general-hover: #bbb;
+    --on-general-hover: #000;
+
     --danger: #e33;
     --on-danger: #fff;
     --light-danger: #fdd;
@@ -65,6 +68,9 @@
     --accent-hover: #0e3f7d;
     --on-accent: #fff;
     --accent-secondary: #7fb3e5;
+
+    --general-hover: #222;
+    --on-general-hover: #fff;
 
     --danger: #e33;
     --on-danger: #fff;
@@ -345,6 +351,47 @@ blockquote {
     width: auto;
 }
 
+.tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    background-color: var(--white-bg);
+}
+
+
+.tabs-buttons button {
+    border-radius: 0;
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.tabs-buttons button.active {
+    background-color: var(--accent);
+    color: var(--on-accent);
+}
+
+.tabs-buttons button:not(.active) {
+    background-color: transparent;
+}
+
+.tabs-buttons button:not(.active):hover {
+    background-color: var(--general-hover);
+    color: var(--on-general-hover);
+}
+
+.tabs-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 0;
+}
+
+.tabs-pane {
+    border: 0.0625rem solid var(--on-body-bg);
+    box-sizing: border-box;
+}
+
 @media screen and (max-width: 600px) {
 body {
     margin: 1rem;
@@ -480,11 +527,17 @@ label {
     font-size: 0.8rem;
 }
 
-#editor {
-    border: 0.0625rem solid var(--on-body-bg);
-    border-radius: 0.375rem;
-    background-color: var(--white-bg);
+#program-tabs {
     margin-top: 1rem;
+    width: 100%;
+}
+
+#transition-graph {
+    min-height: 20rem;
+}
+
+#editor {
+    background-color: var(--white-bg);
     font-family: monospace;
     white-space: pre;
     overflow-x: auto;
