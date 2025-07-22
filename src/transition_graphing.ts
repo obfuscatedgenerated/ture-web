@@ -71,7 +71,7 @@ const prepare_vis_data = (tree: ParseTree): {nodes: DataSet<Node>, edges: DataSe
     }
 
     // add edges from edge list
-    for (const edge of visitor.edge_list) {
+    for (const edge of visitor.merged_edge_list) {
         edges.push({
             from: edge.from,
             to: edge.to,
@@ -146,4 +146,3 @@ export const update_graph = () => {
 
 // TODO: scrolling ux
 // TODO: highlight nodes when stepping
-// TODO: avoid self loop overlap

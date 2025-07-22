@@ -67,6 +67,9 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
         return this._all_states;
     }
 
+    /**
+     * Returns a list of edges in the graph, where each edge is represented as an object with from state, letter, and to state.
+     */
     get edge_list(): TransitionEdge[] {
         if (!this._visited) {
             throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing the edge list.");
@@ -82,6 +85,40 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
         }
 
         return edges;
+    }
+
+    /**
+     * Returns a merged edge list, where multiple identical transitions with different letters are flattened to a comma-separated list of letters.<br>
+     * This is useful for rendering a transition graph as to avoid multiple overlapping transitions between the same states.
+     */
+    get merged_edge_list(): TransitionEdge[] {
+        if (!this._visited) {
+            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing the merged edge list.");
+        }
+
+        // create a map to hold the merged edges
+        const merged_edges: Map<string, TransitionEdge> = new Map();
+
+        // iterate over the edge list and merge edges
+        for (const edge of this.edge_list) {
+            const key = `${edge.from}-${edge.to}`;
+
+            if (merged_edges.has(key)) {
+                // if the edge already exists, append the letter to the existing edge
+                const existing_edge = merged_edges.get(key)!;
+                existing_edge.letter += `, ${edge.letter}`;
+            } else {
+                // otherwise, add a new edge
+                merged_edges.set(key, {...edge});
+            }
+        }
+
+        // return the merged edges as an array
+        return Array.from(merged_edges.values()).map(edge => ({
+            from: edge.from,
+            letter: edge.letter,
+            to: edge.to
+        }));
     }
 
     /**
