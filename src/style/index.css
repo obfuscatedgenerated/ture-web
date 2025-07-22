@@ -82,4 +82,10 @@
 
 #transition-graph {
     min-height: 20rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--text-tertiary);
 }

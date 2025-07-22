@@ -163,6 +163,12 @@ export const update_graph = () => {
 
     const data = prepare_vis_data(last_parsed_tree);
     prepared_data = data;
+    outdated = false;
+
+    if (data.nodes.length === 0) {
+        container.innerText = "No states found in the parse tree.";
+        return;
+    }
 
     drawn_network = new Network(container, data, vis_options);
 
@@ -185,8 +191,6 @@ export const update_graph = () => {
     } else {
         console.warn("No canvas found in transition graph container.");
     }
-
-    outdated = false;
 }
 
 // store the highlighted edge to be used later if the graph is not yet drawn
