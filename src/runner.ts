@@ -2,6 +2,7 @@ import * as error_log from "./error_log";
 import * as editor from "./editor";
 import * as tape_input from "./tape_input";
 import * as sharing from "./sharing";
+import * as transition_graphing from "./transition_graphing";
 
 import {CharStream, CommonTokenStream} from "antlr4";
 
@@ -140,7 +141,7 @@ export const parse = (code: string): ProgramContext => {
     parser._errHandler = new TuringErrorStrategy();
 
     const tree = parser.program();
-    //console.log(tree.toStringTree(parser.ruleNames, parser));
+    transition_graphing.remember_tree(tree);
 
     // collect state names and add to select box
     // also collects letters to tell tape what characters are valid
