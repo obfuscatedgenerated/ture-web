@@ -1,9 +1,10 @@
 import {compressToEncodedURIComponent, decompressFromEncodedURIComponent} from "lz-string";
-import {EMPTY} from "./visitor/TuringExecutor";
 
 import * as editor from "./editor";
 import * as error_log from "./error_log";
 import * as tape_input from "./tape_input";
+
+import {DEFAULT_DOC, EMPTY} from "./config";
 
 // TODO: is this typing necessary? at least clean up all this sharing logic
 // TODO: these should really be separate. without value is used as input and with value as an output. the way "includes" are defined by existing are weird because flags are boolean
@@ -64,7 +65,7 @@ export const get_share_url = (properties: ShareURLProperties) => {
     url.hash = ""; // clear hash (sometimes set by readme viewers)
     url.search = ""; // clear search params to avoid conflicts
 
-    if (properties.script && editor.get_text() !== "" && editor.get_text() !== editor.DEFAULT_DOC) {
+    if (properties.script && editor.get_text() !== "" && editor.get_text() !== DEFAULT_DOC) {
         // compress script with lz-string and encode it in the url
         const comp = compressToEncodedURIComponent(editor.get_text());
         url.searchParams.set("script", comp);
@@ -138,7 +139,7 @@ export const show_create_share_dialog = () => {
 
     // if certain properties dont have a value to share, disable the checkbox
 
-    const script_enable = (editor.get_text() !== "" && editor.get_text() !== editor.DEFAULT_DOC);
+    const script_enable = (editor.get_text() !== "" && editor.get_text() !== DEFAULT_DOC);
 
     if (!script_enable) {
         include_script.disabled = true;

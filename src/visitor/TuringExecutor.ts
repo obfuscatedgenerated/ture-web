@@ -2,10 +2,10 @@ import TuringVisitor from "../grammar/TuringVisitor";
 import {LetterContext, LhsContext, RhsContext, StateContext, Turing_ruleContext} from "../grammar/TuringParser";
 import {ParseTree} from "antlr4";
 
+import {DEFAULT_STEP_LIMIT, EMPTY} from "../config";
+
 // originally a direct port of the java code
 // now with additional features, but still quite OOP heavy
-
-export const DEFAULT_STEP_LIMIT = 1000000;
 
 export enum ExecResultStatus {
     Left,
@@ -29,11 +29,6 @@ class ExecResult {
         this.text_range = text_range;
     }
 }
-
-/**
- * The character representing an empty tape cell.
- */
-export const EMPTY = "⬚";
 
 /**
  * Writes a letter to the tape at the specified position, automatically expanding the tape with empty cells if necessary.

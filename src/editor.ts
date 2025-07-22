@@ -1,17 +1,10 @@
 import "./style/editor.css";
 
-import { basicSetup } from "codemirror";
-import { EditorView, Decoration, hoverTooltip, DecorationSet } from "@codemirror/view";
-import {
-    RangeSetBuilder,
-    Range,
-    StateEffect,
-    StateField,
-    Extension
-} from "@codemirror/state";
+import {basicSetup} from "codemirror";
+import {Decoration, DecorationSet, EditorView, hoverTooltip} from "@codemirror/view";
+import {Extension, Range, RangeSetBuilder, StateEffect, StateField} from "@codemirror/state";
 
-export const DEFAULT_DOC = `% Write your transition rules here!
-`;
+import {DEFAULT_DOC} from "./config";
 
 // chatgpt ended up rewriting this
 // the way codemirror handles extensions is terrible

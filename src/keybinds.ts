@@ -1,10 +1,10 @@
-import {EMPTY} from "./visitor/TuringExecutor";
-
 import * as editor from "./editor";
 import * as files from "./files";
 import * as sharing from "./sharing";
 import * as runner from "./runner";
 import * as pwa from "./pwa";
+
+import {EMPTY} from "./config";
 
 /**
  * Forcibly overrides the .auto-hide class on kbd elements to keep them visible regardless of the pointer detected.

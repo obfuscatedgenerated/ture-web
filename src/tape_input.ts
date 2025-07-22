@@ -1,9 +1,10 @@
 import "./style/tape_input.css";
 
-import {EMPTY} from "./visitor/TuringExecutor";
 import {documents, show_document} from "./documents";
 
 import * as error_log from "./error_log";
+
+import {EMPTY} from "./config";
 
 const tape_input = document.getElementById("input") as HTMLInputElement;
 const tape_visual = document.getElementById("tape-visual") as HTMLDivElement;

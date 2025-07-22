@@ -1,4 +1,4 @@
-import {DataSet, Network, Node, Edge, Options, network} from "vis-network/standalone";
+import {DataSet, Network, Node, Edge, Options} from "vis-network/standalone";
 
 import {ParseTree} from "antlr4";
 import TuringTransitionVisitor, {TransitionEdge} from "./visitor/TuringTransitionVisitor";

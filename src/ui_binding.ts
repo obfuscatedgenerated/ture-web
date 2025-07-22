@@ -2,8 +2,9 @@ import * as error_log from "./error_log";
 import * as editor from "./editor";
 import * as runner from "./runner";
 
-import {EMPTY} from "./visitor/TuringExecutor";
 import {documents, hide_document, show_document} from "./documents";
+
+import {EMPTY} from "./config";
 
 const state_select = document.getElementById("init-state") as HTMLSelectElement;
 const tape_input_dom = document.getElementById("input") as HTMLInputElement;

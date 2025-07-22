@@ -9,9 +9,11 @@ import {CharStream, CommonTokenStream} from "antlr4";
 import TuringLexer from "./grammar/TuringLexer";
 import TuringParser, {ProgramContext} from "./grammar/TuringParser";
 
-import TuringExecutor, {DEFAULT_STEP_LIMIT, EMPTY, ExecResultStatus, StepIterator} from "./visitor/TuringExecutor";
+import TuringExecutor, {ExecResultStatus, StepIterator} from "./visitor/TuringExecutor";
 import {TuringErrorStrategy} from "./TuringErrorStrategy";
 import TuringMetadataVisitor from "./visitor/TuringMetadataVisitor";
+
+import {DEFAULT_STEP_LIMIT, EMPTY} from "./config";
 
 import levenshtein from "js-levenshtein";
 
