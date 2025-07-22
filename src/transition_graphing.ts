@@ -130,14 +130,14 @@ const calculate_vis_graph_size = () => {
     const xs = Object.values(positions).map(pos => pos.x);
     const ys = Object.values(positions).map(pos => pos.y);
 
-    const minX = Math.min(...xs);
-    const maxX = Math.max(...xs);
+    const min_x = Math.min(...xs);
+    const max_x = Math.max(...xs);
 
-    const minY = Math.min(...ys);
-    const maxY = Math.max(...ys);
+    const min_y = Math.min(...ys);
+    const max_y = Math.max(...ys);
 
-    const width = maxX - minX;
-    const height = maxY - minY;
+    const width = max_x - min_x;
+    const height = max_y - min_y;
 
     return {
         width,
