@@ -45,6 +45,36 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
         return Array.from(this._graph.keys());
     }
 
+    get to_states(): string[] {
+        if (!this._visited) {
+            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing to_states.");
+        }
+
+        // collect all states that are reachable from any from state
+        const to_states: Set<string> = new Set();
+        for (const letter_to_state of this._graph.values()) {
+            for (const to_state of letter_to_state.values()) {
+                to_states.add(to_state);
+            }
+        }
+
+        return Array.from(to_states);
+    }
+
+    get all_states(): string[] {
+        if (!this._visited) {
+            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing all_states.");
+        }
+
+        // combine from and to states
+        const all_states = new Set<string>(this.from_states);
+        for (const to_state of this.to_states) {
+            all_states.add(to_state);
+        }
+
+        return Array.from(all_states);
+    }
+
     get edge_list(): TransitionEdge[] {
         if (!this._visited) {
             throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing the edge list.");

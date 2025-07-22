@@ -66,7 +66,7 @@ const prepare_vis_data = (tree: ParseTree): {nodes: DataSet<Node>, edges: DataSe
     const edges: Edge[] = [];
 
     // add from states as nodes
-    for (const state of visitor.from_states) {
+    for (const state of visitor.all_states) {
         nodes.push({id: state, label: state});
     }
 
