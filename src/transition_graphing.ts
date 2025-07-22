@@ -146,3 +146,4 @@ export const update_graph = () => {
 
 // TODO: scrolling ux
 // TODO: highlight nodes when stepping
+// TODO: avoid self loop overlap

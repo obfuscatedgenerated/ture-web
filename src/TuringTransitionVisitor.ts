@@ -27,6 +27,8 @@ export interface TransitionEdge {
  */
 export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
     private _graph: StateGraph = new Map();
+    private _all_states: string[] = [];
+
     private _visited: boolean = false;
 
     get graph(): StateGraph {
@@ -62,17 +64,7 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
     }
 
     get all_states(): string[] {
-        if (!this._visited) {
-            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing all_states.");
-        }
-
-        // combine from and to states
-        const all_states = new Set<string>(this.from_states);
-        for (const to_state of this.to_states) {
-            all_states.add(to_state);
-        }
-
-        return Array.from(all_states);
+        return this._all_states;
     }
 
     get edge_list(): TransitionEdge[] {
@@ -136,7 +128,13 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
     }
 
     visitState = (ctx: StateContext) => {
-        return ctx.getText();
+        const state = ctx.getText();
+
+        if (!this._all_states.includes(state)) {
+            this._all_states.push(state);
+        }
+
+        return state;
     }
 
     visitLhs = (ctx: LhsContext) => {
