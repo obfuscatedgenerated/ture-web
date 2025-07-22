@@ -30,6 +30,8 @@ You can upload either a .txt of just the rules or a .ture file with the rules an
 
 You can copy a URL of the encoded program alongside the name, tape, and init state with the `Create share URL` button (<kbd>Ctrl</kbd><span class="kbd-plus">+</span><kbd>Alt</kbd><span class="kbd-plus">+</span><kbd>S</kbd> or <kbd>Cmd</kbd><span class="kbd-plus">+</span><kbd>Alt</kbd><span class="kbd-plus">+</span><kbd>S</kbd>). This URL can be shared with others to run the same program when they open the link. You have the option of which properties you want to share and whether to make them read only. You can choose to copy the link or generate an iframe embed code to include in your own website or application.
 
+You can the select `Transition graph` tab to view a graph of the state and letter transitions. In step-by-step mode, the edge that was just followed is highlighted in magenta.
+
 ## Syntax
 
 You can check the example programs, such as <a target="_blank" rel="noopener" href="https://ture.ollieg.codes/?script=KQAgygLg9gTgpiCALBAzAljAzhEAbOCCOGEdAO0RRAHdYATEAQy2ZByeICgAKARwCS5dBAA0zAJQgAtAD4Q-AILim4mOgDmSCBN6DhYkACMpchXwBC4o2s3bdXUAFkoANwTQqCOOUZRUXohMAA5wesqSMvJKKrZaOuHWptF8ETYg6vG6-FaRZjmxGXYJBcbJ5rnpmfZcjiAWTADGANYQME3NIFDkjQg0KJQ0CPBNSIE%2BfgHIHiFhMSCAWNTl-ACivhEL4gSoJZbiS1Hma-S5m-hwOw6gAEpwwXhNHtQPOOdEJLQiY9MgGNi4BHepCYvhAPmIpB%2BbRC7AgnDmfGOESYyz4AAkmHhDKoilk9Eikod%2BBisYVqrtjrkUUT0ZjDFVitlEb5KqiSfS4vYgA&name=LastFirst&name_ro=true&init=qInit">LastFirst</a> for examples of valid syntax.
