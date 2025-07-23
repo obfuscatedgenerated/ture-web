@@ -91,7 +91,7 @@
 
 }
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     margin: 2rem;
 
     background-color: var(--body-bg);
@@ -296,6 +296,10 @@ blockquote {
 
 .vertical-rule.short {
     height: 1em;
+}
+
+.danger {
+    color: var(--danger);
 }
 
 @media not all and (max-width: 600px) {
@@ -541,6 +545,10 @@ label {
     align-items: center;
 
     color: var(--text-tertiary);
+}
+
+#share-dialog {
+    width: 25em;
 }
 
 #editor {
