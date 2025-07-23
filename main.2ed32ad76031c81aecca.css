@@ -364,11 +364,20 @@ blockquote {
     background-color: var(--white-bg);
 }
 
+.tabs-buttons {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 0.0625rem solid var(--on-body-bg);
+}
 
 .tabs-buttons button {
     border-radius: 0;
     margin: 0;
     color: var(--text-secondary);
+}
+
+.tabs-buttons button:not(:first-child) {
+    border-left: 0.0625rem solid var(--on-body-bg);
 }
 
 .tabs-buttons button.active {
@@ -390,11 +399,6 @@ blockquote {
     flex-wrap: wrap;
     gap: 0;
     margin: 0;
-}
-
-.tabs-pane {
-    border: 0.0625rem solid var(--on-body-bg);
-    box-sizing: border-box;
 }
 
 @media screen and (max-width: 600px) {
@@ -535,6 +539,22 @@ label {
 #program-tabs {
     margin-top: 1rem;
     width: 100%;
+    border-radius: 0.375rem;
+    border: 0.0625rem solid var(--on-body-bg);
+}
+
+#program-tabs .tabs-buttons button:first-child {
+    border-top-left-radius: 0.375rem;
+}
+
+#program-tabs .tabs-pane {
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+
+#program-tabs .tabs-pane > * {
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
 }
 
 #state-graph {
