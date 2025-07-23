@@ -80,7 +80,7 @@
     width: 100%;
 }
 
-#transition-graph {
+#state-graph {
     min-height: 20rem;
 
     display: flex;

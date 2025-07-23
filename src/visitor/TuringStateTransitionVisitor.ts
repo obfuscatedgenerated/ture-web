@@ -3,7 +3,7 @@ import {LetterContext, LhsContext, RhsContext, StateContext, Turing_ruleContext}
 import {ParseTree} from "antlr4";
 
 type LetterToStateMap = Map<string, string>;
-type StateGraph = Map<string, LetterToStateMap>;
+type StateTransitionMap = Map<string, LetterToStateMap>;
 
 // bit cleaner that dealing in terms of LhsContext and RhsContext
 interface StateAndLetter {
@@ -13,13 +13,13 @@ interface StateAndLetter {
 
 type VisitType = StateAndLetter | string | void;
 
-export interface TransitionEdge {
+export interface StateTransitionEdge {
     from: string;
     letter: string;
     to: string;
 }
 
-export interface MergedTransitionEdge {
+export interface MergedStateTransitionEdge {
     from: string;
     letters: string[];
     to: string;
@@ -31,36 +31,36 @@ export interface MergedTransitionEdge {
  * An ANTLR visitor to map the all transitions by letter from a state to another state in a Turing machine ruleset.<br>
  * This is used by the transition graph generator.
  */
-export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
-    private _graph: StateGraph = new Map();
+export default class TuringStateTransitionVisitor extends TuringVisitor<VisitType> {
+    private _state_map: StateTransitionMap = new Map();
     private _all_states: string[] = [];
 
     private _visited: boolean = false;
 
-    get graph(): StateGraph {
+    get state_map(): StateTransitionMap {
         if (!this._visited) {
-            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing the graph.");
+            throw new Error("TuringStateTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing the graph.");
         }
 
-        return this._graph;
+        return this._state_map;
     }
 
     get from_states(): string[] {
         if (!this._visited) {
-            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing from_states.");
+            throw new Error("TuringStateTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing from_states.");
         }
 
-        return Array.from(this._graph.keys());
+        return Array.from(this._state_map.keys());
     }
 
     get to_states(): string[] {
         if (!this._visited) {
-            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing to_states.");
+            throw new Error("TuringStateTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing to_states.");
         }
 
         // collect all states that are reachable from any from state
         const to_states: Set<string> = new Set();
-        for (const letter_to_state of this._graph.values()) {
+        for (const letter_to_state of this._state_map.values()) {
             for (const to_state of letter_to_state.values()) {
                 to_states.add(to_state);
             }
@@ -76,15 +76,15 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
     /**
      * Returns a list of edges in the graph, where each edge is represented as an object with from state, letter, and to state.
      */
-    get edge_list(): TransitionEdge[] {
+    get edge_list(): StateTransitionEdge[] {
         if (!this._visited) {
-            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing the edge list.");
+            throw new Error("TuringStateTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing the edge list.");
         }
 
         // unwrap the map to a list of edges
         // TODO: should we just store an edge list in the first place? check how it ends up being used (maps are more flexible) then come back
-        const edges: TransitionEdge[] = [];
-        for (const [from_state, letter_to_state] of this._graph.entries()) {
+        const edges: StateTransitionEdge[] = [];
+        for (const [from_state, letter_to_state] of this._state_map.entries()) {
             for (const [letter, to_state] of letter_to_state.entries()) {
                 edges.push({from: from_state, letter, to: to_state});
             }
@@ -97,13 +97,13 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
      * Returns a merged edge list, where multiple identical transitions with different letters are flattened to a list of letters.<br>
      * This is useful for rendering a transition graph as to avoid multiple overlapping transitions between the same states.
      */
-    get merged_edge_list(): MergedTransitionEdge[] {
+    get merged_edge_list(): MergedStateTransitionEdge[] {
         if (!this._visited) {
-            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing the merged edge list.");
+            throw new Error("TuringStateTransitionVisitor has not been visited yet. Call visit on the parse tree before accessing the merged edge list.");
         }
 
         // create a map to hold the merged edges
-        const merged_edges: Map<string, MergedTransitionEdge> = new Map();
+        const merged_edges: Map<string, MergedStateTransitionEdge> = new Map();
 
         // iterate over the edge list and merge edges
         for (const edge of this.edge_list) {
@@ -138,10 +138,10 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
      */
     query_state = (state: string): LetterToStateMap | null => {
         if (!this._visited) {
-            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before querying the state.");
+            throw new Error("TuringStateTransitionVisitor has not been visited yet. Call visit on the parse tree before querying the state.");
         }
 
-        return this._graph.get(state) ?? null;
+        return this._state_map.get(state) ?? null;
     }
 
     /**
@@ -152,10 +152,10 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
      */
     query_transition = (state: string, letter: string): string | null => {
         if (!this._visited) {
-            throw new Error("TuringTransitionVisitor has not been visited yet. Call visit on the parse tree before querying the transition.");
+            throw new Error("TuringStateTransitionVisitor has not been visited yet. Call visit on the parse tree before querying the transition.");
         }
 
-        const letter_to_state = this._graph.get(state);
+        const letter_to_state = this._state_map.get(state);
         if (!letter_to_state) {
             return null;
         }
@@ -203,12 +203,12 @@ export default class TuringTransitionVisitor extends TuringVisitor<VisitType> {
         const rhs = this.visit(ctx._right) as StateAndLetter;
 
         // check if the from state exists in the graph
-        if (!this._graph.has(lhs.state)) {
-            this._graph.set(lhs.state, new Map());
+        if (!this._state_map.has(lhs.state)) {
+            this._state_map.set(lhs.state, new Map());
         }
 
         // get the letter to state map for the from state
-        const letter_to_state = this._graph.get(lhs.state)!;
+        const letter_to_state = this._state_map.get(lhs.state)!;
 
         // check if the letter already exists in the map
         if (letter_to_state.has(lhs.letter)) {

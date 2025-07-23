@@ -1,9 +1,9 @@
 import {DataSet, Network, Node, Edge, Options} from "vis-network/standalone";
 
 import {ParseTree} from "antlr4";
-import TuringTransitionVisitor, {TransitionEdge} from "./visitor/TuringTransitionVisitor";
+import TuringStateTransitionVisitor, {StateTransitionEdge} from "./visitor/TuringStateTransitionVisitor";
 
-const container = document.getElementById("transition-graph") as HTMLDivElement;
+const container = document.getElementById("state-graph") as HTMLDivElement;
 
 let root_style = getComputedStyle(document.documentElement);
 
@@ -86,7 +86,7 @@ window.addEventListener("resize", () => {
 });
 
 /**
- * Sets a parse tree as the last parsed tree (the one to display in the transition graph).
+ * Sets a parse tree as the last parsed tree (the one to display in the state graph).
  * @param tree
  */
 export const remember_tree = (tree: ParseTree) => {
@@ -95,7 +95,7 @@ export const remember_tree = (tree: ParseTree) => {
 }
 
 const prepare_vis_data = (tree: ParseTree): { nodes: DataSet<Node>, edges: DataSet<ExtendedEdge> } => {
-    const visitor = new TuringTransitionVisitor();
+    const visitor = new TuringStateTransitionVisitor();
     visitor.visit(tree);
 
     const nodes: Node[] = [];
@@ -146,8 +146,8 @@ const calculate_vis_graph_size = () => {
 }
 
 /**
- * Updates the transition graph visualisation based on the last parsed tree.<br>
- * For efficiency, you can call this just-in-time when viewing the transition graph, rather than on every parse.<br>
+ * Updates the state graph visualisation based on the last parsed tree.<br>
+ * For efficiency, you can call this just-in-time when viewing the state graph, rather than on every parse.<br>
  * It will only redraw the graph if it is outdated (i.e. if the last parsed tree has changed since the last draw).
  */
 export const update_graph = () => {
@@ -189,12 +189,12 @@ export const update_graph = () => {
         canvas.height = container.clientHeight;
         drawn_network.fit();
     } else {
-        console.warn("No canvas found in transition graph container.");
+        console.warn("No canvas found in state graph container.");
     }
 }
 
 // store the highlighted edge to be used later if the graph is not yet drawn
-let need_to_highlight_edge: TransitionEdge | null = null;
+let need_to_highlight_edge: StateTransitionEdge | null = null;
 
 /**
  * Highlights an edge on the graph by changing its color.<br>
@@ -202,7 +202,7 @@ let need_to_highlight_edge: TransitionEdge | null = null;
  * If the network is not yet drawn, it will wait until the graph is drawn to highlight the edge.
  * @param edge the edge to highlight, or null to remove the highlight
  */
-export const mark_edge = (edge: TransitionEdge | null) => {
+export const mark_edge = (edge: StateTransitionEdge | null) => {
     if (!drawn_network) {
         need_to_highlight_edge = edge;
         return;
@@ -216,7 +216,7 @@ export const mark_edge = (edge: TransitionEdge | null) => {
  * If an edge is already highlighted, it will be replaced with the new one.
  * @param edge the edge to highlight, or null to remove the highlight
  */
-const highlight_edge_on_graph = (edge: TransitionEdge | null) => {
+const highlight_edge_on_graph = (edge: StateTransitionEdge | null) => {
     if (!drawn_network) {
         console.warn("No drawn network to highlight edge in.");
         return;

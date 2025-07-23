@@ -30,7 +30,7 @@ You can upload either a .txt of just the rules or a .ture file with the rules an
 
 You can copy a URL of the encoded program alongside the name, tape, and init state with the `Create share URL` button (<kbd>Ctrl</kbd><span class="kbd-plus">+</span><kbd>Alt</kbd><span class="kbd-plus">+</span><kbd>S</kbd> or <kbd>Cmd</kbd><span class="kbd-plus">+</span><kbd>Alt</kbd><span class="kbd-plus">+</span><kbd>S</kbd>). This URL can be shared with others to run the same program when they open the link. You have the option of which properties you want to share and whether to make them read only. You can choose to copy the link or generate an iframe embed code to include in your own website or application.
 
-You can the select `Transition graph` tab to view a graph of the state and letter transitions. In step-by-step mode, the edge that was just followed is highlighted in magenta.
+You can the select `State graph` tab to view a graph of the state and letter transitions. In step-by-step mode, the edge that was just followed is highlighted in magenta.
 
 ## Syntax
 

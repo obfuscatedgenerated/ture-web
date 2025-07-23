@@ -2,7 +2,7 @@ import * as error_log from "./error_log";
 import * as editor from "./editor";
 import * as tape_input from "./tape_input";
 import * as sharing from "./sharing";
-import * as transition_graphing from "./transition_graphing";
+import * as state_graph from "./state_graph";
 
 import {CharStream, CommonTokenStream} from "antlr4";
 
@@ -143,7 +143,7 @@ export const parse = (code: string): ProgramContext => {
     parser._errHandler = new TuringErrorStrategy();
 
     const tree = parser.program();
-    transition_graphing.remember_tree(tree);
+    state_graph.remember_tree(tree);
 
     // collect state names and add to select box
     // also collects letters to tell tape what characters are valid
@@ -276,7 +276,7 @@ export const cancel_steps = () => {
         editor.remove_decoration_by_id(step_highlight_id);
     }
 
-    transition_graphing.mark_edge(null);
+    state_graph.mark_edge(null);
 
     // restore to original lock state
     const url_props = sharing.get_loaded_properties();
@@ -413,7 +413,7 @@ export const run_step = () => {
 
                 // determine the graph edge and mark it
                 const prev_letter = res.old_value[res.old_pos] || EMPTY;
-                transition_graphing.mark_edge({
+                state_graph.mark_edge({
                     from: res.old_state,
                     to: res.state,
                     letter: prev_letter

@@ -5,7 +5,7 @@ import * as error_log from "./error_log";
 import * as runner from "./runner";
 import * as sharing from "./sharing";
 import * as pwa from "./pwa";
-import * as transition_graphing from "./transition_graphing";
+import * as state_graph from "./state_graph";
 
 import Tabs from "./tabs";
 
@@ -27,7 +27,7 @@ sharing.finish_load_from_url();
 const program_tabs = new Tabs(document.getElementById("program-tabs") as HTMLDivElement);
 
 // upon showing graph tabs pane, call update_graph (lazy loading)
-program_tabs.add_listener("transition-graph", transition_graphing.update_graph);
+program_tabs.add_listener("state-graph", state_graph.update_graph);
 
 // listen for navigating away from the page
 window.addEventListener("beforeunload", (e) => {
