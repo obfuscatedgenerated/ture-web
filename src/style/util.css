@@ -24,19 +24,6 @@
     width: 100%;
 }
 
-.vertical-rule {
-    width: 0.05em;
-    height: 1.5em;
-    background-color: var(--text-body);
-    margin: 0;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.vertical-rule.short {
-    height: 1em;
-}
-
 .danger {
     color: var(--danger);
 }
