@@ -551,6 +551,14 @@ label {
     width: 25em;
 }
 
+#share-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+}
+
 #editor {
     background-color: var(--white-bg);
     font-family: monospace;
