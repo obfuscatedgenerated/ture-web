@@ -78,6 +78,22 @@
 #program-tabs {
     margin-top: 1rem;
     width: 100%;
+    border-radius: 0.375rem;
+    border: 0.0625rem solid var(--on-body-bg);
+}
+
+#program-tabs .tabs-buttons button:first-child {
+    border-top-left-radius: 0.375rem;
+}
+
+#program-tabs .tabs-pane {
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+
+#program-tabs .tabs-pane > * {
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
 }
 
 #state-graph {
