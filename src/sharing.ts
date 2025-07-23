@@ -51,6 +51,7 @@ const file_name = document.getElementById("file-name") as HTMLInputElement;
 const state_select = document.getElementById("init-state") as HTMLSelectElement;
 const upload_button = document.getElementById("upload-button") as HTMLButtonElement;
 const restrict_checkbox = document.getElementById("restrict-input") as HTMLInputElement;
+const long_url_warning = document.getElementById("long-url-warn") as HTMLDivElement;
 
 const open_share_dialog = document.getElementById("open-share-dialog") as HTMLDialogElement;
 const open_share_url_input = document.getElementById("open-share-url") as HTMLInputElement;
@@ -171,6 +172,9 @@ export const show_create_share_dialog = () => {
     } else {
         include_tape.disabled = false;
     }
+
+    // do length check from default values
+    check_length();
 
     create_share_dialog.showModal();
 }
@@ -347,6 +351,17 @@ const get_share_checkbox_values = (): ShareURLProperties => {
     return properties;
 }
 
+const check_length = () => {
+    // check if the URL is too long
+    const share_url = get_share_url(get_share_checkbox_values());
+    console.log("Share URL length: ", share_url.length);
+    if (share_url.length > 2000) {
+        long_url_warning.classList.remove("hidden");
+    } else {
+        long_url_warning.classList.add("hidden");
+    }
+}
+
 // bind share dialog button
 document.getElementById("share-dialog-button")!.addEventListener("click", show_create_share_dialog);
 
@@ -355,7 +370,7 @@ document.getElementById("share-close")!.addEventListener("click", () => {
     create_share_dialog.close();
 });
 
-// bind checkbox suboptions
+// bind include checkboxes to show suboptions
 share_prop_names.forEach(id => {
     const checkbox = document.getElementById(`include-${id}`) as HTMLInputElement;
     const sub_div = document.getElementById(`${id}-sub`);
@@ -374,7 +389,18 @@ share_prop_names.forEach(id => {
             if (sub_div) {
                 sub_div.classList.toggle("hidden", !checkbox.checked);
             }
+
+            check_length();
         });
+    }
+});
+
+// bind flag checkboxes to only do length check
+share_prop_names_flags.forEach(id => {
+    const checkbox = document.getElementById(`flag-${id}`) as HTMLInputElement;
+
+    if (checkbox) {
+        checkbox.addEventListener("change", check_length);
     }
 });
 
@@ -427,6 +453,8 @@ document.getElementById("select-all")!.addEventListener("change", (event) => {
             }
         });
     }
+
+    check_length();
 });
 
 // bind share button

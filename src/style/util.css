@@ -37,6 +37,10 @@
     height: 1em;
 }
 
+.danger {
+    color: var(--danger);
+}
+
 @media not all and (max-width: 600px) {
     .mobile-only {
         display: none;
