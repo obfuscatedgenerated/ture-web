@@ -515,11 +515,11 @@ share_iframe_button.addEventListener("click", async () => {
     }
 
     editor.clear_dirty();
-    share_button.innerText = "Copied!";
+    share_iframe_button.innerText = "Copied!";
 
     // reset text after 2 seconds
     setTimeout(() => {
-        share_button.innerHTML = share_button_content;
+        share_iframe_button.innerHTML = share_iframe_button_content;
     }, 2000);
 });
 
