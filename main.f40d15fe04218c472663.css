@@ -367,6 +367,11 @@ blockquote {
 .tabs-buttons {
     display: flex;
     flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    gap: 0;
+    margin: 0;
     border-bottom: 0.0625rem solid var(--on-body-bg);
 }
 
@@ -374,6 +379,7 @@ blockquote {
     border-radius: 0;
     margin: 0;
     color: var(--text-secondary);
+    white-space: nowrap;
 }
 
 .tabs-buttons button:not(:first-child) {
@@ -394,12 +400,6 @@ blockquote {
     color: var(--on-general-hover);
 }
 
-.tabs-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    margin: 0;
-}
 
 @media screen and (max-width: 600px) {
 body {
