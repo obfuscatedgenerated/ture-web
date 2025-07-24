@@ -32,6 +32,11 @@ document.getElementById("run-remaining")!.addEventListener("click", runner.run_r
 // bind cancel step
 document.getElementById("cancel-step")!.addEventListener("click", runner.cancel_steps);
 
+// bind new file button TODO improve ux
+document.getElementById("new-file")!.addEventListener("click", () => {
+    location.assign(".");
+});
+
 // bind copy empty
 const copy_empty = document.getElementById("copy-empty") as HTMLButtonElement;
 const copy_empty_content = copy_empty.innerHTML;
