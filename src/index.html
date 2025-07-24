@@ -23,16 +23,16 @@
 </head>
 <body>
     <h1>
-        Ture
+        <%= short_title %>
         <br class="not-mobile" />
         <span class="medium mobile-only" aria-hidden="true">&nbsp;·</span>
         <small id="tagline">
-            A turing machine interpreter <span class="not-mobile" aria-hidden="true">·&nbsp;</span><br class="mobile-only" />
+            <%= tagline %> <span class="not-mobile" aria-hidden="true">·&nbsp;</span><br class="mobile-only" />
         </small>
         <small id="links">
             <a id="help-link" class="cursor-pointer">Help</a>
             <span aria-hidden="true">|</span> <a id="examples-link" class="cursor-pointer">Examples</a>
-            <span aria-hidden="true">|</span> <a href="https://github.com/obfuscatedgenerated/ture-web" target="_blank" rel="noopener noreferrer">Source code</a>
+            <span aria-hidden="true">|</span> <a href="<%= repo_url %>" target="_blank" rel="noopener noreferrer">Source code</a>
             <span aria-hidden="true">|</span> <a id="teachers-link" class="cursor-pointer">Teachers</a>
         </small>
     </h1>

@@ -13,10 +13,16 @@ import AppManifestPlugin from "webpack-web-app-manifest-plugin";
 // config
 
 // the short title of the app
-const TITLE = "Ture";
+const SHORT_TITLE = "Ture";
+
+// the tagline for the app
+const TAGLINE = "Turing machine interpreter";
 
 // the longer title with tagline
-const LONG_TITLE = "Ture - Turing machine interpreter";
+const LONG_TITLE = `${SHORT_TITLE} - ${TAGLINE}`;
+
+// the source repo URL
+const REPO_URL = "https://github.com/obfuscatedgenerated/ture-web";
 
 // end config
 
@@ -109,6 +115,11 @@ export default (env, argv) => {
                 inject: false,
                 templateParameters: {
                     commit_details: get_commit_details(),
+
+                    short_title: SHORT_TITLE,
+                    long_title: LONG_TITLE,
+                    tagline: TAGLINE,
+                    repo_url: REPO_URL,
                 },
             }),
 
@@ -118,8 +129,8 @@ export default (env, argv) => {
 
             new AppManifestPlugin({
                 content: {
-                    name: TITLE,
-                    short_name: TITLE,
+                    name: SHORT_TITLE,
+                    short_name: SHORT_TITLE,
                     background_color: "#111",
                     start_url: "/",
                     display: "standalone",
